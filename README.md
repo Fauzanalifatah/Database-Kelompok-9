@@ -17,10 +17,11 @@
 4. [Database dan Docker](#4-database-dan-docker)
 5. [Menyiapkan dan Menjalankan Proyek](#5-menyiapkan-dan-menjalankan-proyek)
 6. [Migrasi Database](#6-migrasi-database)
-7. [Konfigurasi Dependency](#7-konfigurasi-dependency)
-8. [Menghindari Konflik Port](#8-menghindari-konflik-port)
-9. [Pengembangan Berikutnya](#9-pengembangan-berikutnya)
-10. [Ringkasan Perintah](#10-ringkasan-perintah)
+7. [Django Administration](#7-django-administration)
+8. [Konfigurasi Dependency](#8-konfigurasi-dependency)
+9. [Menghindari Konflik Port](#9-menghindari-konflik-port)
+10. [Pengembangan Berikutnya](#10-pengembangan-berikutnya)
+11. [Ringkasan Perintah](#11-ringkasan-perintah)
 
 ## 1. Gambaran Umum
 
@@ -278,7 +279,56 @@ Penting: konfigurasi pada `core/settings.py` menggunakan MariaDB:
 Karena itu, Django harus dijalankan ketika container database aktif. File
 `db.sqlite3` tidak digunakan oleh konfigurasi database saat ini.
 
-## 7. Konfigurasi Dependency
+## 7. Django Administration
+
+Django Administration adalah panel bawaan Django untuk mengelola data aplikasi
+melalui browser. Pada proyek ini, panel tersebut tersedia pada:
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
+Server Django harus tetap berjalan agar halaman admin dapat dibuka. Jalankan
+server dengan:
+
+```powershell
+.\venvku\Scripts\python.exe manage.py runserver 127.0.0.1:8000
+```
+
+Jika browser menampilkan `ERR_CONNECTION_REFUSED`, biasanya tidak ada proses
+Django yang sedang mendengarkan pada port `8000`. Pastikan perintah
+`runserver` masih berjalan dan gunakan alamat yang sesuai.
+
+### Membuat akun administrator
+
+Buat akun superuser menggunakan perintah berikut:
+
+```powershell
+.\venvku\Scripts\python.exe manage.py createsuperuser
+```
+
+Isi username, alamat email, dan password ketika diminta. Akun tersebut
+digunakan untuk login ke Django Administration. Jika password yang dimasukkan
+dua kali berbeda, Django akan meminta pengulangan password.
+
+### Mendaftarkan model ke admin
+
+Model hanya tampil di panel admin setelah didaftarkan pada `app/admin.py`.
+Untuk menampilkan model `Produk`, isi file tersebut dengan:
+
+```python
+from django.contrib import admin
+from .models import Produk
+
+admin.site.register(Produk)
+```
+
+Setelah server dijalankan dan login sebagai superuser, menu `Produk` dapat
+digunakan untuk menambah, mengubah, dan menghapus data produk. Perubahan data
+yang dilakukan melalui admin akan tersimpan pada database yang dikonfigurasi
+di `core/settings.py`.
+
+## 8. Konfigurasi Dependency
 
 Isi `requirements.txt` menyediakan:
 
@@ -291,7 +341,7 @@ Instal dependency jika diperlukan:
 .\venvku\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## 8. Menghindari Konflik Port
+## 9. Menghindari Konflik Port
 
 Satu port host tidak dapat dipakai oleh dua container secara bersamaan. Jika
 muncul pesan:
@@ -322,7 +372,7 @@ Jangan menggunakan `docker compose down -v` hanya untuk mengatasi konflik
 port. Opsi `-v` dapat menghapus volume database dan data yang tersimpan di
 dalamnya.
 
-## 9. Pengembangan Berikutnya
+## 10. Pengembangan Berikutnya
 
 Fitur berikut dapat ditambahkan pada tahap selanjutnya:
 
@@ -349,7 +399,7 @@ Setelah itu, buat superuser agar dapat masuk ke `/admin/`:
 .\venvku\Scripts\python.exe manage.py createsuperuser
 ```
 
-## 10. Ringkasan Perintah
+## 11. Ringkasan Perintah
 
 ```powershell
 cd "D:\UCANG SEMESTER 5\E-COMMERCE\thesisstore"
