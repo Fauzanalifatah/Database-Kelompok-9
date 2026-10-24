@@ -16,6 +16,7 @@
 3. [Model Produk](#3-model-produk)
 4. [Database dan Docker](#4-database-dan-docker)
 5. [Menyiapkan dan Menjalankan Proyek](#5-menyiapkan-dan-menjalankan-proyek)
+   - [Hasil Tambahkan](#hasil-tambahkan)
 6. [Migrasi Database](#6-migrasi-database)
 7. [Django Administration](#7-django-administration)
 8. [Konfigurasi Dependency](#8-konfigurasi-dependency)
@@ -215,6 +216,15 @@ Pada gambar tersebut:
 - `django_migrations` menyimpan catatan migrasi yang sudah diterapkan;
 - `django_session` menyimpan data session Django.
 
+### Hasil tambahkan
+
+Deskripsi: **hasil tambahkan**
+
+1. `app_provinsi`
+2. `app_useradmin`
+
+![Hasil tambahkan app_provinsi dan app_useradmin](docs/images/phpmyadmin-hasil-tambahkan.png)
+
 ### Menjalankan Django
 
 Aktifkan virtual environment:
@@ -287,6 +297,12 @@ melalui browser. Pada proyek ini, panel tersebut tersedia pada:
 ```text
 http://127.0.0.1:8000/admin/
 ```
+
+Screenshot berikut menunjukkan halaman Django Administration setelah model
+aplikasi berhasil ditambahkan. Menu yang tersedia meliputi `Anggota`,
+`Produks`, `Provinsi`, dan `User admins`, serta menu autentikasi Django.
+
+![Django Administration](docs/images/django-administration-hasil-tambahkan.png)
 
 Server Django harus tetap berjalan agar halaman admin dapat dibuka. Jalankan
 server dengan:
