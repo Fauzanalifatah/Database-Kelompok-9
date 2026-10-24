@@ -9,6 +9,19 @@
 | 3 | Firman | 240907501044 |
 | 4 | Ahmad Naufal Dzaky | 240907502037 |
 
+## Daftar Isi
+
+1. [Gambaran Umum](#1-gambaran-umum)
+2. [Struktur Direktori](#2-struktur-direktori)
+3. [Model Produk](#3-model-produk)
+4. [Database dan Docker](#4-database-dan-docker)
+5. [Menyiapkan dan Menjalankan Proyek](#5-menyiapkan-dan-menjalankan-proyek)
+6. [Migrasi Database](#6-migrasi-database)
+7. [Konfigurasi Dependency](#7-konfigurasi-dependency)
+8. [Menghindari Konflik Port](#8-menghindari-konflik-port)
+9. [Pengembangan Berikutnya](#9-pengembangan-berikutnya)
+10. [Ringkasan Perintah](#10-ringkasan-perintah)
+
 ## 1. Gambaran Umum
 
 Thesis Store adalah proyek awal aplikasi e-commerce berbasis Django. Proyek ini
