@@ -1,0 +1,225 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <style>
+        :root {
+            --blue: #dc2626;
+            --blue-dark: #991b1b;
+            --orange: #fecaca;
+            --dark: #172033;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --background: #f7f9fc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            color: var(--dark);
+            background: var(--background);
+            font: 14px Arial, sans-serif;
+        }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 256px;
+            flex-shrink: 0;
+            padding: 27px 16px;
+            color: #fee2e2;
+            background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d);
+            border-right: 1px solid var(--line);
+        }
+        .brand {
+            display: block;
+            margin: 0 12px 48px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -.04em;
+        }
+        .brand-logo {
+            display: block;
+            width: 190px;
+            height: 72px;
+            padding: 5px;
+            object-fit: contain;
+            background: linear-gradient(135deg, #ef4444, #7f1d1d);
+            border-radius: 11px;
+            box-shadow: 0 8px 18px #991b1b55;
+        }
+        .brand-subtitle {
+            display: block;
+            margin-top: 4px;
+            color: #fecaca;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin: 4px 0;
+            padding: 12px;
+            color: #fee2e2;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            text-decoration: none;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background: #ffffff12;
+            border-color: #ffffff12;
+            box-shadow: inset 3px 0 #fecaca;
+        }
+        .nav-icon { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; color: #fca5a5; }
+        .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+        .logout {
+            width: calc(100% - 24px);
+            margin: 260px 12px 0;
+            padding: 11px 18px;
+            color: #fee2e2;
+            background: #ffffff0d;
+            border: 1px solid #ffffff24;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .logout:hover { color: #fff; background: #ffffff1a; }
+        .main { flex: 1; min-width: 0; }
+        .topbar {
+            padding: 24px 38px;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+        }
+        .topbar h1 { margin: 0; color: var(--dark); font-size: 22px; }
+        .topbar p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+        .content { max-width: 1120px; padding: 30px 38px 55px; }
+        .messages, .form-error {
+            margin-bottom: 18px;
+            padding: 12px 16px;
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+        }
+        .form-error { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+        .section {
+            margin-bottom: 28px;
+            padding: 22px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            box-shadow: 0 4px 14px #0f172a08;
+        }
+        .section h2 { margin: 0 0 19px; color: var(--blue-dark); font-size: 16px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .field input, .field select {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            color: var(--dark);
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        .field input:focus, .field select:focus {
+            outline: 3px solid #fee2e2;
+            border-color: var(--blue);
+        }
+        .errors { margin: 6px 0 0; padding-left: 18px; color: #b91c1c; font-size: 12px; }
+        .help { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
+        .actions { display: flex; justify-content: flex-end; }
+        .save {
+            padding: 12px 24px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--blue), #991b1b);
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .save:hover { box-shadow: 0 8px 16px #991b1b33; }
+        @media (max-width: 760px) {
+            .layout { display: block; }
+            .sidebar { width: 100%; padding: 16px; }
+            .brand { margin: 0 0 18px; }
+            .nav-link { display: inline-block; padding: 10px; }
+            .logout { margin: 12px 0 0; }
+            .grid { grid-template-columns: 1fr; }
+            .topbar, .content { padding: 22px 18px; }
+            .section { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <img class="brand-logo" src="{% static 'images/losari-computer-logo.png' %}" alt="Logo Losari Computer">
+            <small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small>
+        </div>
+        <nav>
+            <a class="nav-link" href="{% url 'home' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Katalog Laptop</a>
+            <a class="nav-link" href="{% url 'app:dashboard' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></span>Dashboard</a>
+            <a class="nav-link active" href="{% url 'app:profile_pengguna' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span>Profil Saya</a>
+        </nav>
+        <form method="post" action="{% url 'app:logout' %}">
+            {% csrf_token %}
+            <button class="logout" type="submit">Logout</button>
+        </form>
+    </aside>
+    <main class="main">
+        <header class="topbar"><h1>Profil Saya</h1><p>Kelola informasi akun Losari Computer Anda</p></header>
+        <section class="content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="messages">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% if form.non_field_errors %}
+                <div class="form-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="section">
+                    <h2>Data Pribadi</h2>
+                    <div class="grid">
+                        {% for field in form %}
+                            {% if field.name == "gender" or field.name == "telp" or field.name == "provinsi_anggota" or field.name == "alamat" %}
+                                <div class="field">
+                                    {{ field.label_tag }}{{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Foto Profil</h2>
+                    <div class="grid">
+                        {% for field in form %}
+                            {% if field.name == "photo" %}
+                                <div class="field">
+                                    {{ field.label_tag }}{{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="actions"><button class="save" type="submit">Simpan Profil</button></div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

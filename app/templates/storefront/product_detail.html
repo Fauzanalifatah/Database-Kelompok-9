@@ -1,0 +1,10 @@
+{% extends "storefront/base.html" %}
+{% block title %}{{ product.nama }} - Losari Computer{% endblock %}
+{% block content %}
+<section style="display:grid;grid-template-columns:1fr 1fr;gap:35px;margin:40px 0;background:#fff;padding:28px;border:1px solid #e2e8f0;border-radius:16px">
+    <div style="display:grid;min-height:350px;place-items:center;background:#eff6ff;border-radius:12px;font-size:90px">{% if product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}" style="width:100%;height:100%;object-fit:contain">{% else %}&#128187;{% endif %}</div>
+    <div><span class="tag">{{ product.kategori.nama }}</span><h1>{{ product.merek }} {{ product.nama }}</h1><p class="muted">{{ product.deskripsi|default:"Laptop pilihan dengan performa yang dapat diandalkan." }}</p><div class="price">Rp {{ product.harga|floatformat:0 }}</div><p><strong>Kondisi:</strong> {{ product.get_kondisi_display }} &middot; <strong>Stok:</strong> {{ product.stok }}</p><a class="button" href="https://wa.me/?text=Saya%20tertarik%20dengan%20{{ product.nama|urlencode }}">Tanya produk</a></div>
+</section>
+<section><h2>Spesifikasi</h2><div style="margin-top:16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">{% for key, value in product.spesifikasi.items %}<p><strong>{{ key|title }}:</strong> {{ value }}</p>{% empty %}<p class="muted">Spesifikasi belum diisi. Lengkapi melalui admin Django.</p>{% endfor %}</div></section>
+{% if related_products %}<section><div class="section-head"><h2>Produk terkait</h2></div><div class="products">{% for item in related_products %}<article class="product"><div class="product-body"><span class="tag">{{ item.kategori.nama }}</span><h3>{{ item.merek }} {{ item.nama }}</h3><div class="price">Rp {{ item.harga|floatformat:0 }}</div><a class="button" href="{% url 'app:product_detail' item.slug %}">Lihat detail</a></div></article>{% endfor %}</div></section>{% endif %}
+{% endblock %}

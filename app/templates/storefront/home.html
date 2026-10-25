@@ -1,0 +1,18 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1>Laptop yang pas untuk kebutuhanmu.</h1>
+    <p>Pilih laptop berkualitas dengan spesifikasi transparan, sudah melewati pengecekan, dan siap dipakai untuk kuliah maupun pekerjaan.</p>
+    <form class="search" method="get"><input name="q" value="{{ query }}" placeholder="Cari merek atau nama laptop..."><button class="button" type="submit">Cari laptop</button></form>
+</section>
+<div class="section-head"><div><h2>Pilih sesuai kebutuhan</h2><p class="muted">Temukan perangkat berdasarkan aktivitas utama kamu.</p></div></div>
+<section class="categories">
+    {% for category in categories %}<a class="category" href="?kategori={{ category.slug }}"><div class="category-icon">{{ category.ikon }}</div><h3>{{ category.nama }}</h3><p>{{ category.deskripsi|default:"Laptop pilihan yang sesuai kebutuhanmu." }}</p></a>{% empty %}<p class="muted">Kategori belum tersedia. Tambahkan melalui admin Django.</p>{% endfor %}
+</section>
+<div class="section-head"><div><h2>{% if selected_category %}{{ selected_category.nama }}{% else %}Laptop terbaru{% endif %}</h2><p class="muted">{{ products|length }} produk tersedia</p></div></div>
+<section class="products">
+    {% for product in products %}
+    <article class="product"><div class="product-image">{% if product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}" style="width:100%;height:100%;object-fit:cover">{% else %}&#128187;{% endif %}</div><div class="product-body"><span class="tag">{{ product.kategori.nama }}</span><h3>{{ product.merek }} {{ product.nama }}</h3><p class="muted">{{ product.kondisi|title }} &middot; Stok {{ product.stok }}</p><div class="price">Rp {{ product.harga|floatformat:0 }}</div><a class="button" href="{% url 'app:product_detail' product.slug %}">Lihat detail</a></div></article>
+    {% empty %}<p class="muted">Produk belum ditemukan. Tambahkan data produk melalui <a href="/admin/">admin Django</a>.</p>{% endfor %}
+</section>
+{% endblock %}

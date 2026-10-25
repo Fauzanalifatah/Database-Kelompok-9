@@ -1,0 +1,180 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Losari Computer{% endblock %}</title>
+    {% block extra_styles %}{% endblock %}
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --dark: #0f172a;
+            --muted: #64748b;
+            --border: #dbe3ef;
+            --surface: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            display: grid;
+            min-height: 100vh;
+            margin: 0;
+            padding: 32px 16px;
+            place-items: center;
+            background:
+                radial-gradient(circle at 10% 0%, #fee2e2 0, transparent 32%),
+                radial-gradient(circle at 95% 100%, #ffedd5 0, transparent 28%),
+                #f5f8fc;
+            color: #172033;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        .auth-shell {
+            display: grid;
+            width: min(960px, 100%);
+            grid-template-columns: .9fr 1.1fr;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: 0 24px 70px #0f172a18;
+        }
+        .auth-aside {
+            position: relative;
+            overflow: hidden;
+            padding: 42px 38px;
+            color: #fff;
+            background: linear-gradient(145deg, #7f1d1d 0%, #dc2626 68%, #ef4444 100%);
+        }
+        .auth-aside::after {
+            position: absolute;
+            right: -90px;
+            bottom: -100px;
+            width: 270px;
+            height: 270px;
+            content: "";
+            border: 35px solid #ffffff1c;
+            border-radius: 50%;
+        }
+        .aside-kicker { margin: 0 0 62px;         color: #fecaca; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        .auth-aside h2 { max-width: 300px; margin: 0 0 15px; font-size: 32px; line-height: 1.12; letter-spacing: -.04em; }
+        .auth-aside p { max-width: 300px; margin: 0;         color: #fee2e2; font-size: 14px; line-height: 1.7; }
+        .aside-points { display: grid; gap: 14px; margin: 36px 0 0; padding: 0; list-style: none; }
+        .aside-points li { display: flex; align-items: center; gap: 10px; color: #fff1f2; font-size: 13px; font-weight: 650; }
+        .aside-points li::before { display: grid; width: 22px; height: 22px; place-items: center; content: "✓"; color: #b91c1c; background: #fee2e2; border-radius: 50%; font-size: 12px; font-weight: 900; }
+        .auth-card {
+            width: 100%;
+            padding: 42px 46px;
+            background: var(--surface);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 34px;
+            color: var(--dark);
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -.03em;
+        }
+        .brand-logo {
+            display: block;
+            width: 92px;
+            height: 54px;
+            flex-shrink: 0;
+            object-fit: contain;
+            padding: 5px;
+            background: linear-gradient(135deg, #ef4444, #991b1b);
+            border-radius: 12px;
+            box-shadow: 0 7px 15px #991b1b33;
+        }
+        .brand-name span { color: #f97316; }
+        .brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 500; letter-spacing: 0; }
+        h1 { margin: 0 0 9px; color: var(--dark); font-size: 27px; letter-spacing: -.03em; }
+        .subtitle { margin: 0 0 26px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+        .field { margin-bottom: 17px; }
+        label { display: block; margin-bottom: 8px; color: #334155; font-size: 13px; font-weight: 750; }
+        .form-control,
+        .field input,
+        .field select {
+            width: 100%;
+            min-height: 45px;
+            padding: 11px 13px;
+            color: var(--dark);
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font: inherit;
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        .form-control::placeholder,
+        .field input::placeholder { color: #94a3b8; }
+        .form-control:hover,
+        .field input:hover,
+        .field select:hover { border-color: #94a3b8; }
+        .form-control:focus,
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            background: #fbfdff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px #dc26261a;
+        }
+        .helptext { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .errorlist { margin: 6px 0 0; padding-left: 18px; color: #b91c1c; font-size: 12px; line-height: 1.45; }
+        .form-error { margin: 0 0 18px; padding: 12px 14px; color: #991b1b; background: #fff7f7; border: 1px solid #fecaca; border-left: 4px solid #ef4444; border-radius: 9px; font-size: 13px; line-height: 1.45; }
+        .button {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 16px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: 0;
+            border-radius: 9px;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 750;
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+        .button:hover { box-shadow: 0 8px 16px #dc262633; }
+        .button:active { transform: translateY(1px); }
+        .switch { margin: 22px 0 0; color: var(--muted); text-align: center; font-size: 13px; line-height: 1.5; }
+        a { color: var(--primary-dark); font-weight: 700; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back-link { display: block; margin-top: 14px; color: var(--muted); font-size: 13px; text-align: center; }
+        @media (max-width: 720px) {
+            .auth-shell { display: block; }
+            .auth-aside { display: none; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 20px 12px; }
+            .auth-card { padding: 30px 22px; }
+            .brand { margin-bottom: 26px; }
+            h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="auth-shell">
+        <aside class="auth-aside">
+            <p class="aside-kicker">Losari Computer</p>
+            <h2>Temukan laptop yang tepat untuk kebutuhanmu.</h2>
+            <p>Belanja lebih nyaman dengan katalog laptop pilihan, spesifikasi transparan, dan layanan terpercaya.</p>
+            <ul class="aside-points">
+                <li>Produk terkurasi dan siap digunakan</li>
+                <li>Spesifikasi jelas dan transparan</li>
+                <li>Layanan pelanggan yang responsif</li>
+            </ul>
+        </aside>
+        <section class="auth-card">
+            <div class="brand"><img class="brand-logo" src="{% static 'images/losari-computer-logo.png' %}" alt="Logo Losari Computer"><div class="brand-name">Losari<span>Computer</span><small>Belanja laptop berkualitas</small></div></div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="form-error">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+</body>
+</html>

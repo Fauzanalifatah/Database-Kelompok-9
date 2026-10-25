@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Losari Computer - Laptop Siap Pakai{% endblock %}</title>
+    <style>
+        :root { --ink:#172033; --muted:#64748b; --blue:#2563eb; --line:#e2e8f0; --soft:#f8fafc; }
+        * { box-sizing:border-box; } body { margin:0; color:var(--ink); background:var(--soft); font:15px Arial,sans-serif; }
+        a { color:inherit; text-decoration:none; } .container { width:min(1180px,calc(100% - 32px)); margin:auto; }
+        header { background:#fff; border-bottom:1px solid var(--line); } .nav { display:flex; align-items:center; justify-content:space-between; min-height:72px; gap:20px; }
+        .brand { color:#1d4ed8; font-size:24px; font-weight:800; } .brand span { color:#f97316; }
+        .nav-links { display:flex; align-items:center; gap:20px; color:var(--muted); font-weight:600; } .nav-links a:hover { color:var(--blue); }
+        .button { display:inline-block; padding:11px 18px; color:#fff; background:var(--blue); border-radius:8px; border:0; font-weight:700; cursor:pointer; }
+        .hero { margin:30px 0; padding:46px; color:#fff; background:linear-gradient(115deg,#1e3a8a,#2563eb 60%,#60a5fa); border-radius:18px; }
+        .hero h1 { max-width:600px; margin:0 0 12px; font-size:clamp(28px,5vw,48px); } .hero p { max-width:600px; margin:0; color:#dbeafe; line-height:1.6; }
+        .search { display:flex; gap:10px; margin-top:24px; max-width:650px; } .search input { flex:1; min-height:44px; padding:10px 13px; border:0; border-radius:8px; font:inherit; }
+        .section-head { display:flex; align-items:end; justify-content:space-between; gap:15px; margin:34px 0 16px; } h2 { margin:0; font-size:24px; } .muted { color:var(--muted); }
+        .categories { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; } .category { padding:20px; background:#fff; border:1px solid var(--line); border-radius:12px; }
+        .category:hover { border-color:#93c5fd; box-shadow:0 5px 16px #1e3a8a12; } .category-icon { font-size:28px; } .category h3 { margin:12px 0 6px; } .category p { margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
+        .products { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; } .product { overflow:hidden; background:#fff; border:1px solid var(--line); border-radius:12px; }
+        .product-image { display:grid; height:165px; place-items:center; color:#93c5fd; background:#eff6ff; font-size:56px; } .product-body { padding:16px; }
+        .tag { display:inline-block; padding:4px 8px; color:#1d4ed8; background:#dbeafe; border-radius:20px; font-size:11px; font-weight:700; }
+        .product h3 { margin:10px 0 5px; font-size:16px; } .price { margin:12px 0; color:#1d4ed8; font-size:18px; font-weight:800; }
+        footer { margin-top:60px; padding:28px 0; color:var(--muted); background:#fff; border-top:1px solid var(--line); }
+        @media (max-width:800px) { .categories,.products { grid-template-columns:repeat(2,1fr); } .nav-links { gap:10px; font-size:13px; } }
+        @media (max-width:520px) { .hero { padding:28px 22px; } .categories,.products { grid-template-columns:1fr; } .nav-links a:not(.button) { display:none; } }
+    </style>
+</head>
+<body>
+<header><div class="container nav"><a class="brand" href="{% url 'home' %}">Losari<span>Computer</span></a><nav class="nav-links"><a href="{% url 'home' %}">Katalog</a>{% if user.is_authenticated %}<a href="{% url 'app:dashboard' %}">Dashboard</a>{% else %}<a class="button" href="{% url 'app:login' %}">Masuk</a>{% endif %}</nav></div></header>
+<main class="container">{% block content %}{% endblock %}</main>
+<footer><div class="container">Losari Computer &middot; Laptop pilihan untuk kuliah, kerja, desain, dan gaming.</div></footer>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# Thesis Store
+# Losari Computer
 
 ## Kelompok 9
 
@@ -19,14 +19,16 @@
    - [Hasil Tambahkan](#hasil-tambahkan)
 6. [Migrasi Database](#6-migrasi-database)
 7. [Django Administration](#7-django-administration)
-8. [Konfigurasi Dependency](#8-konfigurasi-dependency)
-9. [Menghindari Konflik Port](#9-menghindari-konflik-port)
-10. [Pengembangan Berikutnya](#10-pengembangan-berikutnya)
-11. [Ringkasan Perintah](#11-ringkasan-perintah)
+8. [Dashboard Aplikasi](#8-dashboard-aplikasi)
+   - [Dokumentasi Visual Tahapan](#dokumentasi-visual-tahapan)
+9. [Konfigurasi Dependency](#9-konfigurasi-dependency)
+10. [Menghindari Konflik Port](#10-menghindari-konflik-port)
+11. [Pengembangan Berikutnya](#11-pengembangan-berikutnya)
+12. [Ringkasan Perintah](#12-ringkasan-perintah)
 
 ## 1. Gambaran Umum
 
-Thesis Store adalah proyek awal aplikasi e-commerce berbasis Django. Proyek ini
+Losari Computer adalah aplikasi e-commerce berbasis Django. Proyek ini
 menggunakan MariaDB sebagai database dan phpMyAdmin sebagai alat bantu untuk
 melihat serta mengelola database melalui browser.
 
@@ -34,13 +36,17 @@ Pada kondisi saat ini, proyek sudah memiliki:
 
 - konfigurasi proyek Django;
 - aplikasi Django bernama `app`;
-- model `Produk`;
-- file migrasi awal untuk membuat tabel produk;
+- model `Kategori`, `Produk`, `Pesanan`, `ItemPesanan`, `Provinsi`, `UserAdmin`,
+  dan `UserPengguna`;
+- autentikasi pengguna dan administrator;
+- dashboard aplikasi untuk melihat ringkasan data;
+- halaman Django Administration untuk mengelola data;
 - service MariaDB dan phpMyAdmin melalui Docker Compose;
 - konfigurasi koneksi Django ke MariaDB.
 
-Halaman katalog atau CRUD produk belum dibuat. File view dan URL aplikasi masih
-disiapkan sebagai fondasi untuk pengembangan berikutnya.
+Pengelolaan data dilakukan melalui dashboard aplikasi dan Django
+Administration. Pengembangan katalog e-commerce dapat dilanjutkan dengan
+menambahkan field produk seperti harga, stok, deskripsi, dan gambar.
 
 ## 2. Struktur Direktori
 
@@ -66,6 +72,22 @@ thesisstore/
         └── __init__.py
 ```
 
+### Tabel katalog e-commerce
+
+Migration katalog sudah tersedia pada `app/migrations/0003_*.py` dan
+`app/migrations/0004_default_categories.py`. Setelah migration dijalankan pada
+MariaDB, tabel berikut akan terlihat di phpMyAdmin:
+
+| Model Django | Tabel MariaDB |
+|---|---|
+| `Kategori` | `app_kategori` |
+| `Produk` | `app_produk` |
+| `Pesanan` | `app_pesanan` |
+| `ItemPesanan` | `app_itempesanan` |
+
+Nama tabel `app_pesanan` memakai bentuk tunggal karena mengikuti nama model
+`Pesanan`; menu admin boleh menampilkan label jamak “Pesanans”.
+
 ### Penjelasan file penting
 
 - `manage.py`: menjalankan perintah administrasi Django, misalnya migrasi dan
@@ -75,36 +97,39 @@ thesisstore/
 - `core/urls.py`: URL utama proyek. Saat ini menyediakan `/admin/` dan
   meneruskan URL dengan awalan `/app/` ke aplikasi `app`.
 - `app/models.py`: definisi struktur data aplikasi.
-- `app/views.py`: tempat logika untuk menerima request dan menghasilkan response.
-  Saat ini belum memiliki view khusus.
-- `app/urls.py`: daftar URL milik aplikasi. Saat ini masih kosong.
-- `app/admin.py`: tempat mendaftarkan model agar dapat dikelola melalui Django
-  Admin. Model `Produk` belum didaftarkan.
-- `app/migrations/0001_initial.py`: migrasi untuk membuat tabel `Produk`.
+- `app/views.py`: logika dashboard, katalog, pencarian, dan detail produk.
+- `app/urls.py`: URL dashboard, autentikasi, profil, katalog, dan detail produk.
+- `app/admin.py`: konfigurasi pengelolaan kategori, produk, pesanan, profil,
+  dan data pengguna melalui Django Admin.
+- `app/migrations/0003_*.py`: migrasi skema katalog e-commerce.
+- `app/migrations/0004_default_categories.py`: data awal empat kategori
+  kebutuhan laptop.
 - `compose.yaml`: definisi container MariaDB dan phpMyAdmin.
 - `requirements.txt`: dependency Python yang diperlukan proyek.
 
-## 3. Model Produk
+## 3. Model Produk dan Pesanan
 
-Isi model saat ini secara konsep adalah:
+Model katalog dirancang untuk mendukung alur toko laptop:
 
-```python
-class Produk(models.Model):
-    nama = models.CharField(max_length=100)
+| Model | Fungsi |
+|---|---|
+| `Kategori` | Mengelompokkan laptop berdasarkan Office & Kuliah, Desain & Kreatif, Gaming, dan Bisnis |
+| `Produk` | Menyimpan nama, slug, merek, harga, stok, kondisi, gambar, dan spesifikasi |
+| `Pesanan` | Menyimpan pelanggan, status, alamat pengiriman, total, dan waktu transaksi |
+| `ItemPesanan` | Menyimpan produk, jumlah, serta snapshot harga dan nama saat dipesan |
 
-    def __str__(self):
-        return self.nama
+Relasi utama:
+
+```text
+Kategori 1 ──── * Produk
+User     1 ──── * Pesanan
+Pesanan  1 ──── * ItemPesanan
+Produk   1 ──── * ItemPesanan
 ```
 
-Model tersebut menghasilkan tabel aplikasi dengan kolom:
-
-| Kolom | Tipe | Keterangan |
-|---|---|---|
-| `id` | `BigAutoField` | Primary key yang dibuat otomatis oleh Django |
-| `nama` | `VARCHAR(100)` | Nama produk, maksimal 100 karakter |
-
-Method `__str__()` membuat objek produk ditampilkan menggunakan nilai
-`nama`, bukan hanya nomor ID.
+`ItemPesanan` menyimpan `nama_produk` dan `harga_satuan` sebagai snapshot agar
+riwayat transaksi tetap benar walaupun nama atau harga produk berubah di
+kemudian hari.
 
 ## 4. Database dan Docker
 
@@ -304,6 +329,16 @@ aplikasi berhasil ditambahkan. Menu yang tersedia meliputi `Anggota`,
 
 ![Django Administration](docs/images/django-administration-hasil-tambahkan.png)
 
+Pada halaman tersebut, administrator dapat:
+
+- membuka menu `Anggota` untuk mengelola data pengguna;
+- menambah dan mengubah data `Produk`;
+- mengelola data `Provinsi`;
+- mengelola profil `User admins`;
+- mengatur akun melalui menu `Users`;
+- mengatur kelompok hak akses melalui menu `Groups`;
+- melihat aktivitas administrator pada panel `Recent actions`.
+
 Server Django harus tetap berjalan agar halaman admin dapat dibuka. Jalankan
 server dengan:
 
@@ -330,13 +365,17 @@ dua kali berbeda, Django akan meminta pengulangan password.
 ### Mendaftarkan model ke admin
 
 Model hanya tampil di panel admin setelah didaftarkan pada `app/admin.py`.
-Untuk menampilkan model `Produk`, isi file tersebut dengan:
+Model katalog saat ini sudah didaftarkan melalui `ModelAdmin` agar tersedia
+fitur pencarian, filter, slug otomatis, dan inline item pesanan.
 
 ```python
 from django.contrib import admin
-from .models import Produk
+from .models import ItemPesanan, Kategori, Pesanan, Produk
 
+admin.site.register(Kategori)
 admin.site.register(Produk)
+admin.site.register(Pesanan)
+admin.site.register(ItemPesanan)
 ```
 
 Setelah server dijalankan dan login sebagai superuser, menu `Produk` dapat
@@ -344,7 +383,84 @@ digunakan untuk menambah, mengubah, dan menghapus data produk. Perubahan data
 yang dilakukan melalui admin akan tersimpan pada database yang dikonfigurasi
 di `core/settings.py`.
 
-## 8. Konfigurasi Dependency
+## 8. Dashboard Aplikasi
+
+Dashboard aplikasi dapat dibuka setelah administrator berhasil login melalui:
+
+```text
+http://127.0.0.1:8000/app/dashboard/
+```
+
+Dashboard menampilkan ringkasan data Losari Computer dalam bentuk kartu informasi:
+
+- **Total Produk**: jumlah produk yang tersimpan;
+- **Total Pelanggan**: jumlah profil pengguna;
+- **Provinsi**: jumlah provinsi yang aktif;
+- **Akun Terdaftar**: jumlah akun Django yang terdaftar dan jumlah profil
+  administrator.
+
+Pada panel navigasi, administrator dapat membuka menu:
+
+- `Dashboard` untuk melihat ringkasan data;
+- `Produk` untuk mengelola produk;
+- `Pelanggan` untuk melihat data pelanggan;
+- `Provinsi` untuk mengelola data provinsi.
+
+Dashboard juga menyediakan tombol **Buka Admin** untuk menuju halaman Django
+Administration dan tombol **Keluar** untuk mengakhiri sesi login.
+
+Tampilan dashboard memperlihatkan status sistem, nama pengguna yang sedang
+aktif, serta tautan cepat menuju data produk, anggota, dan provinsi.
+
+### Dokumentasi Visual Tahapan
+
+Bagian ini mendokumentasikan alur aplikasi Losari Computer dari panel
+administrasi, pembuatan akun, login, pengisian profil, sampai dashboard.
+
+#### Tahap 1 - Django Administration
+
+![Tahap 1 - Django Administration](docs/images/tahap-01-django-administration.png)
+
+Panel Django Administration digunakan oleh administrator untuk mengelola data
+aplikasi. Menu katalog yang tersedia meliputi kategori kebutuhan, pesanan,
+produk, provinsi, dan akun pengguna. Tombol **Tambah** digunakan untuk membuat
+data baru, sedangkan **Ubah** digunakan untuk memperbarui data yang sudah ada.
+
+#### Tahap 2 - Registrasi Pengguna
+
+![Tahap 2 - Registrasi Pengguna](docs/images/tahap-02-registrasi.png)
+
+Halaman registrasi dipakai untuk membuat akun pelanggan baru. Pengguna mengisi
+nama depan, nama belakang, nama pengguna, email, dan password. Setelah
+registrasi berhasil, akun dapat digunakan untuk masuk ke aplikasi.
+
+#### Tahap 3 - Login
+
+![Tahap 3 - Login](docs/images/tahap-03-login.png)
+
+Halaman login memvalidasi email dan password pengguna. Setelah kredensial
+benar, pengguna diarahkan ke dashboard. Pesan keberhasilan atau kesalahan
+ditampilkan di dalam area notifikasi agar status proses mudah dipahami.
+
+#### Tahap 4 - Profil Pengguna
+
+![Tahap 4 - Profil Pengguna](docs/images/tahap-04-profil-pengguna.png)
+
+Pengguna melengkapi data nomor telepon, jenis kelamin, alamat pengiriman,
+provinsi, dan foto profil. Data ini digunakan untuk melengkapi identitas
+pelanggan dan mendukung proses pengiriman pesanan.
+
+#### Tahap 5 - Dashboard Losari Computer
+
+![Tahap 5 - Dashboard Losari Computer](docs/images/tahap-05-dashboard.png)
+
+Dashboard menampilkan ringkasan kondisi aplikasi dalam kartu statistik:
+jumlah produk, pelanggan, provinsi, dan akun terdaftar. Sidebar menyediakan
+akses ke katalog, produk, pelanggan, pesanan, serta halaman administrasi.
+Warna merah, logo, dan ikon SVG digunakan secara konsisten di seluruh halaman
+admin dan pengguna.
+
+## 9. Konfigurasi Dependency
 
 Isi `requirements.txt` menyediakan:
 
@@ -357,7 +473,7 @@ Instal dependency jika diperlukan:
 .\venvku\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## 9. Menghindari Konflik Port
+## 10. Menghindari Konflik Port
 
 Satu port host tidak dapat dipakai oleh dua container secara bersamaan. Jika
 muncul pesan:
@@ -388,7 +504,7 @@ Jangan menggunakan `docker compose down -v` hanya untuk mengatasi konflik
 port. Opsi `-v` dapat menghapus volume database dan data yang tersimpan di
 dalamnya.
 
-## 10. Pengembangan Berikutnya
+## 11. Pengembangan Berikutnya
 
 Fitur berikut dapat ditambahkan pada tahap selanjutnya:
 
@@ -415,7 +531,7 @@ Setelah itu, buat superuser agar dapat masuk ke `/admin/`:
 .\venvku\Scripts\python.exe manage.py createsuperuser
 ```
 
-## 11. Ringkasan Perintah
+## 12. Ringkasan Perintah
 
 ```powershell
 cd "D:\UCANG SEMESTER 5\E-COMMERCE\thesisstore"
@@ -430,3 +546,28 @@ Alamat penting:
 - Django Admin: `http://127.0.0.1:8000/admin/`
 - phpMyAdmin: `http://localhost:8889`
 - MariaDB dari Windows: `127.0.0.1:3311`
+## Katalog laptop dan database toko
+
+Aplikasi sekarang memiliki katalog publik yang mengikuti kebutuhan utama
+website referensi:
+
+- kategori **Office & Kuliah**, **Desain & Kreatif**, **Gaming**, dan
+  **Bisnis** dapat dibuat dari menu admin;
+- `Produk` menyimpan merek, kondisi, harga, stok, gambar, dan spesifikasi
+  JSON;
+- `Pesanan` dan `ItemPesanan` menyimpan snapshot nama serta harga produk saat
+  transaksi dibuat;
+- halaman `/` menyediakan pencarian, filter kategori, dan detail produk.
+
+Jalankan migrasi dan server:
+
+```powershell
+.\venvku\Scripts\python.exe manage.py migrate
+.\venvku\Scripts\python.exe manage.py createsuperuser
+.\venvku\Scripts\python.exe manage.py runserver
+```
+
+Pengembangan lokal memakai MariaDB dari `compose.yaml` secara default. Jika
+MariaDB tidak dijalankan dan ingin memakai SQLite, set `DB_ENGINE=sqlite`
+sebelum menjalankan Django. Konfigurasi MariaDB dapat dioverride melalui
+`DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, dan `DB_PORT`.

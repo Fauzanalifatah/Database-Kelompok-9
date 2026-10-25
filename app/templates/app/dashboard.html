@@ -1,0 +1,141 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Losari Computer</title>
+    <style>
+        :root {
+            --navy: #0f172a;
+            --navy-soft: #450a0a;
+            --blue: #dc2626;
+            --blue-soft: #fef2f2;
+            --orange: #fecaca;
+            --text: #172033;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --surface: #fff;
+            --background: #f7f9fc;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; color: var(--text); background: var(--background); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        a { color: inherit; text-decoration: none; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 256px; flex-shrink: 0; padding: 27px 16px; color: #fee2e2; background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d); }
+        .brand { display: block; margin: 0 12px 48px; color: #fff; font-size: 20px; font-weight: 800; }
+        .brand-logo { display: block; width: 190px; height: 72px; padding: 7px; object-fit: contain; background: linear-gradient(135deg, #ef4444, #7f1d1d); border-radius: 12px; box-shadow: 0 8px 18px #991b1b55; }
+        .brand-subtitle { display: block; margin-top: 4px; color: #94a3b8; font-size: 10px; font-weight: 500; letter-spacing: 0; }
+        .menu-label { margin: 0 12px 10px; color: #64748b; font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        .nav-link { display: flex; align-items: center; gap: 12px; margin: 5px 0; padding: 13px 12px; color: #cbd5e1; border: 1px solid transparent; border-radius: 10px; font-size: 14px; font-weight: 600; transition: .2s ease; }
+        .nav-link:hover, .nav-link.active { color: #fff; background: #ffffff12; border-color: #ffffff12; }
+        .nav-link.active { box-shadow: inset 3px 0 #fecaca; }
+        .nav-icon { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; color: #94a3b8; }
+        .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+        .nav-link.active .nav-icon, .nav-link:hover .nav-icon { color: #fecaca; }
+        .sidebar-footer { margin: 160px 12px 0; padding: 15px; color: #cbd5e1; background: #ffffff0d; border: 1px solid #ffffff12; border-radius: 12px; font-size: 12px; line-height: 1.5; }
+        .sidebar-footer strong { display: block; margin-bottom: 4px; color: #fff; }
+        .main { width: 100%; min-width: 0; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 82px; padding: 16px 40px; background: var(--surface); border-bottom: 1px solid var(--line); }
+        .topbar h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+        .topbar p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+        .user-area { display: flex; align-items: center; gap: 18px; }
+        .user-badge { display: flex; align-items: center; gap: 10px; }
+        .avatar { display: grid; width: 38px; height: 38px; place-items: center; color: #991b1b; background: #fee2e2; border: 3px solid #fff1f2; border-radius: 50%; font-size: 13px; font-weight: 800; }
+        .user-name { color: var(--text); font-size: 13px; font-weight: 750; }
+        .user-role { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 400; }
+        .admin-link, .logout-button { padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 750; }
+        .admin-link { color: var(--blue); background: var(--blue-soft); border: 1px solid #fecaca; }
+        .logout-button { color: #b91c1c; background: #fff; border: 1px solid #fecaca; cursor: pointer; font: inherit; }
+        .logout-button:hover { background: #fef2f2; }
+        .content { max-width: 1400px; padding: 35px 40px 55px; }
+        .welcome { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+        .welcome h2 { margin: 0; font-size: 27px; letter-spacing: -.04em; }
+        .welcome p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+        .status { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 999px; font-size: 12px; font-weight: 750; }
+        .status-dot { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 4px #dcfce7; }
+        .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 17px; }
+        .card, .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 18px #0f172a08; }
+        .card { position: relative; overflow: hidden; padding: 21px; transition: transform .2s ease, box-shadow .2s ease; }
+        .card::after { position: absolute; right: -25px; bottom: -35px; width: 100px; height: 100px; content: ""; background: var(--blue-soft); border-radius: 50%; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 12px 25px #0f172a12; }
+        .card-head { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; }
+        .card-label { color: var(--muted); font-size: 13px; font-weight: 650; }
+        .card-icon { display: grid; width: 40px; height: 40px; place-items: center; color: var(--blue); background: var(--blue-soft); border-radius: 11px; }
+        .card-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+        .card-value { position: relative; z-index: 1; margin-top: 16px; font-size: 30px; font-weight: 850; letter-spacing: -.04em; }
+        .card-note { position: relative; z-index: 1; margin-top: 5px; color: var(--muted); font-size: 12px; }
+        .card-link { position: relative; z-index: 1; display: inline-block; margin-top: 14px; color: var(--blue); font-size: 12px; font-weight: 750; }
+        .panels { display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; margin-top: 22px; }
+        .panel-title { display: flex; align-items: center; justify-content: space-between; padding: 21px 23px; border-bottom: 1px solid var(--line); }
+        .panel-title h2 { margin: 0; font-size: 16px; }
+        .panel-title p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+        .panel-title a { color: var(--blue); font-size: 12px; font-weight: 750; }
+        .panel-body { padding: 8px 23px 21px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px 4px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        th { color: var(--muted); font-size: 11px; font-weight: 750; text-transform: uppercase; }
+        tr:last-child td { border-bottom: 0; }
+        .product-name { font-weight: 700; } .product-meta { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+        .product-action { color: var(--blue); font-size: 12px; font-weight: 750; }
+        .empty { padding: 25px 0; color: var(--muted); text-align: center; }
+        .empty strong { display: block; margin-bottom: 5px; color: var(--text); }
+        .quick-links { display: grid; gap: 10px; }
+        .quick-link { display: flex; align-items: center; justify-content: space-between; padding: 14px; color: var(--text); background: #f8fafc; border: 1px solid var(--line); border-radius: 9px; font-size: 13px; font-weight: 650; transition: .2s ease; }
+        .quick-link:hover { color: var(--blue); background: var(--blue-soft); border-color: #fca5a5; }
+        .quick-link span:last-child { color: var(--blue); font-size: 20px; }
+        @media (max-width: 1050px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .panels { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) { .layout { display: block; } .sidebar { width: 100%; padding: 18px 16px; } .brand { margin-bottom: 23px; } .sidebar nav { display: flex; gap: 5px; overflow-x: auto; } .menu-label, .sidebar-footer { display: none; } .nav-link { white-space: nowrap; } .topbar { align-items: flex-start; flex-direction: column; gap: 17px; padding: 20px; } .user-area { width: 100%; justify-content: space-between; gap: 8px; } .content { padding: 24px 20px 40px; } }
+        @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-name, .user-role { display: none; } .admin-link { margin-left: auto; } .panel-body { overflow-x: auto; } table { min-width: 430px; } }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand"><img class="brand-logo" src="{% static 'images/losari-computer-logo.png' %}" alt="Logo Losari Computer"><small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small></div>
+        <p class="menu-label">Menu utama</p>
+        <nav>
+            <a class="nav-link active" href="{% url 'app:dashboard' %}">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></span>Dashboard
+            </a>
+            <a class="nav-link" href="{% url 'home' %}">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Katalog Laptop
+            </a>
+            <a class="nav-link" href="/admin/app/produk/">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span>Produk
+            </a>
+            <a class="nav-link" href="/admin/app/userpengguna/">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 8h2"></path><path d="M20 7v2"></path></svg></span>Pelanggan
+            </a>
+            <a class="nav-link" href="/admin/app/pesanan/">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6z"></path><path d="M9 3v18"></path><path d="M15 3v18"></path><path d="M9 7h6"></path></svg></span>Pesanan
+            </a>
+        </nav>
+        <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan melalui admin Losari Computer.</div>
+    </aside>
+    <div class="main">
+        <header class="topbar">
+            <div><h1>Dashboard</h1><p>Ringkasan aktivitas Losari Computer</p></div>
+            <div class="user-area">
+                <div class="user-badge"><span class="avatar">{{ request.user.username|first|upper }}</span><span class="user-name">{{ request.user.get_full_name|default:request.user.username }}<small class="user-role">Pengguna aktif</small></span></div>
+                <a class="admin-link" href="/admin/">Buka Admin</a>
+                <form method="post" action="{% url 'app:logout' %}">{% csrf_token %}<button class="logout-button" type="submit">Keluar</button></form>
+            </div>
+        </header>
+        <main class="content">
+            <section class="welcome"><div><h2>Selamat datang kembali 👋</h2><p>Pantau katalog, pelanggan, dan aktivitas toko dari satu tempat.</p></div><span class="status"><span class="status-dot"></span>Sistem aktif</span></section>
+            <section class="cards">
+                <article class="card"><div class="card-head"><span class="card-label">Total Produk</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span></div><div class="card-value">{{ total_produk }}</div><div class="card-note">Produk tersimpan</div><a class="card-link" href="/admin/app/produk/">Kelola produk →</a></article>
+                <article class="card"><div class="card-head"><span class="card-label">Total Pelanggan</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 5.5a3 3 0 0 1 0 5.8"></path><path d="M17 14a6.5 6.5 0 0 1 4.5 6"></path></svg></span></div><div class="card-value">{{ total_anggota }}</div><div class="card-note">Profil pelanggan</div><a class="card-link" href="/admin/app/userpengguna/">Lihat pelanggan →</a></article>
+                <article class="card"><div class="card-head"><span class="card-label">Provinsi</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span></div><div class="card-value">{{ total_provinsi }}</div><div class="card-note">{{ provinsi_aktif }} provinsi aktif</div><a class="card-link" href="/admin/app/provinsi/">Kelola wilayah →</a></article>
+                <article class="card"><div class="card-head"><span class="card-label">Akun Terdaftar</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 3v4"></path><path d="M17 5h4"></path></svg></span></div><div class="card-value">{{ total_user }}</div><div class="card-note">{{ total_admin }} profil administrator</div><a class="card-link" href="/admin/auth/user/">Kelola akun →</a></article>
+            </section>
+            <section class="panels">
+                <article class="panel"><div class="panel-title"><div><h2>Produk terbaru</h2><p>Produk yang terakhir ditambahkan ke katalog</p></div><a href="/admin/app/produk/">Lihat semua</a></div><div class="panel-body">{% if produk_terbaru %}<table><thead><tr><th>Produk</th><th>Status</th><th>Aksi</th></tr></thead><tbody>{% for produk in produk_terbaru %}<tr><td><span class="product-name">{{ produk.nama }}</span><span class="product-meta">{{ produk.merek|default:"Merek belum diisi" }}</span></td><td>{% if produk.aktif %}<span class="status">Aktif</span>{% else %}<span class="status" style="color:#b91c1c;background:#fef2f2;border-color:#fecaca">Nonaktif</span>{% endif %}</td><td><a class="product-action" href="/admin/app/produk/{{ produk.id }}/change/">Detail</a></td></tr>{% endfor %}</tbody></table>{% else %}<div class="empty"><strong>Belum ada produk</strong>Tambahkan produk pertama ke katalog Losari Computer.</div>{% endif %}</div></article>
+                <article class="panel"><div class="panel-title"><div><h2>Akses cepat</h2><p>Jalankan tugas umum dengan cepat</p></div></div><div class="panel-body"><div class="quick-links"><a class="quick-link" href="/admin/app/produk/add/"><span>Tambah produk baru</span><span>›</span></a><a class="quick-link" href="/admin/app/kategori/add/"><span>Tambah kategori</span><span>›</span></a><a class="quick-link" href="/admin/app/pesanan/"><span>Periksa pesanan</span><span>›</span></a><a class="quick-link" href="/admin/"><span>Kelola administrasi</span><span>›</span></a></div></div></article>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

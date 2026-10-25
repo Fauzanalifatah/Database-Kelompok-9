@@ -1,7 +1,6 @@
 import os
 import uuid
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -117,8 +116,12 @@ class UserPengguna(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk:
-            old_instance = UserPengguna.objects.get(pk=self.pk)
-            if old_instance.photo and old_instance.photo != self.photo:
+            old_instance = UserPengguna.objects.filter(pk=self.pk).first()
+            if (
+                old_instance
+                and old_instance.photo
+                and old_instance.photo != self.photo
+            ):
                 old_instance.photo.delete(save=False)
         super().save(*args, **kwargs)
 
@@ -133,6 +136,10 @@ def rename_photo_admin(instance, filename):
     if extension:
         filename = f"{filename}.{extension}"
     return os.path.join("img_profile", "admin", filename)
+
+
+def default_product_slug():
+    return f"produk-{uuid.uuid4().hex[:12]}"
 
 
 class UserAdmin(models.Model):
@@ -165,7 +172,128 @@ class UserAdmin(models.Model):
 
 
 class Produk(models.Model):
-    nama = models.CharField(max_length=100)
+    KONDISI_CHOICES = [
+        ("baru", "Baru"),
+        ("second", "Second"),
+        ("refurbished", "Refurbished"),
+    ]
+
+    nama = models.CharField(max_length=150, verbose_name="Nama produk")
+    slug = models.SlugField(
+        max_length=170, unique=True, default=default_product_slug
+    )
+    kategori = models.ForeignKey(
+        "Kategori",
+        on_delete=models.PROTECT,
+        related_name="produk",
+        verbose_name="Kategori kebutuhan",
+        null=True,
+        blank=True,
+    )
+    merek = models.CharField(max_length=80, default="")
+    deskripsi = models.TextField(blank=True)
+    spesifikasi = models.JSONField(default=dict, blank=True)
+    harga = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    stok = models.PositiveIntegerField(default=0)
+    kondisi = models.CharField(
+        max_length=20, choices=KONDISI_CHOICES, default="second"
+    )
+    gambar = models.ImageField(
+        upload_to="produk/", null=True, blank=True
+    )
+    unggulan = models.BooleanField(default=False)
+    aktif = models.BooleanField(default=True)
+    dibuat_pada = models.DateTimeField(default=timezone.now)
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-unggulan", "-dibuat_pada"]
+        indexes = [
+            models.Index(fields=["aktif", "kategori"]),
+            models.Index(fields=["merek"]),
+        ]
+
+    def __str__(self):
+        return f"{self.merek} {self.nama}"
+
+    @property
+    def tersedia(self):
+        return self.aktif and self.stok > 0
+
+
+class Kategori(models.Model):
+    nama = models.CharField(max_length=80, unique=True)
+    slug = models.SlugField(max_length=90, unique=True)
+    deskripsi = models.TextField(blank=True)
+    ikon = models.CharField(max_length=10, default="💻")
+    aktif = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["nama"]
+        verbose_name = "Kategori kebutuhan"
+        verbose_name_plural = "Kategori kebutuhan"
+
+    def __str__(self):
+        return self.nama
+
+
+class Pesanan(models.Model):
+    STATUS_CHOICES = [
+        ("menunggu", "Menunggu pembayaran"),
+        ("dibayar", "Sudah dibayar"),
+        ("diproses", "Diproses"),
+        ("dikirim", "Dikirim"),
+        ("selesai", "Selesai"),
+        ("dibatalkan", "Dibatalkan"),
+    ]
+
+    nomor = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    pengguna = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name="pesanan"
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="menunggu"
+    )
+    alamat_pengiriman = models.TextField()
+    total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-dibuat_pada"]
+
+    def __str__(self):
+        return f"Pesanan {str(self.nomor)[:8].upper()}"
+
+    def hitung_total(self):
+        return sum(
+            (item.subtotal for item in self.item.all()), 0
+        )
+
+
+class ItemPesanan(models.Model):
+    pesanan = models.ForeignKey(
+        Pesanan, on_delete=models.CASCADE, related_name="item"
+    )
+    produk = models.ForeignKey(Produk, on_delete=models.PROTECT)
+    nama_produk = models.CharField(max_length=150)
+    harga_satuan = models.DecimalField(max_digits=12, decimal_places=2)
+    jumlah = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name = "Item pesanan"
+        verbose_name_plural = "Item pesanan"
+
+    @property
+    def subtotal(self):
+        return self.harga_satuan * self.jumlah
+
+    def save(self, *args, **kwargs):
+        if not self.nama_produk:
+            self.nama_produk = self.produk.nama
+        if not self.harga_satuan:
+            self.harga_satuan = self.produk.harga
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nama
