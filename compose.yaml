@@ -5,13 +5,13 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: db_storethesis
+      MYSQL_DATABASE: db_losarikomputer
       MYSQL_USER: thesistore_user
       MYSQL_PASSWORD: thesistore_pass
     volumes:
       - db_data:/var/lib/mysql
     ports:
-      - "${MYSQL_HOST_PORT:-3311}:3306"
+      - "${MYSQL_HOST_PORT:-3312}:3306"
     networks:
       - thesistore_network
 
@@ -26,7 +26,7 @@ services:
       PMA_USER: root
       PMA_PASSWORD: rootpassword
     ports:
-      - "${PHPMYADMIN_HOST_PORT:-8889}:80"
+      - "${PHPMYADMIN_HOST_PORT:-8890}:80"
     networks:
       - thesistore_network
 

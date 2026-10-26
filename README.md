@@ -138,20 +138,20 @@ File `compose.yaml` menjalankan dua service:
 ### Service `db`
 
 - Image: `mariadb:10.11.15`
-- Nama database: `db_storethesis`
+- Nama database: `db_losarikomputer`
 - User aplikasi: `thesistore_user`
 - Password user aplikasi: `thesistore_pass`
 - Password root: `rootpassword`
-- Port host: `3311`
+- Port host: `3312`
 - Port di dalam jaringan Docker: `3306`
 
 Format port berikut:
 
 ```yaml
-"3311:3306"
+"3312:3306"
 ```
 
-berarti port `3311` pada Windows diteruskan ke port `3306` di dalam container
+berarti port `3312` pada Windows diteruskan ke port `3306` di dalam container
 MariaDB.
 
 ### Service `phpmyadmin`
@@ -159,15 +159,15 @@ MariaDB.
 - Image: `phpmyadmin:latest`
 - Host database Docker: `db`
 - Port database Docker: `3306`
-- Port browser pada host: `8889`
+- Port browser pada host: `8890`
 
 Format port berikut:
 
 ```yaml
-"8889:80"
+"8890:80"
 ```
 
-berarti phpMyAdmin dapat dibuka pada port `8889` di Windows, sedangkan Apache
+berarti phpMyAdmin dapat dibuka pada port `8890` di Windows, sedangkan Apache
 di dalam container mendengarkan pada port `80`.
 
 Nama `db` pada `PMA_HOST` bukan `localhost`. Karena phpMyAdmin dan MariaDB
@@ -211,7 +211,7 @@ Kedua service harus berstatus `Up`.
 Buka alamat berikut pada browser:
 
 ```text
-http://localhost:8889
+http://localhost:8890
 ```
 
 Gunakan data login:
@@ -222,20 +222,20 @@ Username: root
 Password: rootpassword
 ```
 
-Database `db_storethesis` seharusnya terlihat pada panel kiri phpMyAdmin.
+Database `db_losarikomputer` seharusnya terlihat pada panel kiri phpMyAdmin.
 
 ### Output phpMyAdmin
 
-Berikut adalah hasil saat database `db_storethesis` berhasil dibuka melalui
-phpMyAdmin pada `http://localhost:8889`. Tampilan ini menunjukkan tabel
+Berikut adalah hasil saat database `db_losarikomputer` berhasil dibuka melalui
+phpMyAdmin pada `http://localhost:8890`. Tampilan ini menunjukkan tabel
 `app_produk` dan tabel bawaan Django seperti tabel autentikasi, migrasi, dan
 session.
 
-![Output database db_storethesis di phpMyAdmin](docs/images/phpmyadmin-database-output.png)
+![Output database db_losarikomputer di phpMyAdmin](docs/images/phpmyadmin-database-output.png)
 
 Pada gambar tersebut:
 
-- `db_storethesis` adalah database yang digunakan oleh proyek;
+- `db_losarikomputer` adalah database yang digunakan oleh proyek;
 - `app_produk` adalah tabel yang dibuat dari model `Produk`;
 - tabel `auth_*` digunakan oleh sistem autentikasi Django;
 - `django_migrations` menyimpan catatan migrasi yang sudah diterapkan;
@@ -308,7 +308,7 @@ Penting: konfigurasi pada `core/settings.py` menggunakan MariaDB:
 
 ```python
 'HOST': '127.0.0.1',
-'PORT': '3311',
+'PORT': '3312',
 ```
 
 Karena itu, Django harus dijalankan ketika container database aktif. File
@@ -479,7 +479,7 @@ Satu port host tidak dapat dipakai oleh dua container secara bersamaan. Jika
 muncul pesan:
 
 ```text
-Bind for 0.0.0.0:8889 failed: port is already allocated
+Bind for 0.0.0.0:8890 failed: port is already allocated
 ```
 
 periksa container yang memakai port tersebut:
@@ -544,8 +544,8 @@ Alamat penting:
 
 - Django: `http://127.0.0.1:8000/`
 - Django Admin: `http://127.0.0.1:8000/admin/`
-- phpMyAdmin: `http://localhost:8889`
-- MariaDB dari Windows: `127.0.0.1:3311`
+- phpMyAdmin: `http://localhost:8890`
+- MariaDB dari Windows: `127.0.0.1:3312`
 ## Katalog laptop dan database toko
 
 Aplikasi sekarang memiliki katalog publik yang mengikuti kebutuhan utama
