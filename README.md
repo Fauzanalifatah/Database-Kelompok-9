@@ -28,14 +28,14 @@
 
 ## 1. Gambaran Umum
 
-Losari Computer adalah aplikasi e-commerce berbasis Django. Proyek ini
+Losari Computer adalah website e-commerce berbasis Django. Proyek ini
 menggunakan MariaDB sebagai database dan phpMyAdmin sebagai alat bantu untuk
 melihat serta mengelola database melalui browser.
 
 Pada kondisi saat ini, proyek sudah memiliki:
 
 - konfigurasi proyek Django;
-- aplikasi Django bernama `app`;
+- folder Django bernama `app`;
 - model `Kategori`, `Produk`, `Pesanan`, `ItemPesanan`, `Provinsi`, `UserAdmin`,
   dan `UserPengguna`;
 - autentikasi pengguna dan administrator;
@@ -44,7 +44,7 @@ Pada kondisi saat ini, proyek sudah memiliki:
 - service MariaDB dan phpMyAdmin melalui Docker Compose;
 - konfigurasi koneksi Django ke MariaDB.
 
-Pengelolaan data dilakukan melalui dashboard aplikasi dan Django
+Pengelolaan data dilakukan melalui dashboard dan Django
 Administration. Pengembangan katalog e-commerce dapat dilanjutkan dengan
 menambahkan field produk seperti harga, stok, deskripsi, dan gambar.
 
