@@ -139,8 +139,8 @@ File `compose.yaml` menjalankan dua service:
 
 - Image: `mariadb:10.11.15`
 - Nama database: `db_losarikomputer`
-- User aplikasi: `thesistore_user`
-- Password user aplikasi: `thesistore_pass`
+- User aplikasi: `losarikomputer_user`
+- Password user aplikasi: `losarikomputer_pass`
 - Password root: `rootpassword`
 - Port host: `3312`
 - Port di dalam jaringan Docker: `3306`
@@ -175,7 +175,7 @@ berjalan pada network Docker yang sama, phpMyAdmin mengakses MariaDB melalui
 nama service `db`.
 
 Volume `db_data` menyimpan data MariaDB agar data tidak hilang ketika container
-dihentikan atau dibuat ulang. Network `thesistore_network` memungkinkan service
+dihentikan atau dibuat ulang. Network `losarikomputer_network` memungkinkan service
 `db` dan `phpmyadmin` saling berkomunikasi.
 
 ## 5. Menyiapkan dan Menjalankan Proyek

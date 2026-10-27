@@ -86,8 +86,8 @@ if os.getenv("DB_ENGINE", "mysql").lower() == "mysql":
         "default": {
             "ENGINE": "django.db.backends.mysql",
             "NAME": os.getenv("DB_NAME", "db_losarikomputer"),
-            "USER": os.getenv("DB_USER", "thesistore_user"),
-            "PASSWORD": os.getenv("DB_PASSWORD", "thesistore_pass"),
+            "USER": os.getenv("DB_USER", "losarikomputer_user"),
+            "PASSWORD": os.getenv("DB_PASSWORD", "losarikomputer_pass"),
             "HOST": os.getenv("DB_HOST", "127.0.0.1"),
             "PORT": os.getenv("DB_PORT", "3312"),
             "OPTIONS": {"charset": "utf8mb4"},
