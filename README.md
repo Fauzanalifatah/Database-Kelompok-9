@@ -329,6 +329,40 @@ aplikasi berhasil ditambahkan. Menu yang tersedia meliputi `Anggota`,
 
 ![Django Administration](docs/images/django-administration-hasil-tambahkan.png)
 
+### Tampilan Admin dengan Jazzmin
+
+Panel admin pada proyek ini menggunakan **Django Jazzmin** sebagai tema
+antarmuka untuk membuat tampilan Django Administration lebih modern dan
+nyaman digunakan. Jazzmin hanya mengubah tampilan panel, sidebar, navigasi,
+ikon, serta tata letak halaman; fungsi Django Admin, hak akses, model, dan
+operasi CRUD tetap menggunakan mekanisme bawaan Django.
+
+Konfigurasi Jazzmin diaktifkan melalui `INSTALLED_APPS` pada
+`core/settings.py` dan harus ditempatkan sebelum `django.contrib.admin`:
+
+```python
+INSTALLED_APPS = [
+    "jazzmin",
+    "django.contrib.admin",
+    # ...
+]
+```
+
+Dependency Jazzmin tercatat di `requirements.txt` dan dapat dipasang dengan:
+
+```powershell
+.\venvku\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+Gambar-gambar dokumentasi yang sudah ada tidak diubah. Gambar tersebut tetap
+digunakan untuk menjelaskan alur dan menu administrasi, sedangkan tampilan
+visual terbaru menggunakan Jazzmin. Setelah server dijalankan, panel dapat
+dibuka melalui:
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
 Pada halaman tersebut, administrator dapat:
 
 - membuka menu `Anggota` untuk mengelola data pengguna;
@@ -465,6 +499,7 @@ admin dan pengguna.
 Isi `requirements.txt` menyediakan:
 
 - `Django>=5.2,<6.0`: framework web yang digunakan;
+- `django-jazzmin>=3.0,<4.0`: tema antarmuka modern untuk Django Admin;
 - `PyMySQL>=1.1,<2.0`: driver Python untuk koneksi MySQL/MariaDB.
 
 Instal dependency jika diperlukan:
