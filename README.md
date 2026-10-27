@@ -363,6 +363,29 @@ dibuka melalui:
 http://127.0.0.1:8000/admin/
 ```
 
+Contoh tampilan setelah menggunakan Jazzmin:
+
+#### Dashboard Admin Jazzmin
+
+![Dashboard Admin dengan Jazzmin](docs/images/jazzmin-dashboard.png)
+
+Dashboard menampilkan model-model aplikasi dalam panel yang lebih bersih dan
+terstruktur.
+
+#### Sidebar Navigasi Jazzmin
+
+![Sidebar Navigasi Jazzmin](docs/images/jazzmin-sidebar.png)
+
+Sidebar Jazzmin memudahkan administrator berpindah antara modul aplikasi dan
+fitur autentikasi Django.
+
+#### Halaman Login Jazzmin
+
+![Halaman Login dengan Jazzmin](docs/images/jazzmin-login.png)
+
+Halaman login admin juga menggunakan tema Jazzmin dengan form login yang
+terpusat dan tampilan yang konsisten.
+
 Pada halaman tersebut, administrator dapat:
 
 - membuka menu `Anggota` untuk mengelola data pengguna;
