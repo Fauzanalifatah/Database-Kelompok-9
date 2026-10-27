@@ -39,7 +39,7 @@ Pada kondisi saat ini, proyek sudah memiliki:
 - model `Kategori`, `Produk`, `Pesanan`, `ItemPesanan`, `Provinsi`, `UserAdmin`,
   dan `UserPengguna`;
 - autentikasi pengguna dan administrator;
-- dashboard aplikasi untuk melihat ringkasan data;
+- dashboard webiste untuk melihat ringkasan data;
 - halaman Django Administration untuk mengelola data;
 - service MariaDB dan phpMyAdmin melalui Docker Compose;
 - konfigurasi koneksi Django ke MariaDB.
