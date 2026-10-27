@@ -51,7 +51,7 @@ menambahkan field produk seperti harga, stok, deskripsi, dan gambar.
 ## 2. Struktur Direktori
 
 ```text
-thesisstore/
+losaricomputerdatabase/
 ├── manage.py
 ├── requirements.txt
 ├── compose.yaml
