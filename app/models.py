@@ -77,38 +77,6 @@ class UserPengguna(models.Model):
         null=True,
         blank=True,
     )
-    jafung = models.CharField(max_length=100, null=True, blank=True)
-    nupk = models.CharField(
-        max_length=20,
-        null=True,
-        blank=True,
-        verbose_name="NUPK",
-    )
-    bidang_keahlian = models.CharField(max_length=100, null=True, blank=True)
-    link_sinta = models.URLField(
-        max_length=200,
-        null=True,
-        blank=True,
-        verbose_name="Link Sinta",
-    )
-    link_scopus = models.URLField(
-        max_length=200,
-        null=True,
-        blank=True,
-        verbose_name="Link Scopus",
-    )
-    link_google_scholar = models.URLField(
-        max_length=200,
-        null=True,
-        blank=True,
-        verbose_name="Link Google Scholar",
-    )
-    link_orcid = models.URLField(
-        max_length=200,
-        null=True,
-        blank=True,
-        verbose_name="Link ORCID",
-    )
 
     class Meta:
         verbose_name = "Anggota"

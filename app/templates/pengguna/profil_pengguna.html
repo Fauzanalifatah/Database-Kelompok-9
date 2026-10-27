@@ -115,6 +115,41 @@
             box-shadow: 0 4px 14px #0f172a08;
         }
         .section h2 { margin: 0 0 19px; color: var(--blue-dark); font-size: 16px; }
+        .profile-summary {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+            padding: 20px 22px;
+            background: linear-gradient(135deg, #fff, #fff7f7);
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px #0f172a08;
+        }
+        .profile-avatar {
+            display: grid;
+            width: 76px;
+            height: 76px;
+            flex-shrink: 0;
+            place-items: center;
+            overflow: hidden;
+            color: #991b1b;
+            background: #fee2e2;
+            border: 3px solid #fecaca;
+            border-radius: 50%;
+            font-size: 30px;
+            font-weight: 700;
+        }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-summary h2 { margin: 0 0 4px; color: var(--dark); font-size: 20px; }
+        .profile-summary .email { margin: 0 0 14px; color: var(--muted); }
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(110px, 1fr));
+            gap: 12px 22px;
+        }
+        .profile-detail span { display: block; color: var(--muted); font-size: 11px; }
+        .profile-detail strong { display: block; margin-top: 3px; font-size: 13px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
         .field label {
             display: block;
@@ -155,6 +190,8 @@
             .nav-link { display: inline-block; padding: 10px; }
             .logout { margin: 12px 0 0; }
             .grid { grid-template-columns: 1fr; }
+            .profile-summary { align-items: flex-start; }
+            .profile-details { grid-template-columns: 1fr 1fr; }
             .topbar, .content { padding: 22px 18px; }
             .section { padding: 18px; }
         }
@@ -188,6 +225,37 @@
             {% if form.non_field_errors %}
                 <div class="form-error">{{ form.non_field_errors }}</div>
             {% endif %}
+            <section class="profile-summary">
+                <div class="profile-avatar">
+                    {% if photo %}
+                        <img src="{{ photo.url }}" alt="Foto {{ user.get_full_name|default:user.username }}">
+                    {% else %}
+                        {{ user.first_name|default:user.username|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <div>
+                    <h2>{{ user.get_full_name|default:user.username }}</h2>
+                    <p class="email">{{ user.email|default:"Email belum diisi" }}</p>
+                    <div class="profile-details">
+                        <div class="profile-detail">
+                            <span>Nomor HP</span>
+                            <strong>{{ userpengguna.telp|default:"Belum diisi" }}</strong>
+                        </div>
+                        <div class="profile-detail">
+                            <span>Jenis Kelamin</span>
+                            <strong>{{ userpengguna.gender|default:"Belum diisi" }}</strong>
+                        </div>
+                        <div class="profile-detail">
+                            <span>Provinsi</span>
+                            <strong>{{ userpengguna.provinsi_anggota|default:"Belum diisi" }}</strong>
+                        </div>
+                        <div class="profile-detail">
+                            <span>Alamat</span>
+                            <strong>{{ userpengguna.alamat|default:"Belum diisi" }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="section">

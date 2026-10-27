@@ -66,6 +66,10 @@
         .card-value { position: relative; z-index: 1; margin-top: 16px; font-size: 30px; font-weight: 850; letter-spacing: -.04em; }
         .card-note { position: relative; z-index: 1; margin-top: 5px; color: var(--muted); font-size: 12px; }
         .card-link { position: relative; z-index: 1; display: inline-block; margin-top: 14px; color: var(--blue); font-size: 12px; font-weight: 750; }
+        .profile-panel { margin-bottom: 22px; }
+        .profile-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 24px; }
+        .profile-grid span { display: block; color: var(--muted); font-size: 11px; }
+        .profile-grid strong { display: block; margin-top: 5px; font-size: 13px; }
         .panels { display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; margin-top: 22px; }
         .panel-title { display: flex; align-items: center; justify-content: space-between; padding: 21px 23px; border-bottom: 1px solid var(--line); }
         .panel-title h2 { margin: 0; font-size: 16px; }
@@ -85,7 +89,7 @@
         .quick-link:hover { color: var(--blue); background: var(--blue-soft); border-color: #fca5a5; }
         .quick-link span:last-child { color: var(--blue); font-size: 20px; }
         @media (max-width: 1050px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .panels { grid-template-columns: 1fr; } }
-        @media (max-width: 700px) { .layout { display: block; } .sidebar { width: 100%; padding: 18px 16px; } .brand { margin-bottom: 23px; } .sidebar nav { display: flex; gap: 5px; overflow-x: auto; } .menu-label, .sidebar-footer { display: none; } .nav-link { white-space: nowrap; } .topbar { align-items: flex-start; flex-direction: column; gap: 17px; padding: 20px; } .user-area { width: 100%; justify-content: space-between; gap: 8px; } .content { padding: 24px 20px 40px; } }
+        @media (max-width: 700px) { .layout { display: block; } .sidebar { width: 100%; padding: 18px 16px; } .brand { margin-bottom: 23px; } .sidebar nav { display: flex; gap: 5px; overflow-x: auto; } .menu-label, .sidebar-footer { display: none; } .nav-link { white-space: nowrap; } .topbar { align-items: flex-start; flex-direction: column; gap: 17px; padding: 20px; } .user-area { width: 100%; justify-content: space-between; gap: 8px; } .content { padding: 24px 20px 40px; } .profile-grid { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-name, .user-role { display: none; } .admin-link { margin-left: auto; } .panel-body { overflow-x: auto; } table { min-width: 430px; } }
     </style>
 </head>
@@ -124,6 +128,19 @@
         </header>
         <main class="content">
             <section class="welcome"><div><h2>Selamat datang kembali 👋</h2><p>Pantau katalog, pelanggan, dan aktivitas toko dari satu tempat.</p></div><span class="status"><span class="status-dot"></span>Sistem aktif</span></section>
+            {% if profil_pengguna %}
+            <section class="panel profile-panel">
+                <div class="panel-title"><div><h2>Profil pengguna</h2><p>Data yang tersimpan dari halaman Profil Saya</p></div><a href="{% url 'app:profile_pengguna' %}">Edit profil</a></div>
+                <div class="panel-body profile-grid">
+                    <div><span>Nama</span><strong>{{ request.user.get_full_name|default:request.user.username }}</strong></div>
+                    <div><span>Email</span><strong>{{ request.user.email|default:"Belum diisi" }}</strong></div>
+                    <div><span>Nomor HP</span><strong>{{ profil_pengguna.telp|default:"Belum diisi" }}</strong></div>
+                    <div><span>Jenis kelamin</span><strong>{{ profil_pengguna.gender|default:"Belum diisi" }}</strong></div>
+                    <div><span>Provinsi anggota</span><strong>{{ profil_pengguna.provinsi_anggota.nama_provinsi|default:"Belum diisi" }}</strong></div>
+                    <div><span>Alamat</span><strong>{{ profil_pengguna.alamat|default:"Belum diisi" }}</strong></div>
+                </div>
+            </section>
+            {% endif %}
             <section class="cards">
                 <article class="card"><div class="card-head"><span class="card-label">Total Produk</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span></div><div class="card-value">{{ total_produk }}</div><div class="card-note">Produk tersimpan</div><a class="card-link" href="/admin/app/produk/">Kelola produk →</a></article>
                 <article class="card"><div class="card-head"><span class="card-label">Total Pelanggan</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 5.5a3 3 0 0 1 0 5.8"></path><path d="M17 14a6.5 6.5 0 0 1 4.5 6"></path></svg></span></div><div class="card-value">{{ total_anggota }}</div><div class="card-note">Profil pelanggan</div><a class="card-link" href="/admin/app/userpengguna/">Lihat pelanggan →</a></article>

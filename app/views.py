@@ -28,6 +28,12 @@ def index(request):
     }
 
     user_admin = UserAdmin.objects.filter(username=request.user).first()
+    user_pengguna = (
+        UserPengguna.objects.select_related("provinsi_anggota")
+        .filter(user=request.user)
+        .first()
+    )
+    dashboard_context["profil_pengguna"] = user_pengguna
     if (
         request.user.is_staff
         or request.user.is_superuser
@@ -47,7 +53,6 @@ def index(request):
         )
         return render(request, "app/dashboard.html", dashboard_context)
 
-    user_pengguna = UserPengguna.objects.filter(user=request.user).first()
     if request.user.last_name == "Pengguna" or user_pengguna:
 
         if not user_pengguna:
