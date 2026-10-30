@@ -29,6 +29,7 @@ urlpatterns = [
     path("register/", core_views.registerView, name="register"),
     path("logout/", core_views.LogoutView, name="logout"),
     path("", views.home, name="home"),
+    path("shop/", views.shop, name="shop"),
 ]
 
 if settings.DEBUG:

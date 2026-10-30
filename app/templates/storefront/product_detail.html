@@ -1,10 +1,112 @@
 {% extends "storefront/base.html" %}
+{% load static %}
 {% block title %}{{ product.nama }} - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=3">{% endblock %}
 {% block content %}
-<section style="display:grid;grid-template-columns:1fr 1fr;gap:35px;margin:40px 0;background:#fff;padding:28px;border:1px solid #e2e8f0;border-radius:16px">
-    <div style="display:grid;min-height:350px;place-items:center;background:#eff6ff;border-radius:12px;font-size:90px">{% if product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}" style="width:100%;height:100%;object-fit:contain">{% else %}&#128187;{% endif %}</div>
-    <div><span class="tag">{{ product.kategori.nama }}</span><h1>{{ product.merek }} {{ product.nama }}</h1><p class="muted">{{ product.deskripsi|default:"Laptop pilihan dengan performa yang dapat diandalkan." }}</p><div class="price">Rp {{ product.harga|floatformat:0 }}</div><p><strong>Kondisi:</strong> {{ product.get_kondisi_display }} &middot; <strong>Stok:</strong> {{ product.stok }}</p><a class="button" href="https://wa.me/?text=Saya%20tertarik%20dengan%20{{ product.nama|urlencode }}">Tanya produk</a></div>
-</section>
-<section><h2>Spesifikasi</h2><div style="margin-top:16px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">{% for key, value in product.spesifikasi.items %}<p><strong>{{ key|title }}:</strong> {{ value }}</p>{% empty %}<p class="muted">Spesifikasi belum diisi. Lengkapi melalui admin Django.</p>{% endfor %}</div></section>
-{% if related_products %}<section><div class="section-head"><h2>Produk terkait</h2></div><div class="products">{% for item in related_products %}<article class="product"><div class="product-body"><span class="tag">{{ item.kategori.nama }}</span><h3>{{ item.merek }} {{ item.nama }}</h3><div class="price">Rp {{ item.harga|floatformat:0 }}</div><a class="button" href="{% url 'app:product_detail' item.slug %}">Lihat detail</a></div></article>{% endfor %}</div></section>{% endif %}
+<div class="detail-breadcrumb container"><a href="{% url 'shop' %}">Shop</a><span>/</span><span>{{ product.kategori.nama|default:"Katalog laptop" }}</span><strong>/ {{ product.merek }} {{ product.nama }}</strong></div>
+<main class="container product-page">
+    <section class="product-detail">
+        <div class="product-gallery">
+            <div class="gallery-main">
+                {% if primary_gallery_image %}<img src="{{ primary_gallery_image.gambar.url }}" alt="{{ primary_gallery_image.get_tipe_display }} {{ product.nama }}" id="primary-product-image"><span class="image-label">{{ primary_gallery_image.get_tipe_display }}</span>{% elif product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}" id="primary-product-image"><span class="image-label">Gambar produk</span>{% else %}<span aria-hidden="true">&#128187;</span><span class="image-label">Tampak depan</span>{% endif %}
+                {% if product.unggulan %}<span class="tested-label">✓ Unit asli teruji</span>{% endif %}
+            </div>
+            <div class="gallery-tabs" aria-label="Galeri gambar produk">
+                <button class="gallery-tab{% if primary_gallery_image.tipe == 'depan' %} selected{% endif %}" type="button"{% if not gallery_by_type.depan %} disabled{% endif %}{% if gallery_by_type.depan %} data-image="{{ gallery_by_type.depan.gambar.url }}"{% endif %} data-label="Tampak Depan">
+                    <span class="gallery-icon icon-laptop" aria-hidden="true"></span>
+                    <span>Tampak Depan</span>
+                </button>
+                <button class="gallery-tab{% if primary_gallery_image.tipe == 'keyboard' %} selected{% endif %}" type="button"{% if not gallery_by_type.keyboard %} disabled{% endif %}{% if gallery_by_type.keyboard %} data-image="{{ gallery_by_type.keyboard.gambar.url }}"{% endif %} data-label="Keyboard &amp; Port">
+                    <span class="gallery-icon icon-keyboard" aria-hidden="true"></span>
+                    <span>Keyboard &amp; Port</span>
+                </button>
+                <button class="gallery-tab{% if primary_gallery_image.tipe == 'panel' %} selected{% endif %}" type="button"{% if not gallery_by_type.panel %} disabled{% endif %}{% if gallery_by_type.panel %} data-image="{{ gallery_by_type.panel.gambar.url }}"{% endif %} data-label="Panel &amp; Layar">
+                    <span class="gallery-icon icon-screen" aria-hidden="true"></span>
+                    <span>Panel &amp; Layar</span>
+                </button>
+                <button class="gallery-tab{% if primary_gallery_image.tipe == 'cek' %} selected{% endif %}" type="button"{% if not gallery_by_type.cek %} disabled{% endif %}{% if gallery_by_type.cek %} data-image="{{ gallery_by_type.cek.gambar.url }}"{% endif %} data-label="30-Titik Cek">
+                    <span class="gallery-icon icon-shield" aria-hidden="true"></span>
+                    <span>30-Titik Cek</span>
+                </button>
+            </div>
+            <div class="trust-grid">
+                {% for benefit in benefits %}
+                <div class="trust-card">
+                    <span class="trust-icon trust-icon-{{ benefit.warna }} icon-{{ benefit.ikon }}" aria-hidden="true"></span>
+                    <div><strong>{{ benefit.judul }}</strong><small>{{ benefit.deskripsi }}</small></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="product-summary">
+            <div class="summary-top"><span class="tag">{{ product.kategori.nama|default:"Laptop" }}</span><span class="rating">★★★★★ <strong>4.9</strong> <small>(42 Ulasan)</small></span></div>
+            <h1>{{ product.merek }} {{ product.nama }}</h1>
+            <p class="muted product-lead">{{ product.deskripsi|default:"Performa andal dan nyaman untuk mendukung aktivitas harian." }}</p>
+            <div class="price-card">{% if product.memiliki_diskon %}<div class="original-price"><del>{{ product.harga_rupiah }}</del><span class="discount-badge">-{{ product.diskon_persen|floatformat:"0" }}%</span></div>{% endif %}<div class="price">{{ product.harga_aktif_rupiah }}</div><span class="installment">Cicilan 0% tersedia via <b>Indodana</b> · <b>Kredivo</b> · <b>SPayLater</b></span></div>
+            <div class="feature-grid">
+                {% for key, value in product.spesifikasi.items %}
+                <div class="feature"><span class="feature-icon">{% if "ram" in key|lower %}▦{% elif "penyimpanan" in key|lower %}▤{% elif "layar" in key|lower %}▣{% else %}◈{% endif %}</span><div><small>{{ key|title }}</small><strong>{{ value }}</strong></div></div>
+                {% endfor %}
+            </div>
+            <div class="stock-row"><strong>Kondisi:</strong> {{ product.get_kondisi_display }} <span>•</span> <strong>Stok:</strong> {{ product.stok }} unit</div>
+            <a class="button detail-buy" href="https://wa.me/?text=Saya%20ingin%20membeli%20{{ product.nama|urlencode }}">Tanya & beli produk</a>
+        </div>
+    </section>
+    <section class="spec-section"><div class="section-head"><div><p class="eyebrow">Informasi produk</p><h2>Spesifikasi lengkap</h2></div></div><div class="specifications">{% for key, value in product.spesifikasi.items %}<div><strong>{{ key|title }}</strong><span>{{ value }}</span></div>{% empty %}<p class="muted">Spesifikasi belum diisi. Lengkapi melalui admin Django.</p>{% endfor %}</div></section>
+    {% if related_products %}
+    <section class="related-products">
+        <div class="related-heading">
+            <p class="eyebrow">Pilihan lainnya</p>
+            <h2>Laptop Rekomendasi Terkait</h2>
+        </div>
+        <div class="related-grid">
+            {% for item in related_products %}
+            <article class="related-card">
+                <a class="related-image" href="{% url 'app:product_detail' item.slug %}">
+                    {% if item.gambar %}
+                    <img src="{{ item.gambar.url }}" alt="{{ item.merek }} {{ item.nama }}">
+                    {% else %}
+                    {% with related_image=item.galeri.all|first %}
+                    {% if related_image %}<img src="{{ related_image.gambar.url }}" alt="{{ item.merek }} {{ item.nama }}">{% else %}<span aria-hidden="true">&#128187;</span>{% endif %}
+                    {% endwith %}
+                    {% endif %}
+                    <span class="related-badge">{% if item.unggulan %}Unit Teruji{% else %}{{ item.get_kondisi_display }}{% endif %}</span>
+                </a>
+                <div class="related-body">
+                    <span class="related-category">{{ item.kategori.nama|default:"Laptop" }}</span>
+                    <h3>{{ item.merek }} {{ item.nama }}</h3>
+                    <p>{{ item.deskripsi|default:"Laptop pilihan dengan performa andal untuk aktivitas harian."|truncatewords:12 }}</p>
+                    <div class="related-footer">
+                        <div><small>Mulai dari</small><strong>{{ item.harga_aktif_rupiah }}</strong></div>
+                        <a href="{% url 'app:product_detail' item.slug %}">Lihat Detail <span aria-hidden="true">→</span></a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</main>
+<script>
+    document.querySelectorAll(".gallery-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            var image = document.getElementById("primary-product-image");
+            var label = document.querySelector(".image-label");
+            if (image) {
+                if (!tab.dataset.image) {
+                    return;
+                }
+                image.src = tab.dataset.image;
+                image.alt = tab.dataset.label + " {{ product.nama|escapejs }}";
+            }
+            if (label) {
+                label.textContent = tab.dataset.label;
+            }
+            document.querySelectorAll(".gallery-tab").forEach(function (item) {
+                item.classList.remove("selected");
+            });
+            tab.classList.add("selected");
+        });
+    });
+</script>
 {% endblock %}

@@ -26,7 +26,7 @@ class LoginForm(forms.Form):
 
 def loginView(request):
     if request.user.is_authenticated:
-        return redirect("app:dashboard")
+        return redirect("home")
 
     form = LoginForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -41,7 +41,7 @@ def loginView(request):
         if authenticated_user is not None:
             login(request, authenticated_user)
             messages.success(request, "Selamat datang kembali.")
-            return redirect(request.GET.get("next") or "app:dashboard")
+            return redirect("home")
         form.add_error(None, "Email atau password salah.")
 
     return render(
@@ -53,15 +53,19 @@ def loginView(request):
 
 def registerView(request):
     if request.user.is_authenticated:
-        return redirect("app:dashboard")
+        return redirect("home")
 
     form = RegistrationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.save(commit=False)
         user.last_name = "Pengguna"
         user.save()
-        messages.success(request, "Registrasi berhasil, silakan login.")
-        return redirect("app:login")
+        login(request, user)
+        messages.success(
+            request,
+            "Registrasi berhasil. Selamat datang di Losari Computer.",
+        )
+        return redirect("home")
 
     return render(
         request,

@@ -15,11 +15,11 @@ def check_useradmin(view_func):
         useradmin = UserAdmin.objects.filter(username=request.user).first()
         if not useradmin:
             messages.error(request, "Profil admin belum tersedia.")
-            return redirect("app:profile_admin")
+            return redirect("app:dashboard")
 
         if not useradmin.photo or not useradmin.telp:
             messages.error(request, "Lengkapi data admin Anda terlebih dahulu.")
-            return redirect("app:profile_admin")
+            return redirect("app:dashboard")
 
         request.useradmin = useradmin
         return view_func(request, *args, **kwargs)
@@ -36,11 +36,10 @@ def admin_required(view_func):
         is_admin = (
             request.user.is_staff
             or request.user.is_superuser
-            or request.user.last_name == "Super Admin"
         )
         if not is_admin:
-            messages.error(request, "Anda tidak memiliki akses sebagai admin.")
-            return redirect("app:dashboard")
+            messages.error(request, "Halaman dashboard hanya tersedia untuk admin.")
+            return redirect("app:profile_pengguna")
 
         return view_func(request, *args, **kwargs)
 

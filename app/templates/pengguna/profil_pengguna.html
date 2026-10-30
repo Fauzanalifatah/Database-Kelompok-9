@@ -7,10 +7,10 @@
     <title>{{ title }}</title>
     <style>
         :root {
-            --blue: #dc2626;
-            --blue-dark: #991b1b;
-            --orange: #fecaca;
-            --dark: #172033;
+            --red: #dc2626;
+            --red-dark: #991b1b;
+            --red-soft: #fef2f2;
+            --text: #172033;
             --muted: #64748b;
             --line: #e2e8f0;
             --background: #f7f9fc;
@@ -18,44 +18,44 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            color: var(--dark);
+            color: var(--text);
             background: var(--background);
             font: 14px Arial, sans-serif;
         }
         .layout { display: flex; min-height: 100vh; }
+        .menu-toggle, .sidebar-close { display: none; }
+        .sidebar-overlay { display: none; }
         .sidebar {
+            display: flex;
+            flex-direction: column;
             width: 256px;
+            min-height: 100vh;
             flex-shrink: 0;
             padding: 27px 16px;
             color: #fee2e2;
             background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d);
-            border-right: 1px solid var(--line);
         }
-        .brand {
-            display: block;
-            margin: 0 12px 48px;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -.04em;
-        }
+        .brand { display: flex; align-items: center; gap: 10px; margin: 0 12px 48px; }
         .brand-logo {
             display: block;
-            width: 190px;
-            height: 72px;
-            padding: 5px;
+            width: 44px;
+            height: 44px;
+            padding: 4px;
+            flex: 0 0 44px;
             object-fit: contain;
             background: linear-gradient(135deg, #ef4444, #7f1d1d);
-            border-radius: 11px;
-            box-shadow: 0 8px 18px #991b1b55;
+            border-radius: 10px;
+            box-shadow: 0 6px 14px #991b1b55;
         }
+        .brand-copy { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+        .brand-name { display: block; color: #fff; font-size: 15px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
         .brand-subtitle {
             display: block;
             margin-top: 4px;
             color: #fecaca;
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0;
+            font-size: 9px;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
         }
         .nav-link {
             display: flex;
@@ -78,7 +78,7 @@
         .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
         .logout {
             width: calc(100% - 24px);
-            margin: 260px 12px 0;
+            margin: 0 12px;
             padding: 11px 18px;
             color: #fee2e2;
             background: #ffffff0d;
@@ -87,17 +87,22 @@
             cursor: pointer;
             font-weight: 700;
         }
-        .logout:hover { color: #fff; background: #ffffff1a; }
+        .sidebar > form { display: flex; margin-top: auto; padding-top: 18px; }
         .main { flex: 1; min-width: 0; }
         .topbar {
             padding: 24px 38px;
             background: #fff;
             border-bottom: 1px solid var(--line);
         }
-        .topbar h1 { margin: 0; color: var(--dark); font-size: 22px; }
+        .topbar h1 { margin: 0; font-size: 22px; }
         .topbar p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
-        .content { max-width: 1120px; padding: 30px 38px 55px; }
-        .messages, .form-error {
+        .profile-user-badge { display: flex; align-items: center; gap: 10px; }
+        .profile-user-avatar { display: grid; width: 44px; height: 44px; place-items: center; overflow: hidden; color: #334155; background: #f8fafc; border: 1px solid #dbe5f1; border-radius: 50%; font-size: 17px; font-weight: 700; }
+        .profile-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-user-status { position: relative; }
+        .profile-user-status::after { position: absolute; right: -1px; bottom: 1px; width: 9px; height: 9px; content: ""; background: #22c55e; border: 2px solid #fff; border-radius: 50%; }
+        .content { max-width: 1400px; padding: 30px 38px 55px; }
+        .message {
             margin-bottom: 18px;
             padding: 12px 16px;
             color: #166534;
@@ -105,108 +110,275 @@
             border: 1px solid #bbf7d0;
             border-radius: 8px;
         }
-        .form-error { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+        .error {
+            margin: 6px 0 0;
+            padding: 0;
+            color: #b91c1c;
+            font-size: 12px;
+            list-style: none;
+        }
+        .profile-summary {
+            display: grid;
+            grid-template-columns: minmax(220px, .75fr) minmax(0, 1.8fr);
+            align-items: stretch;
+            gap: 22px;
+            margin-bottom: 0;
+            min-width: 0;
+        }
+        .profile-photo {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 330px;
+            height: 100%;
+            padding: 26px 18px 22px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #fffafa, #fff1f2);
+            border: 1px solid #fee2e2;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .profile-photo::after {
+            position: absolute;
+            right: -40px;
+            bottom: -55px;
+            width: 150px;
+            height: 150px;
+            content: "";
+            background: #fecaca55;
+            border-radius: 50%;
+        }
+        .profile-photo-frame { position: relative; z-index: 1; width: 150px; height: 150px; }
+        .profile-photo-image, .profile-photo-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .profile-photo-image { object-fit: cover; border: 5px solid #fff; outline: 2px solid #fecaca; }
+        .profile-photo-placeholder {
+            display: grid;
+            place-items: center;
+            color: var(--red-dark);
+            background: #fee2e2;
+            border: 5px solid #fff;
+            outline: 2px solid #fecaca;
+            font-size: 38px;
+            font-weight: 800;
+        }
+        .profile-camera {
+            position: absolute;
+            z-index: 2;
+            right: -4px;
+            bottom: 4px;
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            color: #fff;
+            background: #ef4444;
+            border: 4px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px #991b1b33;
+        }
+        .profile-camera:hover { background: #b91c1c; }
+        .profile-camera svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+        .profile-photo-copy { position: relative; z-index: 1; margin-top: 15px; }
+        .profile-name { display: block; max-width: 100%; font-size: 21px; overflow-wrap: anywhere; }
+        .profile-role {
+            display: inline-flex;
+            margin-top: 8px;
+            padding: 6px 15px;
+            color: #2563eb;
+            background: #dbeafe;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+        .profile-divider { width: 100%; margin: 15px 0 10px; border: 0; border-top: 1px solid #dfe5ee; }
+        .profile-account-note { position: relative; z-index: 1; margin: 0; color: #71809c; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+        .profile-active { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--muted); font-size: 13px; }
+        .profile-active-dot { width: 9px; height: 9px; background: #10b981; border-radius: 50%; box-shadow: 0 0 0 3px #d1fae5; }
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: 1fr;
+            align-content: stretch;
+            align-self: stretch;
+            gap: 14px;
+            min-width: 0;
+            padding: 18px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 4px 18px #0f172a08;
+        }
+        .profile-panel {
+            margin-bottom: 22px;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 4px 18px #0f172a08;
+        }
+        .profile-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 30px;
+            border-bottom: 1px solid var(--line);
+        }
+        .profile-panel-header h2 { margin: 0; font-size: 20px; }
+        .profile-panel-header p { margin: 7px 0 0; color: var(--muted); }
+        .profile-panel-header a { color: var(--red); font-weight: 700; text-decoration: none; }
+        .profile-panel-body { padding: 10px 30px 18px; }
+        .profile-info-card {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+            min-height: 86px;
+            overflow: hidden;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #e8edf5;
+            border-radius: 14px;
+        }
+        .profile-info-icon { display: grid; width: 43px; height: 43px; flex: 0 0 43px; place-items: center; color: #2563eb; background: #eff6ff; border-radius: 11px; }
+        .profile-info-card:nth-child(2) .profile-info-icon { color: #16a34a; background: #dcfce7; }
+        .profile-info-card:nth-child(3) .profile-info-icon { color: #7c3aed; background: #ede9fe; }
+        .profile-info-card:nth-child(5) .profile-info-icon { color: #dc2626; background: #fee2e2; }
+        .profile-info-card:nth-child(6) .profile-info-icon { color: #ca8a04; background: #fef3c7; }
+        .profile-info-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+        .profile-info-copy { min-width: 0; }
+        .profile-info-copy span { display: block; color: var(--muted); font-size: 12px; }
+        .profile-info-copy strong { display: block; margin-top: 5px; font-size: 15px; overflow-wrap: anywhere; word-break: break-word; }
         .section {
-            margin-bottom: 28px;
+            margin-bottom: 22px;
             padding: 22px;
             background: #fff;
             border: 1px solid var(--line);
-            border-radius: 12px;
+            border-radius: 14px;
             box-shadow: 0 4px 14px #0f172a08;
         }
-        .section h2 { margin: 0 0 19px; color: var(--blue-dark); font-size: 16px; }
-        .profile-summary {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 28px;
-            padding: 20px 22px;
-            background: linear-gradient(135deg, #fff, #fff7f7);
-            border: 1px solid #fecaca;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px #0f172a08;
-        }
-        .profile-avatar {
-            display: grid;
-            width: 76px;
-            height: 76px;
-            flex-shrink: 0;
-            place-items: center;
-            overflow: hidden;
-            color: #991b1b;
-            background: #fee2e2;
-            border: 3px solid #fecaca;
-            border-radius: 50%;
-            font-size: 30px;
-            font-weight: 700;
-        }
-        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-summary h2 { margin: 0 0 4px; color: var(--dark); font-size: 20px; }
-        .profile-summary .email { margin: 0 0 14px; color: var(--muted); }
-        .profile-details {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(110px, 1fr));
-            gap: 12px 22px;
-        }
-        .profile-detail span { display: block; color: var(--muted); font-size: 11px; }
-        .profile-detail strong { display: block; margin-top: 3px; font-size: 13px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
-        .field label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 12px;
-            font-weight: 700;
-        }
+        .section h2 { margin: 0 0 20px; color: var(--red-dark); font-size: 16px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 28px; }
+        .field { display: grid; gap: 7px; min-width: 0; }
+        .form-grid .photo-field { grid-column: 1 / -1; }
+        .field label { color: var(--text); font-size: 12px; font-weight: 700; }
         .field input, .field select {
             width: 100%;
-            min-height: 42px;
+            min-height: 46px;
             padding: 10px 12px;
-            color: var(--dark);
+            color: var(--text);
             background: #fff;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
+            font: inherit;
         }
-        .field input:focus, .field select:focus {
-            outline: 3px solid #fee2e2;
-            border-color: var(--blue);
+        .field input:focus, .field select:focus { outline: 3px solid var(--red-soft); border-color: var(--red); }
+        .photo-field input[type="file"] { display: none; }
+        .profile-hidden-photo { display: none; }
+        .photo-picker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+            max-width: 100%;
+            padding: 11px 16px;
+            color: var(--red-dark);
+            background: var(--red-soft);
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
         }
-        .errors { margin: 6px 0 0; padding-left: 18px; color: #b91c1c; font-size: 12px; }
-        .help { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
         .actions { display: flex; justify-content: flex-end; }
         .save {
             padding: 12px 24px;
             color: #fff;
-            background: linear-gradient(135deg, var(--blue), #991b1b);
+            background: linear-gradient(135deg, var(--red), var(--red-dark));
             border: 0;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
         }
-        .save:hover { box-shadow: 0 8px 16px #991b1b33; }
+        .edit-panel { scroll-margin-top: 20px; }
+        @media (max-width: 900px) {
+            .profile-summary { grid-template-columns: 1fr; }
+            .profile-photo { min-height: 280px; height: auto; }
+        }
+        @media (max-width: 900px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid .photo-field { grid-column: auto; }
+        }
         @media (max-width: 760px) {
             .layout { display: block; }
-            .sidebar { width: 100%; padding: 16px; }
-            .brand { margin: 0 0 18px; }
-            .nav-link { display: inline-block; padding: 10px; }
-            .logout { margin: 12px 0 0; }
-            .grid { grid-template-columns: 1fr; }
-            .profile-summary { align-items: flex-start; }
-            .profile-details { grid-template-columns: 1fr 1fr; }
+            .sidebar { position: fixed; z-index: 20; top: 0; bottom: 0; left: 0; width: min(290px, 86vw); padding: 18px 16px; overflow-y: auto; transform: translateX(-105%); transition: transform .25s ease; box-shadow: 12px 0 30px #00000030; }
+            body.menu-open { overflow: hidden; }
+            body.menu-open .sidebar { transform: translateX(0); }
+            body.menu-open .sidebar-overlay { display: block; position: fixed; z-index: 10; inset: 0; background: #0f172a80; }
+            .sidebar-close { display: grid; position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; place-items: center; color: #fff; background: #ffffff18; border: 1px solid #ffffff35; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; }
+            .brand { margin: 0 0 18px; padding-right: 52px; }
+            .brand-copy { min-width: 0; overflow: hidden; }
+            .brand-name { overflow: hidden; text-overflow: ellipsis; }
+            .nav-link { display: flex; padding: 10px; }
+            .logout { margin: 0; width: 100%; }
             .topbar, .content { padding: 22px 18px; }
+            .topbar-heading { display: flex; align-items: center; gap: 12px; }
+            .menu-toggle { display: inline-grid; width: 42px; height: 42px; place-items: center; color: #991b1b; background: #fff1f2; border: 1px solid #fecaca; border-radius: 10px; cursor: pointer; }
+            .menu-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
+            .form-grid, .profile-info-grid { grid-template-columns: 1fr; }
             .section { padding: 18px; }
+        }
+        @media (max-width: 450px) {
+            .profile-photo { min-height: 0; padding: 22px 14px; }
+            .profile-photo-frame { width: 132px; height: 132px; }
+            .profile-info-grid { padding: 12px; }
+        }
+        @media (max-width: 1100px) {
+            .sidebar { width: 220px; }
+            .brand { gap: 8px; margin-right: 8px; margin-left: 8px; }
+            .brand-logo { width: 40px; height: 40px; flex-basis: 40px; }
+            .brand-name { font-size: 14px; }
+            .content { padding-right: 28px; padding-left: 28px; }
+            .topbar { padding-right: 28px; padding-left: 28px; }
+            .profile-summary { grid-template-columns: 1fr; gap: 18px; }
+            .profile-photo { min-height: 270px; height: auto; }
+        }
+        @media (max-width: 760px) {
+            .profile-panel-header { align-items: flex-start; flex-direction: column; gap: 10px; padding: 20px 18px; }
+            .profile-panel-header a { align-self: flex-end; }
+            .profile-panel-body { padding: 10px 18px 18px; }
+            .profile-info-card { min-height: 76px; }
+            .field input, .field select { min-width: 0; max-width: 100%; }
+        }
+        @media (max-width: 420px) {
+            .content { padding-right: 14px; padding-left: 14px; }
+            .topbar { padding-right: 14px; padding-left: 14px; }
+            .profile-info-grid { gap: 10px; }
+            .profile-info-card { gap: 9px; padding: 12px; }
+            .profile-info-icon { width: 38px; height: 38px; flex-basis: 38px; }
+            .profile-info-copy strong { font-size: 14px; }
+            .profile-role { white-space: normal; }
+            .save { width: 100%; }
         }
     </style>
 </head>
 <body>
 <div class="layout">
-    <aside class="sidebar">
+    <button class="sidebar-overlay" type="button" aria-label="Tutup menu"></button>
+    <aside class="sidebar" id="user-sidebar">
+        <button class="sidebar-close" type="button" aria-label="Tutup menu">&times;</button>
         <div class="brand">
-            <img class="brand-logo" src="{% static 'images/losari-computer-logo.png' %}" alt="Logo Losari Computer">
-            <small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small>
+            <img class="brand-logo" src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer">
+            <div class="brand-copy"><strong class="brand-name">Losari Computer</strong><small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small></div>
         </div>
         <nav>
-            <a class="nav-link" href="{% url 'home' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Katalog Laptop</a>
-            <a class="nav-link" href="{% url 'app:dashboard' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></span>Dashboard</a>
+            <a class="nav-link" href="{% url 'home' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Kembali ke Website</a>
             <a class="nav-link active" href="{% url 'app:profile_pengguna' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span>Profil Saya</a>
         </nav>
         <form method="post" action="{% url 'app:logout' %}">
@@ -215,79 +387,89 @@
         </form>
     </aside>
     <main class="main">
-        <header class="topbar"><h1>Profil Saya</h1><p>Kelola informasi akun Losari Computer Anda</p></header>
+        <header class="topbar">
+            <div class="topbar-heading"><button class="menu-toggle" type="button" aria-label="Buka menu" aria-controls="user-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button><div><h1>Profil Saya</h1><p>Kelola informasi akun Losari Computer Anda</p></div></div>
+        </header>
         <section class="content">
             {% if messages %}
-                {% for message in messages %}
-                    <div class="messages">{{ message }}</div>
-                {% endfor %}
+                {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
             {% endif %}
-            {% if form.non_field_errors %}
-                <div class="form-error">{{ form.non_field_errors }}</div>
-            {% endif %}
-            <section class="profile-summary">
-                <div class="profile-avatar">
-                    {% if photo %}
-                        <img src="{{ photo.url }}" alt="Foto {{ user.get_full_name|default:user.username }}">
-                    {% else %}
-                        {{ user.first_name|default:user.username|slice:":1"|upper }}
-                    {% endif %}
-                </div>
-                <div>
-                    <h2>{{ user.get_full_name|default:user.username }}</h2>
-                    <p class="email">{{ user.email|default:"Email belum diisi" }}</p>
-                    <div class="profile-details">
-                        <div class="profile-detail">
-                            <span>Nomor HP</span>
-                            <strong>{{ userpengguna.telp|default:"Belum diisi" }}</strong>
-                        </div>
-                        <div class="profile-detail">
-                            <span>Jenis Kelamin</span>
-                            <strong>{{ userpengguna.gender|default:"Belum diisi" }}</strong>
-                        </div>
-                        <div class="profile-detail">
-                            <span>Provinsi</span>
-                            <strong>{{ userpengguna.provinsi_anggota|default:"Belum diisi" }}</strong>
-                        </div>
-                        <div class="profile-detail">
-                            <span>Alamat</span>
-                            <strong>{{ userpengguna.alamat|default:"Belum diisi" }}</strong>
-                        </div>
+            {% if form.non_field_errors %}<div class="message" style="color:#991b1b;background:#fef2f2;border-color:#fecaca;">{{ form.non_field_errors }}</div>{% endif %}
+            <section class="profile-panel">
+                <header class="profile-panel-header">
+                    <div><h2>Profil pengguna</h2><p>Data profil yang tersimpan di database</p></div>
+                    <a href="#edit-profil">Edit profil</a>
+                </header>
+                <div class="profile-panel-body">
+                <section class="profile-summary">
+                <div class="profile-photo">
+                    <div class="profile-photo-frame">
+                        {% if photo %}
+                            <img class="profile-photo-image" src="{{ photo.url }}" alt="Foto profil {{ user.first_name|default:user.username }}">
+                        {% else %}
+                            <span class="profile-photo-placeholder">{{ user.first_name|first|default:user.username|first|upper }}</span>
+                        {% endif %}
+                        <label class="profile-camera" for="id_photo" title="Pilih foto profil" aria-label="Pilih foto profil">
+                            <svg viewBox="0 0 24 24"><path d="M4 7h3l1.5-2h7L17 7h3v12H4Z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+                        </label>
                     </div>
+                    <div class="profile-photo-copy">
+                        <strong class="profile-name">{{ user.first_name|default:user.username }}</strong>
+                        <span class="profile-role">Pengguna</span>
+                        <hr class="profile-divider">
+                        <p class="profile-account-note">Informasi akun pengguna Losari Computer</p>
+                        <span class="profile-active"><i class="profile-active-dot"></i>Akun Aktif</span>
+                    </div>
+                </div>
+                <div class="profile-info-grid">
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span><div class="profile-info-copy"><span>Nama</span><strong>{{ user.first_name|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><div class="profile-info-copy"><span>Email</span><strong>{{ user.email|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="M6.5 3.5 9 3l2 5-2 1.5a15 15 0 0 0 5.5 5.5L16 13l5 2-.5 2.5a3 3 0 0 1-3.3 2.4A16.5 16.5 0 0 1 4.1 7.3 3 3 0 0 1 6.5 3.5Z"></path></svg></span><div class="profile-info-copy"><span>Nomor HP</span><strong>{{ userpengguna.telp|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><circle cx="16" cy="9" r="2"></circle><path d="M3 20a6 6 0 0 1 12 0"></path><path d="M14 15a5 5 0 0 1 7 5"></path></svg></span><div class="profile-info-copy"><span>Jenis Kelamin</span><strong>{{ userpengguna.gender|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span><div class="profile-info-copy"><span>Provinsi</span><strong>{{ userpengguna.provinsi_anggota|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span><div class="profile-info-copy"><span>Alamat</span><strong>{{ userpengguna.alamat|default:"Belum diisi" }}</strong></div></div>
+                </div>
+                </section>
                 </div>
             </section>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="edit-profil" class="edit-panel">
                 {% csrf_token %}
-                <div class="section">
-                    <h2>Data Pribadi</h2>
-                    <div class="grid">
+                <section class="section">
+                    <h2>Edit profil pengguna</h2>
+                    <div class="form-grid">
                         {% for field in form %}
-                            {% if field.name == "gender" or field.name == "telp" or field.name == "provinsi_anggota" or field.name == "alamat" %}
+                            {% if field.name != "photo" %}
                                 <div class="field">
                                     {{ field.label_tag }}{{ field }}
-                                    {{ field.errors }}
+                                    {% if field.errors %}{{ field.errors }}{% endif %}
                                 </div>
                             {% endif %}
                         {% endfor %}
+                        <div class="profile-hidden-photo">{{ form.photo }}</div>
                     </div>
-                </div>
-                <div class="section">
-                    <h2>Foto Profil</h2>
-                    <div class="grid">
-                        {% for field in form %}
-                            {% if field.name == "photo" %}
-                                <div class="field">
-                                    {{ field.label_tag }}{{ field }}
-                                    {{ field.errors }}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
+                </section>
                 <div class="actions"><button class="save" type="submit">Simpan Profil</button></div>
             </form>
         </section>
     </main>
 </div>
 </body>
+<script>
+    (function () {
+        const body = document.body;
+        const toggle = document.querySelector(".menu-toggle");
+        const close = document.querySelector(".sidebar-close");
+        const overlay = document.querySelector(".sidebar-overlay");
+        function setMenu(open) {
+            body.classList.toggle("menu-open", open);
+            if (toggle) toggle.setAttribute("aria-expanded", String(open));
+        }
+        if (toggle) toggle.addEventListener("click", function () { setMenu(true); });
+        if (close) close.addEventListener("click", function () { setMenu(false); });
+        if (overlay) overlay.addEventListener("click", function () { setMenu(false); });
+        document.querySelectorAll(".sidebar a").forEach(function (link) {
+            link.addEventListener("click", function () { setMenu(false); });
+        });
+    }());
+</script>
 </html>

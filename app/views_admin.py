@@ -8,9 +8,8 @@ from .models import UserAdmin
 
 @admin_required
 def profile_admin(request):
-    try:
-        useradmin = UserAdmin.objects.get(username=request.user)
-    except UserAdmin.DoesNotExist:
+    useradmin = UserAdmin.objects.filter(username=request.user).first()
+    if useradmin is None:
         useradmin = UserAdmin(username=request.user)
 
     if request.method == "POST":
@@ -20,7 +19,9 @@ def profile_admin(request):
             instance=useradmin,
         )
         if form.is_valid():
-            form.save()
+            useradmin = form.save(commit=False)
+            useradmin.username = request.user
+            useradmin.save()
             messages.success(request, "Profil Anda berhasil diperbarui.")
             return redirect("app:profile_admin")
         messages.error(request, "Gagal memperbarui profil. Periksa isian form.")

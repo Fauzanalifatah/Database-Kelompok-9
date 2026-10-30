@@ -4,6 +4,29 @@ from .models import Provinsi, UserPengguna
 
 
 class formProfile(forms.ModelForm):
+    nama = forms.CharField(
+        label="Nama",
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Nama lengkap"}
+        ),
+    )
+    email = forms.EmailField(
+        label="Email",
+        required=True,
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Alamat email"}
+        ),
+    )
+    telp = forms.CharField(
+        label="Nomor HP",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Contoh: 08123456789",
+            }
+        ),
+    )
     gender = forms.ChoiceField(
         choices=[
             ("", "-- Pilih Jenis Kelamin --"),
@@ -28,9 +51,18 @@ class formProfile(forms.ModelForm):
         required=True,
     )
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if self.user is not None:
+            self.initial["nama"] = self.user.first_name
+            self.initial["email"] = self.user.email
+
     class Meta:
         model = UserPengguna
         fields = [
+            "nama",
+            "email",
             "telp",
             "gender",
             "alamat",
@@ -38,19 +70,11 @@ class formProfile(forms.ModelForm):
             "photo",
         ]
         widgets = {
-            "telp": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "Contoh: 08123456789",
-                }
-            ),
             "alamat": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "Alamat lengkap untuk pengiriman",
                 }
             ),
-            "photo": forms.FileInput(
-                attrs={"class": "form-control", "accept": "image/*"}
-            ),
+            "photo": forms.FileInput(attrs={"accept": "image/*"}),
         }

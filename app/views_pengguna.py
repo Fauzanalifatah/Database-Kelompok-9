@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import redirect, render
 
 from .form_pengguna import formProfile
@@ -15,11 +16,16 @@ def profile_pengguna(request):
             request.POST,
             request.FILES,
             instance=userpengguna,
+            user=request.user,
         )
         if form.is_valid():
-            pengguna = form.save(commit=False)
-            pengguna.user = request.user
-            pengguna.save()
+            with transaction.atomic():
+                pengguna = form.save(commit=False)
+                pengguna.user = request.user
+                pengguna.save()
+                request.user.first_name = form.cleaned_data["nama"]
+                request.user.email = form.cleaned_data["email"]
+                request.user.save(update_fields=["first_name", "email"])
             messages.success(request, "Data pengguna berhasil disimpan.")
             return redirect("app:profile_pengguna")
         messages.error(
@@ -28,7 +34,7 @@ def profile_pengguna(request):
             "Silakan periksa kembali form.",
         )
     else:
-        form = formProfile(instance=userpengguna)
+        form = formProfile(instance=userpengguna, user=request.user)
 
     context = {
         "title": "Profil Pengguna",

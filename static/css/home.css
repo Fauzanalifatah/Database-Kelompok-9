@@ -1,0 +1,20 @@
+.hero { position:relative; overflow:hidden; min-height:0; margin:0 0 46px; background:#eaf3ff; box-shadow:0 18px 40px #0b328b26; }
+.hero img { display:block; width:100%; height:auto; max-height:610px; object-fit:cover; object-position:center; }
+.eyebrow { margin:0 0 18px; color:#a5e8ff; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+.hero h1 { max-width:650px; margin:0 0 18px; font-size:clamp(34px,5vw,62px); line-height:1.04; letter-spacing:-.04em; }
+.hero p { max-width:680px; margin:0; color:#dceeff; line-height:1.7; }
+.hero-actions { display:flex; gap:12px; margin-top:28px; }
+.button-light { color:#075fc9; background:#fff; }
+.categories { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; }
+.category { position:relative; overflow:hidden; padding:22px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); transition:.2s; }
+.category:after { position:absolute; right:-28px; bottom:-32px; width:92px; height:92px; content:""; background:#eaf2ff; border-radius:50%; }
+.category:hover { border-color:#84b8ff; box-shadow:var(--shadow-md); transform:translateY(-4px); }
+.category-number { color:var(--blue); font-size:12px; font-weight:800; }
+.category-icon { margin-top:14px; font-size:29px; }
+.category h3 { margin:12px 0 6px; }
+.category p { margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
+.trust { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin:50px 0; padding:30px; background:linear-gradient(115deg,#0b1f3a,#104da4); color:#fff; border-radius:14px; box-shadow:0 14px 30px #0b1f3a26; }
+.trust strong { display:block; margin-bottom:7px; color:#7dd3fc; font-size:20px; }
+.trust span { color:#d7e5f7; font-size:13px; }
+@media (max-width:850px) { .categories,.trust { grid-template-columns:repeat(2,1fr); } .hero img { min-height:280px; object-fit:cover; } }
+@media (max-width:560px) { .hero { margin-bottom:30px; } .hero img { min-height:220px; object-fit:cover; object-position:center; } .categories,.trust { grid-template-columns:1fr; } }

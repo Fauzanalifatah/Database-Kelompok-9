@@ -48,7 +48,7 @@
 <p class="subtitle">Isi data berikut untuk membuat akun baru.</p>
 <div class="register-intro">
     <span class="register-intro-icon">i</span>
-    <span>Akun Anda akan langsung digunakan untuk masuk ke dashboard setelah registrasi berhasil.</span>
+    <span>Akun Anda akan langsung digunakan untuk berbelanja setelah registrasi berhasil.</span>
 </div>
 <form method="post" class="register-form">
     {% csrf_token %}
@@ -76,7 +76,7 @@
         </div>
         {% endif %}
     {% endfor %}
-    <button class="button" type="submit">Daftar dan Buka Dashboard</button>
+    <button class="button" type="submit">Daftar dan Mulai Belanja</button>
 </form>
 <p class="switch">Sudah punya akun? <a href="{% url 'app:login' %}">Masuk sekarang</a></p>
 <a class="back-link" href="{% url 'app:login' %}">Kembali ke login</a>

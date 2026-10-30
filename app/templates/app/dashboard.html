@@ -22,10 +22,14 @@
         body { margin: 0; color: var(--text); background: var(--background); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         a { color: inherit; text-decoration: none; }
         .layout { display: flex; min-height: 100vh; }
-        .sidebar { width: 256px; flex-shrink: 0; padding: 27px 16px; color: #fee2e2; background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d); }
-        .brand { display: block; margin: 0 12px 48px; color: #fff; font-size: 20px; font-weight: 800; }
-        .brand-logo { display: block; width: 190px; height: 72px; padding: 7px; object-fit: contain; background: linear-gradient(135deg, #ef4444, #7f1d1d); border-radius: 12px; box-shadow: 0 8px 18px #991b1b55; }
-        .brand-subtitle { display: block; margin-top: 4px; color: #94a3b8; font-size: 10px; font-weight: 500; letter-spacing: 0; }
+        .sidebar { display: flex; flex-direction: column; width: 256px; min-height: 100vh; flex-shrink: 0; padding: 27px 16px; color: #fee2e2; background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d); }
+        .menu-toggle, .sidebar-close { display: none; }
+        .sidebar-overlay { display: none; }
+        .brand { display: flex; align-items: center; gap: 10px; margin: 0 12px 48px; color: #fff; }
+        .brand-logo { display: block; width: 44px; height: 44px; padding: 4px; flex: 0 0 44px; object-fit: contain; background: linear-gradient(135deg, #ef4444, #7f1d1d); border-radius: 10px; box-shadow: 0 6px 14px #991b1b55; }
+        .brand-copy { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+        .brand-name { display: block; color: #fff; font-size: 15px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+        .brand-subtitle { display: block; margin-top: 4px; color: #fecaca; font-size: 9px; font-weight: 500; line-height: 1.25; overflow-wrap: anywhere; }
         .menu-label { margin: 0 12px 10px; color: #64748b; font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
         .nav-link { display: flex; align-items: center; gap: 12px; margin: 5px 0; padding: 13px 12px; color: #cbd5e1; border: 1px solid transparent; border-radius: 10px; font-size: 14px; font-weight: 600; transition: .2s ease; }
         .nav-link:hover, .nav-link.active { color: #fff; background: #ffffff12; border-color: #ffffff12; }
@@ -35,13 +39,17 @@
         .nav-link.active .nav-icon, .nav-link:hover .nav-icon { color: #fecaca; }
         .sidebar-footer { margin: 160px 12px 0; padding: 15px; color: #cbd5e1; background: #ffffff0d; border: 1px solid #ffffff12; border-radius: 12px; font-size: 12px; line-height: 1.5; }
         .sidebar-footer strong { display: block; margin-bottom: 4px; color: #fff; }
+        .sidebar-logout { width: calc(100% - 24px); margin: auto 12px 0; padding: 11px 18px; color: #fee2e2; background: #ffffff0d; border: 1px solid #ffffff24; border-radius: 8px; cursor: pointer; font: 700 13px inherit; }
+        .sidebar-logout-form { display: flex; margin-top: auto; padding-top: 18px; }
+        .sidebar-logout:hover { color: #fff; background: #ffffff1a; }
         .main { width: 100%; min-width: 0; }
         .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 82px; padding: 16px 40px; background: var(--surface); border-bottom: 1px solid var(--line); }
         .topbar h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
         .topbar p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
         .user-area { display: flex; align-items: center; gap: 18px; }
         .user-badge { display: flex; align-items: center; gap: 10px; }
-        .avatar { display: grid; width: 38px; height: 38px; place-items: center; color: #991b1b; background: #fee2e2; border: 3px solid #fff1f2; border-radius: 50%; font-size: 13px; font-weight: 800; }
+        .avatar { display: grid; width: 38px; height: 38px; place-items: center; overflow: hidden; color: #991b1b; background: #fee2e2; border: 3px solid #fff1f2; border-radius: 50%; font-size: 13px; font-weight: 800; }
+        .avatar-image { width: 100%; height: 100%; object-fit: cover; }
         .user-name { color: var(--text); font-size: 13px; font-weight: 750; }
         .user-role { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 400; }
         .admin-link, .logout-button { padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 750; }
@@ -66,10 +74,43 @@
         .card-value { position: relative; z-index: 1; margin-top: 16px; font-size: 30px; font-weight: 850; letter-spacing: -.04em; }
         .card-note { position: relative; z-index: 1; margin-top: 5px; color: var(--muted); font-size: 12px; }
         .card-link { position: relative; z-index: 1; display: inline-block; margin-top: 14px; color: var(--blue); font-size: 12px; font-weight: 750; }
-        .profile-panel { margin-bottom: 22px; }
-        .profile-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 24px; }
+        .profile-panel { margin-bottom: 22px; overflow: hidden; }
+        .profile-panel > .panel-body { padding-bottom: 18px; }
+        .profile-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 24px; min-width: 0; }
+        .profile-grid > div { min-width: 0; }
         .profile-grid span { display: block; color: var(--muted); font-size: 11px; }
-        .profile-grid strong { display: block; margin-top: 5px; font-size: 13px; }
+        .profile-grid strong { display: block; min-width: 0; margin-top: 5px; font-size: 13px; overflow-wrap: anywhere; word-break: break-word; }
+        .profile-summary { display: grid; grid-template-columns: minmax(220px, .75fr) minmax(0, 1.8fr); align-items: stretch; gap: 22px; min-width: 0; }
+        .profile-photo { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; min-height: 300px; height: 100%; padding: 26px 18px 22px; overflow: hidden; background: linear-gradient(145deg, #fffafa, #fff1f2); border: 1px solid #fee2e2; border-radius: 16px; text-align: center; }
+        .profile-photo::after { position: absolute; right: -40px; bottom: -55px; width: 150px; height: 150px; content: ""; background: #fecaca55; border-radius: 50%; }
+        .profile-photo-frame { position: relative; z-index: 1; width: 150px; height: 150px; flex: 0 0 150px; }
+        .profile-photo-image, .profile-photo-placeholder { width: 100%; height: 100%; border-radius: 50%; }
+        .profile-photo-image { object-fit: cover; border: 5px solid #fff; outline: 2px solid #fecaca; }
+        .profile-photo-placeholder { display: grid; place-items: center; color: #991b1b; background: #fee2e2; border: 5px solid #fff; outline: 2px solid #fecaca; font-size: 38px; font-weight: 800; }
+        .profile-camera { position: absolute; z-index: 2; right: -4px; bottom: 4px; display: grid; width: 42px; height: 42px; place-items: center; color: #fff; background: #ef4444; border: 4px solid #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px #991b1b33; }
+        .profile-camera:hover { background: #b91c1c; }
+        .profile-camera svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+        .profile-photo-copy { position: relative; z-index: 1; }
+        .profile-photo-copy span { display: block; color: var(--muted); font-size: 12px; }
+        .profile-photo-copy strong { display: block; margin-top: 6px; font-size: 20px; }
+        .profile-name { position: relative; z-index: 1; max-width: 100%; margin: 2px 0 0; color: #172033; font-size: clamp(18px, 2vw, 23px); font-weight: 850; overflow-wrap: anywhere; }
+        .profile-role { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; margin-top: 5px; padding: 6px 15px; color: #2563eb; background: #dbeafe; border-radius: 999px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .profile-role svg { width: 17px; height: 17px; fill: currentColor; }
+        .profile-divider { width: 100%; margin: 10px 0 0; border: 0; border-top: 1px solid #dfe5ee; }
+        .profile-account-note { position: relative; z-index: 1; max-width: 260px; margin: 10px auto 0; color: #71809c; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+        .profile-active { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; color: #64748b; font-size: 13px; }
+        .profile-active-dot { width: 9px; height: 9px; background: #10b981; border-radius: 50%; box-shadow: 0 0 0 3px #d1fae5; }
+        .profile-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; align-content: stretch; align-self: stretch; gap: 14px; min-width: 0; }
+        .profile-info-card { display: flex; align-items: center; gap: 13px; min-width: 0; overflow: hidden; padding: 17px; background: #fff; border: 1px solid #e8edf5; border-radius: 14px; box-shadow: 0 3px 12px #0f172a06; }
+        .profile-info-icon { display: grid; width: 43px; height: 43px; flex: 0 0 43px; place-items: center; color: #2563eb; background: #eff6ff; border-radius: 11px; }
+        .profile-info-card:nth-child(2) .profile-info-icon { color: #16a34a; background: #dcfce7; }
+        .profile-info-card:nth-child(3) .profile-info-icon { color: #7c3aed; background: #ede9fe; }
+        .profile-info-card:nth-child(5) .profile-info-icon { color: #dc2626; background: #fee2e2; }
+        .profile-info-card:nth-child(6) .profile-info-icon { color: #ca8a04; background: #fef3c7; }
+        .profile-info-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+        .profile-info-copy { min-width: 0; }
+        .profile-info-copy span { display: block; color: var(--muted); font-size: 12px; }
+        .profile-info-copy strong { display: block; margin-top: 5px; overflow-wrap: anywhere; font-size: 15px; }
         .panels { display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; margin-top: 22px; }
         .panel-title { display: flex; align-items: center; justify-content: space-between; padding: 21px 23px; border-bottom: 1px solid var(--line); }
         .panel-title h2 { margin: 0; font-size: 16px; }
@@ -88,15 +129,71 @@
         .quick-link { display: flex; align-items: center; justify-content: space-between; padding: 14px; color: var(--text); background: #f8fafc; border: 1px solid var(--line); border-radius: 9px; font-size: 13px; font-weight: 650; transition: .2s ease; }
         .quick-link:hover { color: var(--blue); background: var(--blue-soft); border-color: #fca5a5; }
         .quick-link span:last-child { color: var(--blue); font-size: 20px; }
+        .profile-edit-panel { margin-bottom: 22px; scroll-margin-top: 20px; }
+        .profile-form { display: grid; gap: 20px; width: 100%; margin: 0; }
+        .profile-readonly { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; padding-bottom: 4px; }
+        .profile-readonly span { display: block; color: var(--muted); font-size: 11px; }
+        .profile-readonly strong { display: block; margin-top: 5px; font-size: 13px; }
+        .profile-edit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 28px; }
+        .profile-field-wide { grid-column: 1 / -1; }
+        .profile-field { display: grid; gap: 7px; }
+        .profile-hidden-photo { display: none; }
+        .profile-field label { color: var(--text); font-size: 12px; font-weight: 700; }
+        .profile-field input, .profile-field select { display: block; width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; }
+        .profile-field input:focus, .profile-field select:focus { outline: 3px solid var(--blue-soft); border-color: var(--blue); }
+        .profile-field ul.errorlist { margin: 0; padding: 0; color: #b91c1c; font-size: 12px; list-style: none; }
+        .profile-actions { display: flex; justify-content: flex-end; margin-top: 4px; }
+        .save-profile { padding: 11px 20px; color: #fff; background: linear-gradient(135deg, var(--blue), #991b1b); border: 0; border-radius: 8px; cursor: pointer; font: 700 12px inherit; }
+        .save-profile:hover { filter: brightness(.95); }
         @media (max-width: 1050px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .panels { grid-template-columns: 1fr; } }
-        @media (max-width: 700px) { .layout { display: block; } .sidebar { width: 100%; padding: 18px 16px; } .brand { margin-bottom: 23px; } .sidebar nav { display: flex; gap: 5px; overflow-x: auto; } .menu-label, .sidebar-footer { display: none; } .nav-link { white-space: nowrap; } .topbar { align-items: flex-start; flex-direction: column; gap: 17px; padding: 20px; } .user-area { width: 100%; justify-content: space-between; gap: 8px; } .content { padding: 24px 20px 40px; } .profile-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-name, .user-role { display: none; } .admin-link { margin-left: auto; } .panel-body { overflow-x: auto; } table { min-width: 430px; } }
+        @media (max-width: 1050px) { .profile-summary { grid-template-columns: minmax(190px, .7fr) minmax(0, 1.5fr); gap: 16px; } .profile-info-grid { gap: 10px; } .profile-info-card { padding: 13px; } }
+        @media (max-width: 850px) { .profile-summary { grid-template-columns: 1fr; gap: 20px; } .profile-photo { min-height: 260px; } }
+        @media (max-width: 900px) { .profile-edit-grid { grid-template-columns: 1fr; } .profile-field-wide { grid-column: auto; } }
+        @media (max-width: 700px) { .layout { display: block; }                 .sidebar { position: fixed; z-index: 20; top: 0; bottom: 0; left: 0; width: min(290px, 86vw); min-height: 100vh; padding: 18px 16px; overflow-y: auto; transform: translateX(-105%); transition: transform .25s ease; box-shadow: 12px 0 30px #00000030; } body.menu-open { overflow: hidden; } body.menu-open .sidebar { transform: translateX(0); } body.menu-open .sidebar-overlay { display: block; position: fixed; z-index: 10; inset: 0; background: #0f172a80; } .sidebar-close { display: grid; position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; place-items: center; color: #fff; background: #ffffff18; border: 1px solid #ffffff35; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; } .brand { margin: 0 0 23px; padding-right: 52px; } .brand-copy { min-width: 0; overflow: hidden; } .brand-name { overflow: hidden; text-overflow: ellipsis; } .sidebar nav { display: grid; gap: 5px; } .menu-label, .sidebar-footer { display: none; } .sidebar-logout-form { margin-top: auto; } .sidebar-logout { margin: 0 12px; } .nav-link { white-space: normal; } .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 16px 18px; } .topbar-heading { display: flex; min-width: 0; align-items: center; gap: 9px; } .topbar-heading > div { min-width: 0; } .topbar h1, .topbar p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .menu-toggle { display: inline-grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; color: #991b1b; background: #fff1f2; border: 1px solid #fecaca; border-radius: 9px; cursor: pointer; } .menu-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; } .user-area { width: auto; min-width: 0; flex: 0 0 auto; justify-content: flex-end; gap: 6px; } .user-badge { min-width: 0; } .user-name { max-width: 82px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .admin-link { white-space: nowrap; } .content { padding: 24px 20px 40px; } .profile-grid, .profile-readonly, .profile-edit-grid { grid-template-columns: 1fr; } .profile-field-wide { grid-column: auto; } .profile-actions { justify-content: stretch; } .save-profile { width: 100%; } .profile-photo { width: 100%; } }
+        @media (max-width: 500px) { .profile-info-grid { grid-template-columns: 1fr; } .profile-photo { min-height: 0; padding: 22px 14px; } .profile-photo-frame { width: 132px; height: 132px; flex-basis: 132px; } .profile-camera { right: -3px; bottom: 3px; width: 39px; height: 39px; } .profile-role { font-size: 12px; } .profile-account-note { max-width: 190px; } }
+        @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-role { display: none; } .user-name { display: block; max-width: 58px; font-size: 10px; } .avatar { width: 32px; height: 32px; flex-basis: 32px; border-width: 2px; } .admin-link { margin-left: 0; padding: 8px 9px; font-size: 10px; } .panel-body { overflow-x: hidden; } table { min-width: 430px; } .panel-title { padding: 18px; } .panel-body { padding: 8px 18px 18px; } }
+        @media (min-width: 901px) {
+            .profile-info-grid { height: 100%; }
+        }
+        @media (max-width: 1100px) {
+            .sidebar { width: 220px; }
+            .brand { gap: 8px; margin-right: 8px; margin-left: 8px; }
+            .brand-logo { width: 40px; height: 40px; flex-basis: 40px; }
+            .brand-name { font-size: 14px; }
+            .content { padding-right: 28px; padding-left: 28px; }
+            .topbar { padding-right: 28px; padding-left: 28px; }
+            .profile-summary { grid-template-columns: 1fr; gap: 18px; }
+            .profile-photo { min-height: 270px; height: auto; }
+            .profile-info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 700px) {
+            .topbar h1 { font-size: 20px; }
+            .topbar p { line-height: 1.4; }
+            .welcome h2 { font-size: 23px; }
+            .user-area { flex-wrap: nowrap; }
+            .profile-panel .panel-title { align-items: flex-start; flex-direction: column; gap: 10px; }
+            .profile-panel .panel-title a { align-self: flex-end; }
+            .profile-info-card { min-height: 76px; }
+            .profile-form .profile-edit-grid { gap: 16px; }
+            .profile-field input, .profile-field select { min-width: 0; max-width: 100%; }
+        }
+        @media (max-width: 420px) {
+            .content { padding-right: 14px; padding-left: 14px; }
+            .topbar { padding-right: 14px; padding-left: 14px; }
+            .profile-info-grid { padding: 12px; }
+            .profile-info-card { gap: 9px; padding: 12px; }
+            .profile-info-icon { width: 38px; height: 38px; flex-basis: 38px; }
+            .profile-info-copy strong { font-size: 14px; }
+            .profile-role { white-space: normal; }
+        }
     </style>
 </head>
 <body>
 <div class="layout">
-    <aside class="sidebar">
-        <div class="brand"><img class="brand-logo" src="{% static 'images/losari-computer-logo.png' %}" alt="Logo Losari Computer"><small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small></div>
+    <button class="sidebar-overlay" type="button" aria-label="Tutup menu"></button>
+    <aside class="sidebar" id="dashboard-sidebar">
+        <button class="sidebar-close" type="button" aria-label="Tutup menu">&times;</button>
+        <div class="brand"><img class="brand-logo" src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer"><div class="brand-copy"><strong class="brand-name">Losari Computer</strong><small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small></div></div>
         <p class="menu-label">Menu utama</p>
         <nav>
             <a class="nav-link active" href="{% url 'app:dashboard' %}">
@@ -116,28 +213,55 @@
             </a>
         </nav>
         <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan melalui admin Losari Computer.</div>
+        <form class="sidebar-logout-form" method="post" action="{% url 'app:logout' %}">
+            {% csrf_token %}
+            <button class="sidebar-logout" type="submit">Logout</button>
+        </form>
     </aside>
     <div class="main">
         <header class="topbar">
-            <div><h1>Dashboard</h1><p>Ringkasan aktivitas Losari Computer</p></div>
+            <div class="topbar-heading"><button class="menu-toggle" type="button" aria-label="Buka menu" aria-controls="dashboard-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button><div><h1>Dashboard</h1><p>Ringkasan aktivitas Losari Computer</p></div></div>
             <div class="user-area">
-                <div class="user-badge"><span class="avatar">{{ request.user.username|first|upper }}</span><span class="user-name">{{ request.user.get_full_name|default:request.user.username }}<small class="user-role">Pengguna aktif</small></span></div>
+                <div class="user-badge"><span class="avatar">{% if photo %}<img class="avatar-image" src="{{ photo.url }}" alt="Foto profil {{ request.user.username }}">{% else %}{{ request.user.username|first|upper }}{% endif %}</span><span class="user-name">{{ request.user.get_full_name|default:request.user.username }}<small class="user-role">Pengguna aktif</small></span></div>
                 <a class="admin-link" href="/admin/">Buka Admin</a>
-                <form method="post" action="{% url 'app:logout' %}">{% csrf_token %}<button class="logout-button" type="submit">Keluar</button></form>
             </div>
         </header>
         <main class="content">
             <section class="welcome"><div><h2>Selamat datang kembali 👋</h2><p>Pantau katalog, pelanggan, dan aktivitas toko dari satu tempat.</p></div><span class="status"><span class="status-dot"></span>Sistem aktif</span></section>
-            {% if profil_pengguna %}
+            {% if userdetail or profil_pengguna %}
             <section class="panel profile-panel">
-                <div class="panel-title"><div><h2>Profil pengguna</h2><p>Data yang tersimpan dari halaman Profil Saya</p></div><a href="{% url 'app:profile_pengguna' %}">Edit profil</a></div>
-                <div class="panel-body profile-grid">
-                    <div><span>Nama</span><strong>{{ request.user.get_full_name|default:request.user.username }}</strong></div>
-                    <div><span>Email</span><strong>{{ request.user.email|default:"Belum diisi" }}</strong></div>
-                    <div><span>Nomor HP</span><strong>{{ profil_pengguna.telp|default:"Belum diisi" }}</strong></div>
-                    <div><span>Jenis kelamin</span><strong>{{ profil_pengguna.gender|default:"Belum diisi" }}</strong></div>
-                    <div><span>Provinsi anggota</span><strong>{{ profil_pengguna.provinsi_anggota.nama_provinsi|default:"Belum diisi" }}</strong></div>
-                    <div><span>Alamat</span><strong>{{ profil_pengguna.alamat|default:"Belum diisi" }}</strong></div>
+                <div class="panel-title"><div><h2>{% if user.is_staff or user.is_superuser %}Profil admin{% else %}Profil pengguna{% endif %}</h2><p>{% if user.is_staff or user.is_superuser %}Data profil yang tersimpan di database{% else %}Data yang tersimpan dari halaman Profil Saya{% endif %}</p></div>{% if user.is_staff or user.is_superuser %}<a href="#edit-profil">Edit profil</a>{% else %}<a href="{% url 'app:profile_pengguna' %}">Edit profil</a>{% endif %}</div>
+                <div class="panel-body">
+                    <div class="profile-summary">
+                    {% if userdetail %}
+                    <div class="profile-photo"><div class="profile-photo-frame">{% if photo %}<img class="profile-photo-image" src="{{ photo.url }}" alt="Foto profil {{ request.user.username }}">{% else %}<span class="profile-photo-placeholder">{{ request.user.first_name|first|default:request.user.username|first|upper }}</span>{% endif %}{% if is_admin %}<label class="profile-camera" for="id_photo" title="Pilih foto profil" aria-label="Pilih foto profil"><svg viewBox="0 0 24 24"><path d="M4 7h3l1.5-2h7L17 7h3v12H4Z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></label>                    {% endif %}</div><div class="profile-photo-copy"><strong class="profile-name">{{ request.user.first_name|default:request.user.username }}</strong><small class="profile-role"><svg viewBox="0 0 24 24"><path d="m12 3 2.2 4.5 5 .7-3.6 3.5-.9-5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7Z"></path></svg>{% if is_admin %}Administrator{% else %}Pengguna{% endif %}</small><hr class="profile-divider"><p class="profile-account-note">Akun ini dikelola sebagai {% if is_admin %}admin sistem{% else %}pengguna Losari Computer{% endif %}</p><span class="profile-active"><i class="profile-active-dot"></i>Aktif</span></div></div>
+                    {% endif %}
+                    <div class="profile-info-grid">
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span><div class="profile-info-copy"><span>{% if is_admin %}Nama Panggilan{% else %}Nama{% endif %}</span><strong>{% if is_admin %}{{ userdetail.nama_panggilan|default:"Belum diisi" }}{% else %}{{ request.user.first_name|default:"Belum diisi" }}{% endif %}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><div class="profile-info-copy"><span>Email</span><strong>{{ request.user.email|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="M6.5 3.5 9 3l2 5-2 1.5a15 15 0 0 0 5.5 5.5L16 13l5 2-.5 2.5a3 3 0 0 1-3.3 2.4A16.5 16.5 0 0 1 4.1 7.3 3 3 0 0 1 6.5 3.5Z"></path></svg></span><div class="profile-info-copy"><span>Nomor HP</span><strong>{% if userdetail %}{{ userdetail.telp|default:"Belum diisi" }}{% else %}{{ profil_pengguna.telp|default:"Belum diisi" }}{% endif %}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="5"></circle><path d="M10 15v6M7 18h6M15 5h6M18 2v6"></path></svg></span><div class="profile-info-copy"><span>Jenis kelamin</span><strong>{% if userdetail %}{{ userdetail.gender|default:"Belum diisi" }}{% else %}{{ profil_pengguna.gender|default:"Belum diisi" }}{% endif %}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span><div class="profile-info-copy"><span>Provinsi</span><strong>{{ profil_pengguna.provinsi_anggota.nama_provinsi|default:"Belum diisi" }}</strong></div></div>
+                    <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span><div class="profile-info-copy"><span>Alamat</span><strong>{{ profil_pengguna.alamat|default:"Belum diisi" }}</strong></div></div>
+                    </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+            {% if is_admin and userdetail %}
+            <section class="panel profile-edit-panel" id="edit-profil">
+                <div class="panel-title"><div><h2>Edit profil admin</h2><p>Perubahan disimpan langsung ke database</p></div></div>
+                <div class="panel-body">
+                    <form method="post" enctype="multipart/form-data" class="profile-form">
+                        {% csrf_token %}
+                        <div class="profile-edit-grid">
+                        {% for field in profile_form %}
+                        {% if field.name != 'photo' %}<div class="profile-field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endif %}
+                        {% endfor %}
+                        <div class="profile-hidden-photo">{{ profile_form.photo }}</div>
+                        </div>
+                        <div class="profile-actions"><button class="save-profile" type="submit">Simpan profil</button></div>
+                    </form>
                 </div>
             </section>
             {% endif %}
@@ -155,4 +279,22 @@
     </div>
 </div>
 </body>
+<script>
+    (function () {
+        const body = document.body;
+        const toggle = document.querySelector(".menu-toggle");
+        const close = document.querySelector(".sidebar-close");
+        const overlay = document.querySelector(".sidebar-overlay");
+        function setMenu(open) {
+            body.classList.toggle("menu-open", open);
+            if (toggle) toggle.setAttribute("aria-expanded", String(open));
+        }
+        if (toggle) toggle.addEventListener("click", function () { setMenu(true); });
+        if (close) close.addEventListener("click", function () { setMenu(false); });
+        if (overlay) overlay.addEventListener("click", function () { setMenu(false); });
+        document.querySelectorAll(".sidebar a").forEach(function (link) {
+            link.addEventListener("click", function () { setMenu(false); });
+        });
+    }());
+</script>
 </html>

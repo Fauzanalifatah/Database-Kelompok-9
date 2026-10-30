@@ -5,6 +5,8 @@ from .models import (
     Kategori,
     Pesanan,
     Produk,
+    ProdukGambar,
+    ProdukKeunggulan,
     Provinsi,
     UserAdmin,
     UserPengguna,
@@ -18,12 +20,38 @@ class KategoriAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("nama",)}
 
 
+class ProdukGambarInline(admin.TabularInline):
+    model = ProdukGambar
+    extra = 1
+    fields = ("tipe", "gambar", "urutan")
+
+
+class ProdukKeunggulanInline(admin.TabularInline):
+    model = ProdukKeunggulan
+    extra = 4
+    fields = ("judul", "deskripsi", "ikon", "warna", "urutan")
+
+
 @admin.register(Produk)
 class ProdukAdmin(admin.ModelAdmin):
-    list_display = ("nama", "merek", "kategori", "harga", "stok", "aktif")
+    list_display = (
+        "nama",
+        "merek",
+        "kategori",
+        "harga",
+        "diskon_persen",
+        "harga_aktif_admin",
+        "stok",
+        "aktif",
+    )
     list_filter = ("kategori", "kondisi", "aktif", "unggulan")
     search_fields = ("nama", "merek")
     prepopulated_fields = {"slug": ("nama",)}
+    inlines = [ProdukGambarInline, ProdukKeunggulanInline]
+
+    @admin.display(description="Harga setelah diskon")
+    def harga_aktif_admin(self, obj):
+        return obj.harga_aktif
 
 
 class ItemPesananInline(admin.TabularInline):

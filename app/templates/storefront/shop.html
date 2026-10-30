@@ -1,0 +1,30 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Shop - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=8">{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="shop-hero"><img src="{% static 'images/losari-computer-hero.png' %}" alt="Losari Computer - Pusat Laptop dan Solusi Komputer Terpercaya"></div>
+    <div class="shop-heading"><p class="eyebrow shop-eyebrow">Unit tersedia · {{ products|length }} produk</p><h1>Laptop pilihan untukmu</h1></div>
+    <form class="shop-toolbar" method="get">
+        <div class="shop-search"><span class="search-icon" aria-hidden="true">&#9906;</span><input name="q" value="{{ query }}" placeholder="Cari laptop, mis. ThinkPad, ASUS, MacBook..." aria-label="Cari laptop"></div>
+        <label class="shop-filter"><span>Kategori</span><select name="kategori"><option value="">Semua</option>{% for category in categories %}<option value="{{ category.slug }}" {% if selected_category == category %}selected{% endif %}>{{ category.nama }}</option>{% endfor %}</select></label>
+        <label class="shop-filter"><span>Budget</span><select name="budget"><option value="">Semua harga</option><option value="under-5" {% if budget == "under-5" %}selected{% endif %}>Di bawah Rp5 juta</option><option value="5-10" {% if budget == "5-10" %}selected{% endif %}>Rp5–10 juta</option><option value="over-10" {% if budget == "over-10" %}selected{% endif %}>Di atas Rp10 juta</option></select></label>
+        <a class="shop-reset" href="{% url 'shop' %}">Reset</a>
+    </form>
+    <section class="products shop-products">{% for product in products %}<article class="product shop-product">
+        <div class="shop-product-image">
+            {% if product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}">{% else %}{% with gallery_image=product.galeri.all|first %}{% if gallery_image %}<img src="{{ gallery_image.gambar.url }}" alt="{{ product.nama }}">{% else %}<span aria-hidden="true">&#128187;</span>{% endif %}{% endwith %}{% endif %}
+            <span class="condition-badge">{{ product.get_kondisi_display }}</span>
+            {% if product.memiliki_diskon %}<span class="image-discount-badge">-{{ product.diskon_persen|floatformat:"0" }}%</span>{% endif %}
+        </div>
+        <div class="product-body">
+            <span class="tag">{{ product.kategori.nama|default:"Laptop" }}</span>
+            <div class="shop-product-title"><h3>{{ product.merek }} {{ product.nama }}</h3><a class="whatsapp-button" href="https://wa.me/?text=Saya%20tertarik%20dengan%20{{ product.nama|urlencode }}" aria-label="Tanya {{ product.nama }} melalui WhatsApp">&#9742;</a></div>
+            <p class="product-description">{{ product.deskripsi|default:"Performa andal dan nyaman untuk mendukung aktivitas harian."|truncatewords:16 }}</p>
+            {% if product.spesifikasi %}<div class="spec-chips">{% for key, value in product.spesifikasi.items %}{% if forloop.counter <= 4 %}<span>{{ key|title }} {{ value }}</span>{% endif %}{% endfor %}</div>{% endif %}
+            <div class="shop-product-footer"><div><small>{% if product.memiliki_diskon %}<del>{{ product.harga_rupiah }}</del>{% else %}Mulai dari{% endif %}</small><strong>{{ product.harga_aktif_rupiah }}</strong></div><div class="product-actions"><a class="detail-button" href="{% url 'app:product_detail' product.slug %}">Detail</a><a class="buy-button" href="https://wa.me/?text=Saya%20ingin%20membeli%20{{ product.nama|urlencode }}">Beli</a></div></div>
+        </div>
+    </article>{% empty %}<p class="muted">Produk tidak ditemukan.</p>{% endfor %}</section>
+</div>
+{% endblock %}

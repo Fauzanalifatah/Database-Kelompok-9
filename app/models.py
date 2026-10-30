@@ -1,8 +1,11 @@
 import os
 import uuid
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 
 
@@ -118,6 +121,7 @@ class UserAdmin(models.Model):
         primary_key=True,
         related_name="admin_profile",
     )
+    nama_panggilan = models.CharField(max_length=150, blank=True, default="")
     telp = models.CharField(max_length=15)
     gender = models.CharField(
         max_length=15,
@@ -130,8 +134,12 @@ class UserAdmin(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk:
-            old_instance = UserAdmin.objects.get(pk=self.pk)
-            if old_instance.photo and old_instance.photo != self.photo:
+            old_instance = UserAdmin.objects.filter(pk=self.pk).first()
+            if (
+                old_instance
+                and old_instance.photo
+                and old_instance.photo != self.photo
+            ):
                 old_instance.photo.delete(save=False)
         super().save(*args, **kwargs)
 
@@ -162,6 +170,17 @@ class Produk(models.Model):
     deskripsi = models.TextField(blank=True)
     spesifikasi = models.JSONField(default=dict, blank=True)
     harga = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    diskon_persen = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        verbose_name="Diskon (%)",
+        validators=[
+            MinValueValidator(Decimal("0")),
+            MaxValueValidator(Decimal("100")),
+        ],
+        help_text="Isi 0 tanpa diskon. Diskon aktif harus antara 10 sampai 100%.",
+    )
     stok = models.PositiveIntegerField(default=0)
     kondisi = models.CharField(
         max_length=20, choices=KONDISI_CHOICES, default="second"
@@ -184,9 +203,127 @@ class Produk(models.Model):
     def __str__(self):
         return f"{self.merek} {self.nama}"
 
+    def clean(self):
+        super().clean()
+        if Decimal("0") < self.diskon_persen < Decimal("10"):
+            raise ValidationError(
+                {"diskon_persen": "Diskon aktif harus antara 10 sampai 100%."}
+            )
+
+    @property
+    def harga_rupiah(self):
+        return f"Rp{self.harga:,.0f}".replace(",", ".")
+
+    @property
+    def harga_diskon(self):
+        potongan = self.harga * self.diskon_persen / Decimal("100")
+        return (self.harga - potongan).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+
+    @property
+    def harga_aktif(self):
+        return self.harga_diskon if self.diskon_persen else self.harga
+
+    @property
+    def harga_aktif_rupiah(self):
+        return f"Rp{self.harga_aktif:,.0f}".replace(",", ".")
+
+    @property
+    def memiliki_diskon(self):
+        return self.diskon_persen >= Decimal("10")
+
     @property
     def tersedia(self):
         return self.aktif and self.stok > 0
+
+
+def rename_product_gallery_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"{instance.produk.slug}-{instance.tipe}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("produk", "galeri", filename)
+
+
+class ProdukGambar(models.Model):
+    TIPE_CHOICES = [
+        ("depan", "Tampak depan"),
+        ("keyboard", "Keyboard & port"),
+        ("panel", "Panel & layar"),
+        ("cek", "30-titik cek"),
+        ("lainnya", "Gambar lainnya"),
+    ]
+
+    produk = models.ForeignKey(
+        Produk,
+        on_delete=models.CASCADE,
+        related_name="galeri",
+    )
+    tipe = models.CharField(
+        max_length=20,
+        choices=TIPE_CHOICES,
+        default="depan",
+    )
+    gambar = models.ImageField(upload_to=rename_product_gallery_image)
+    urutan = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["urutan", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["produk", "tipe"],
+                name="unique_produk_gambar_tipe",
+            ),
+        ]
+        verbose_name = "Gambar produk"
+        verbose_name_plural = "Gambar produk"
+
+    def __str__(self):
+        return f"{self.produk} - {self.get_tipe_display()}"
+
+
+class ProdukKeunggulan(models.Model):
+    IKON_CHOICES = [
+        ("shield", "Perisai"),
+        ("star", "Bintang"),
+        ("gift", "Hadiah"),
+        ("box", "Kotak"),
+        ("check", "Centang"),
+    ]
+    WARNA_CHOICES = [
+        ("green", "Hijau"),
+        ("blue", "Biru"),
+        ("yellow", "Kuning"),
+        ("purple", "Ungu"),
+    ]
+
+    produk = models.ForeignKey(
+        Produk,
+        on_delete=models.CASCADE,
+        related_name="keunggulan",
+    )
+    judul = models.CharField(max_length=100)
+    deskripsi = models.CharField(max_length=180)
+    ikon = models.CharField(
+        max_length=15,
+        choices=IKON_CHOICES,
+        default="check",
+    )
+    warna = models.CharField(
+        max_length=15,
+        choices=WARNA_CHOICES,
+        default="green",
+    )
+    urutan = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["urutan", "id"]
+        verbose_name = "Keunggulan produk"
+        verbose_name_plural = "Keunggulan produk"
+
+    def __str__(self):
+        return f"{self.produk} - {self.judul}"
 
 
 class Kategori(models.Model):
@@ -260,7 +397,7 @@ class ItemPesanan(models.Model):
         if not self.nama_produk:
             self.nama_produk = self.produk.nama
         if not self.harga_satuan:
-            self.harga_satuan = self.produk.harga
+            self.harga_satuan = self.produk.harga_aktif
         super().save(*args, **kwargs)
 
     def __str__(self):
