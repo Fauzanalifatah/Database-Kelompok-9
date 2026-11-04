@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    Artikel,
     ItemPesanan,
     Kategori,
     Pesanan,
@@ -11,6 +12,23 @@ from .models import (
     UserAdmin,
     UserPengguna,
 )
+
+
+@admin.register(Artikel)
+class ArtikelAdmin(admin.ModelAdmin):
+    list_display = (
+        "title_articles",
+        "category",
+        "authors",
+        "published",
+        "views",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = ("published", "created_at", "updated_at")
+    search_fields = ("title_articles", "category", "desc_seo", "content")
+    prepopulated_fields = {"slug": ("title_articles",)}
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(Kategori)

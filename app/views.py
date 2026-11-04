@@ -4,14 +4,22 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .decorators_admin import admin_required
 from .form_admin import formProfile
 from .forms import RegistrationForm
-from .models import Kategori, Produk, Provinsi, UserAdmin, UserPengguna
+from .models import (
+    Artikel,
+    ArtikelView,
+    Kategori,
+    Produk,
+    Provinsi,
+    UserAdmin,
+    UserPengguna,
+)
 
 
 @admin_required
@@ -66,11 +74,14 @@ def index(request):
         "heading": "Dashboard",
         "today": today,
         "total_produk": Produk.objects.count(),
+        "total_artikel": Artikel.objects.count(),
+        "artikel_terbit": Artikel.objects.filter(published=True).count(),
         "total_anggota": UserPengguna.objects.count(),
         "total_provinsi": Provinsi.objects.count(),
         "total_admin": UserAdmin.objects.count(),
         "total_user": User.objects.count(),
         "produk_terbaru": Produk.objects.order_by("-id")[:5],
+        "artikel_terbaru": Artikel.objects.order_by("-created_at")[:5],
         "provinsi_aktif": Provinsi.objects.filter(aktif=True).count(),
     }
 
@@ -155,10 +166,54 @@ def home(request):
         "storefront/home.html",
         {
             "categories": Kategori.objects.filter(aktif=True),
+            "latest_articles": Artikel.objects.filter(published=True).order_by(
+                "-created_at"
+            )[:3],
             "products": products,
             "selected_category": selected_category,
             "query": query,
         },
+    )
+
+
+def article_list(request):
+    articles = Artikel.objects.filter(published=True)
+    return render(
+        request,
+        "storefront/article_list.html",
+        {"articles": articles},
+    )
+
+
+def article_detail(request, slug):
+    article = get_object_or_404(
+        Artikel,
+        slug=slug,
+        published=True,
+    )
+    if request.user.is_authenticated:
+        visitor_key = f"user:{request.user.pk}"
+    else:
+        if not request.session.session_key:
+            request.session.create()
+        visitor_key = f"session:{request.session.session_key}"
+
+    _, created = ArtikelView.objects.get_or_create(
+        artikel=article,
+        visitor_key=visitor_key,
+    )
+    if created:
+        Artikel.objects.filter(pk=article.pk).update(views=F("views") + 1)
+    article.refresh_from_db(fields=["views"])
+    related_articles = (
+        Artikel.objects.filter(published=True)
+        .exclude(pk=article.pk)
+        .order_by("-views", "-created_at")[:5]
+    )
+    return render(
+        request,
+        "storefront/article_detail.html",
+        {"article": article, "related_articles": related_articles},
     )
 
 

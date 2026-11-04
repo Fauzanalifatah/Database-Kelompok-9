@@ -1,0 +1,48 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}{{ article.title_articles }} - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}">{% endblock %}
+{% block content %}
+<div class="container article-detail-layout">
+    <article class="article-detail">
+        <p class="article-breadcrumb"><a href="{% url 'home' %}">Beranda</a><span>›</span><a href="{% url 'article_list' %}">{{ article.category }}</a></p>
+        <h1>{{ article.title_articles }}</h1>
+        <div class="article-byline">
+            <div class="article-byline-copy">
+                <span>Oleh <strong>{{ article.authors|default:"Losari Computer" }}</strong></span>
+                <span> - {{ article.created_at|date:"l, F d, Y" }}</span>
+            </div>
+            <span class="article-metrics" aria-label="Informasi artikel">
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg>{{ article.character_count }} Characters</span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>{{ article.views }} views</span>
+            </span>
+        </div>
+        <p class="article-detail-summary">{{ article.desc_seo }}</p>
+        {% if article.images %}
+        <img class="article-detail-image" src="{{ article.images.url }}" alt="{{ article.title_articles }}">
+        {% endif %}
+        <div class="article-content">{{ article.content|linebreaks }}</div>
+        <p class="article-author">Ditulis oleh {{ article.authors|default:"Losari Computer" }}</p>
+    </article>
+    <aside class="article-sidebar" aria-label="Rekomendasi artikel">
+        <div class="sidebar-heading">
+            <h2>Artikel Pilihan</h2>
+            <span></span>
+        </div>
+        {% for related in related_articles %}
+        <a class="related-article" href="{% url 'article_detail' related.slug %}">
+            <div class="related-image">
+                {% if related.images %}<img src="{{ related.images.url }}" alt="{{ related.title_articles }}">{% else %}<span>LC</span>{% endif %}
+            </div>
+            <div class="related-copy">
+                <span class="related-label">Artikel terbaru</span>
+                <h3>{{ related.title_articles }}</h3>
+                <p>{{ related.created_at|date:"d F Y" }} &middot; {{ related.views }} views</p>
+            </div>
+        </a>
+        {% empty %}
+        <p class="related-empty">Belum ada artikel lain.</p>
+        {% endfor %}
+    </aside>
+</div>
+{% endblock %}

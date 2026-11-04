@@ -30,6 +30,8 @@ urlpatterns = [
     path("logout/", core_views.LogoutView, name="logout"),
     path("", views.home, name="home"),
     path("shop/", views.shop, name="shop"),
+    path("artikel/", views.article_list, name="article_list"),
+    path("artikel/<slug:slug>/", views.article_detail, name="article_detail"),
 ]
 
 if settings.DEBUG:

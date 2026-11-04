@@ -113,6 +113,101 @@ def default_product_slug():
     return f"produk-{uuid.uuid4().hex[:12]}"
 
 
+def default_article_slug():
+    return f"artikel-{uuid.uuid4().hex[:12]}"
+
+
+def rename_article_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"{instance.slug or 'artikel'}-{uuid.uuid4().hex[:8]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("artikel", filename)
+
+
+class Artikel(models.Model):
+    title_articles = models.CharField(
+        max_length=200,
+        verbose_name="Judul artikel",
+    )
+    slug = models.SlugField(
+        max_length=220,
+        unique=True,
+        default=default_article_slug,
+    )
+    desc_seo = models.CharField(
+        max_length=300,
+        verbose_name="Deskripsi SEO",
+        help_text="Ringkasan singkat yang tampil di kartu artikel dan mesin pencari.",
+    )
+    category = models.CharField(
+        max_length=80,
+        default="BERITA TERKINI",
+        verbose_name="Kategori berita",
+        help_text="Contoh: BERITA TERKINI, TIPS TEKNOLOGI, atau PROMO.",
+    )
+    content = models.TextField(verbose_name="Isi artikel")
+    authors = models.CharField(
+        max_length=150,
+        blank=True,
+        default="",
+        verbose_name="Penulis",
+        help_text="Ketik nama penulis secara bebas.",
+    )
+    images = models.ImageField(
+        upload_to=rename_article_image,
+        null=True,
+        blank=True,
+        verbose_name="Gambar artikel",
+    )
+    published = models.BooleanField(
+        default=True,
+        verbose_name="Tampilkan di website",
+    )
+    views = models.PositiveIntegerField(
+        default=0,
+        editable=False,
+        verbose_name="Jumlah dilihat",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui")
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Artikel"
+        verbose_name_plural = "Artikel"
+        indexes = [
+            models.Index(fields=["published", "-created_at"]),
+        ]
+
+    def __str__(self):
+        return self.title_articles
+
+    @property
+    def character_count(self):
+        return len(self.content or "")
+
+
+class ArtikelView(models.Model):
+    artikel = models.ForeignKey(
+        Artikel,
+        on_delete=models.CASCADE,
+        related_name="view_records",
+    )
+    visitor_key = models.CharField(max_length=100)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["artikel", "visitor_key"],
+                name="unique_artikel_visitor",
+            ),
+        ]
+        verbose_name = "Kunjungan artikel"
+        verbose_name_plural = "Kunjungan artikel"
+
+
 class UserAdmin(models.Model):
     username = models.OneToOneField(
         User,

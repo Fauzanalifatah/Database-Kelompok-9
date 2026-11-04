@@ -1,0 +1,40 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Artikel - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}">{% endblock %}
+{% block content %}
+<section class="article-heading">
+    <div class="container">
+        <div class="article-heading-row">
+            <h1><span>Check Out!</span> Read more »</h1>
+            <a href="{% url 'home' %}">Lihat semua</a>
+        </div>
+    </div>
+</section>
+<div class="container article-container">
+    <div class="article-list">
+        {% for article in articles %}
+        <article class="article-list-item">
+            <a class="article-list-image" href="{% url 'article_detail' article.slug %}">
+                {% if article.images %}
+                <img src="{{ article.images.url }}" alt="{{ article.title_articles }}">
+                {% else %}
+                <span>Losari Computer</span>
+                {% endif %}
+            </a>
+            <div class="article-list-body">
+                <p class="article-list-label">{{ article.category }}</p>
+                <h2><a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a></h2>
+                <p class="article-list-summary">{{ article.desc_seo }}</p>
+                <p class="article-list-meta">Oleh <strong>{{ article.authors|default:"Losari Computer" }}</strong> <span>·</span> {{ article.created_at|date:"l, F d, Y" }}</p>
+            </div>
+        </article>
+        {% empty %}
+        <div class="article-empty">
+            <h2>Belum ada artikel</h2>
+            <p>Artikel yang diterbitkan akan tampil di halaman ini.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

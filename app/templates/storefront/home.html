@@ -13,6 +13,34 @@
         <a class="category" href="{% url 'shop' %}?kategori={{ category.slug }}"><span class="category-number">0{{ forloop.counter }}</span><div class="category-icon">{{ category.ikon }}</div><h3>{{ category.nama }}</h3><p>{{ category.deskripsi|default:"Laptop pilihan yang sesuai kebutuhanmu." }}</p></a>
         {% empty %}<p class="muted">Kategori belum tersedia.</p>{% endfor %}
     </section>
+    <section class="home-articles" aria-labelledby="latest-articles-title">
+        <div class="section-head">
+            <div>
+                <p class="home-section-eyebrow">Insight Losari Computer</p>
+                <h2 id="latest-articles-title">Artikel Terbaru</h2>
+                <p class="muted">Baca informasi dan cerita terbaru dari Losari Computer.</p>
+            </div>
+            <a class="section-link" href="{% url 'article_list' %}">Lihat semua artikel <span>→</span></a>
+        </div>
+        <div class="home-article-grid">
+            {% for article in latest_articles %}
+            <article class="home-article-card">
+                <a class="home-article-image" href="{% url 'article_detail' article.slug %}">
+                    {% if article.images %}<img src="{{ article.images.url }}" alt="{{ article.title_articles }}">{% else %}<span>Losari Computer</span>{% endif %}
+                </a>
+                <div class="home-article-body">
+                    <p class="home-article-category">{{ article.category }}</p>
+                    <p class="home-article-date">{{ article.created_at|date:"F d, Y" }}</p>
+                    <h3><a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a></h3>
+                    <p class="home-article-summary">{{ article.desc_seo }}</p>
+                    <a class="home-article-read-more" href="{% url 'article_detail' article.slug %}">Read More <span aria-hidden="true">→</span></a>
+                </div>
+            </article>
+            {% empty %}
+            <p class="muted">Belum ada artikel yang diterbitkan.</p>
+            {% endfor %}
+        </div>
+    </section>
     <section class="trust"><div><strong>QC 20+ titik</strong><span>Setiap unit diperiksa sebelum dikirim.</span></div><div><strong>Garansi toko</strong><span>Belanja lebih tenang dengan layanan purna jual.</span></div><div><strong>Konsultasi gratis</strong><span>Kami bantu pilih laptop sesuai kebutuhan dan budget.</span></div></section>
 </div>
 {% endblock %}
