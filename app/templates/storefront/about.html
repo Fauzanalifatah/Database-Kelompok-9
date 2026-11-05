@@ -1,0 +1,13 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Tentang Kami - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/about.css' %}">{% endblock %}
+{% block content %}
+<section class="about-hero"><div class="container about-hero-grid"><div><p class="about-eyebrow">Mengenal lebih dekat</p><h1>{{ about_setting.judul }}</h1><p class="about-tagline">{{ about_setting.tagline }}</p><a class="button" href="{% url 'shop' %}">Jelajahi produk</a></div><div class="about-logo-card">{% if about_setting.logo %}<img src="{{ about_setting.logo.url }}" alt="Logo Losari Computer">{% else %}<img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer">{% endif %}</div></div></section>
+<main class="container about-content">
+    <section class="about-panel"><div class="about-section-label">01 / Tentang kami</div><div><h2>Teknologi yang dekat dengan kebutuhan Anda</h2><p>{{ about_setting.deskripsi|linebreaksbr }}</p></div></section>
+    <section class="about-panel"><div class="about-section-label">02 / Perjalanan kami</div><div><h2>Berawal dari kepercayaan</h2><p>{{ about_setting.sejarah|linebreaksbr }}</p></div></section>
+    <section class="about-ceo"><div class="about-ceo-photo">{% if about_setting.ceo_foto %}<img src="{{ about_setting.ceo_foto.url }}" alt="{{ about_setting.ceo_nama }}">{% else %}<span>CEO</span>{% endif %}</div><div class="about-ceo-copy"><p class="about-eyebrow">Kepemimpinan</p><h2>{{ about_setting.ceo_nama }}</h2><p class="about-ceo-title">{{ about_setting.ceo_jabatan }}</p><p>“Kami percaya teknologi terbaik adalah teknologi yang benar-benar membantu manusia bekerja, belajar, dan berkembang.”</p></div></section>
+    <section class="about-values"><article><span>03</span><h2>Visi</h2><p>{{ about_setting.visi|linebreaksbr }}</p></article><article><span>04</span><h2>Misi</h2><p>{{ about_setting.misi|linebreaksbr }}</p></article></section>
+</main>
+{% endblock %}

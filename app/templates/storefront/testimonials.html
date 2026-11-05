@@ -1,0 +1,64 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Testimoni Pelanggan - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/testimonials.css' %}">{% endblock %}
+{% block content %}
+<section class="testimonial-hero" aria-label="Testimoni pengguna">
+    <img class="testimonial-hero-image" src="{% static 'images/testimonials-banner.png' %}" alt="Testimoni pengguna Losari Computer">
+</section>
+<main class="container testimonial-content">
+    <section class="testimonial-form-section" id="beri-ulasan">
+        <div class="testimonial-form-intro"><p class="testimonial-label">Punya pengalaman?</p><h2>Bagikan cerita<br><em>versi Anda.</em></h2><p>Ulasan Anda membantu pelanggan lain memilih dengan lebih yakin. Setiap akun hanya dapat mengirim satu ulasan.</p></div>
+        {% if testimonial_form %}
+        <form class="testimonial-form" method="post">
+            {% csrf_token %}
+            <div class="testimonial-form-grid">
+                {% for field in testimonial_form %}
+                <div class="testimonial-form-field {% if field.name == 'pesan' %}testimonial-form-wide{% elif field.name == 'rating' %}testimonial-rating-field{% endif %}">
+                    {{ field.label_tag }}{{ field }}{% if field.errors %}<div class="testimonial-errors">{{ field.errors }}</div>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <button class="button testimonial-submit" type="submit">Kirim ulasan <b>↗</b></button>
+        </form>
+        {% elif not user.is_authenticated %}
+        <div class="testimonial-login-prompt"><p>Sudah pernah berbelanja di Losari Computer?</p><a class="button" href="{% url 'app:login' %}?next={% url 'testimonials' %}#beri-ulasan">Login untuk memberi ulasan <b>↗</b></a></div>
+        {% else %}
+        <div class="testimonial-submitted"><span>✓</span><div><strong>Terima kasih atas ulasan Anda.</strong><p>Akun Anda sudah mengirim satu testimoni. Terima kasih telah berbagi pengalaman.</p></div></div>
+        {% endif %}
+    </section>
+    <div class="testimonial-heading"><p class="testimonial-label">Kata mereka</p><h2><strong>Apa Kata Pelanggan LOSARI COMPUTER</strong></h2></div>
+    {% if testimonials %}
+    <section class="testimonial-carousel" aria-label="Testimoni pelanggan">
+        <div class="testimonial-track">
+            {% for copy in "12" %}
+            <div class="testimonial-track-group"{% if copy == "2" %} aria-hidden="true"{% endif %}>
+                {% for item in testimonials %}
+                <article class="testimonial-card">
+                    <div class="testimonial-card-top"><div class="testimonial-rating-display"><div class="testimonial-stars" aria-label="Rating {{ item.rating }} dari 5">{% for star in "12345" %}{% if forloop.counter <= item.rating %}★{% else %}<span>★</span>{% endif %}{% endfor %}</div><strong>{{ item.rating }}.0/5</strong></div></div>
+                    <blockquote>“{{ item.pesan }}”</blockquote>
+                    <div class="testimonial-card-footer"><div class="testimonial-customer">{% if item.display_photo %}<img src="{{ item.display_photo.url }}" alt="{% if copy == "1" %}Foto {{ item.display_name }}{% endif %}">{% else %}<span>{{ item.display_name|first|upper }}</span>{% endif %}</div><div class="testimonial-customer-copy"><strong>{{ item.display_name }}</strong><small>Pelanggan Losari Computer</small></div></div>
+                </article>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% else %}
+    <section class="testimonial-empty"><span>✦</span><h2>Jadilah cerita pertama kami.</h2><p>Testimoni pelanggan akan tampil di sini setelah ditambahkan melalui dashboard.</p></section>
+    {% endif %}
+</main>
+<script>
+    const ratingInputs = document.querySelectorAll(".testimonial-rating-field input");
+    const updateRatingStars = (selectedValue) => {
+        ratingInputs.forEach((input) => {
+            const label = input.closest("label");
+            label?.classList.toggle("is-selected", Number(input.value) <= selectedValue);
+        });
+    };
+    ratingInputs.forEach((input) => {
+        input.addEventListener("change", () => updateRatingStars(Number(input.value)));
+        if (input.checked) updateRatingStars(Number(input.value));
+    });
+</script>
+{% endblock %}

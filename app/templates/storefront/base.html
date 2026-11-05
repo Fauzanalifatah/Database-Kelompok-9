@@ -10,23 +10,98 @@
 </head>
 <body>
 <div class="topbar"><div class="container topbar-inner"><div class="topbar-brand"><strong>LOSARI COMPUTER</strong><span>SECOND LAPTOP</span><span>IT SOLUTION</span></div><div class="topbar-links"><a href="#footer">Promo</a><a href="#footer">Garansi</a><a href="#footer">Bantuan</a><a href="#footer">Kontak</a></div></div></div>
-<header><div class="container nav"><a class="brand" href="{% url 'home' %}"><img class="brand-logo" src="{% static 'images/losari-computer-mark.jpg' %}" alt="Losari Computer"><span class="brand-main">Losari Computer</span></a><nav class="nav-links"><a class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a><a class="{% if request.resolver_match.url_name == 'shop' %}active{% endif %}" href="{% url 'shop' %}">Shop</a><a class="{% if request.resolver_match.url_name == 'article_list' or request.resolver_match.url_name == 'article_detail' %}active{% endif %}" href="{% url 'article_list' %}">Artikel</a><span class="nav-link-disabled">Service</span><span class="nav-link-disabled">Tentang</span><span class="nav-link-disabled">Support</span></nav><div class="nav-actions"><div class="user-menu"><button class="user-toggle" type="button" aria-label="{% if user.is_authenticated %}Buka akun{% else %}Buka menu akun{% endif %}" aria-expanded="false"><svg class="user-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.25"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg>{% if user.is_authenticated %}<span class="user-status"></span>{% endif %}</button>{% if user.is_authenticated %}<div class="user-dropdown"><div class="user-name">{{ user.get_full_name|default:user.username }}</div>{% if user.is_staff or user.is_superuser %}<a href="{% url 'app:dashboard' %}">Dashboard akun</a>{% else %}<a href="{% url 'app:profile_pengguna' %}">Profil Saya</a>{% endif %}<form method="post" action="{% url 'app:logout' %}">{% csrf_token %}<button type="submit">Keluar</button></form></div>{% else %}<div class="user-dropdown"><a href="{% url 'app:login' %}">Login</a></div>{% endif %}</div></div></div></header>
+<header><div class="container nav"><a class="brand" href="{% url 'home' %}"><img class="brand-logo" src="{% static 'images/losari-computer-mark.jpg' %}" alt="Losari Computer"><span class="brand-main">Losari Computer</span></a><nav class="nav-links" id="main-navigation"><a class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a><a class="{% if request.resolver_match.url_name == 'shop' %}active{% endif %}" href="{% url 'shop' %}">Shop</a><a class="{% if request.resolver_match.url_name == 'article_list' or request.resolver_match.url_name == 'article_detail' %}active{% endif %}" href="{% url 'article_list' %}">Artikel</a><a class="{% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" href="{% url 'testimonials' %}">Testimoni</a><a class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">Tentang</a><span class="nav-link-disabled">Service</span><span class="nav-link-disabled">Support</span></nav><div class="nav-actions"><div class="user-menu"><button class="user-toggle" type="button" aria-label="{% if user.is_authenticated %}Buka akun{% else %}Buka menu akun{% endif %}" aria-expanded="false"><svg class="user-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.25"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg>{% if user.is_authenticated %}<span class="user-status"></span>{% endif %}</button>{% if user.is_authenticated %}<div class="user-dropdown"><div class="user-name">{{ user.get_full_name|default:user.username }}</div>{% if user.is_staff or user.is_superuser %}<a href="{% url 'app:dashboard' %}">Dashboard akun</a>{% else %}<a href="{% url 'app:profile_pengguna' %}">Profil Saya</a>{% endif %}<form method="post" action="{% url 'app:logout' %}">{% csrf_token %}<button type="submit">Keluar</button></form></div>{% else %}<div class="user-dropdown"><a href="{% url 'app:login' %}">Login</a></div>{% endif %}</div><button class="menu-toggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="main-navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></div></div></header>
 <div class="announcement"><div class="announcement-track"><div class="announcement-group"><span>Garansi toko</span><span>•</span><span>Siap kirim ke seluruh kota</span><span>•</span><span>Unit teruji</span><span>•</span><span>Laptop second berkualitas</span><span>•</span></div><div class="announcement-group" aria-hidden="true"><span>Garansi toko</span><span>•</span><span>Siap kirim ke seluruh kota</span><span>•</span><span>Unit teruji</span><span>•</span><span>Laptop second berkualitas</span><span>•</span></div></div></div>
 <main>{% block content %}{% endblock %}</main>
-<footer id="footer"><div class="container">Losari Computer &middot; Laptop pilihan untuk kuliah, kerja, desain, dan gaming.</div></footer>
+<footer id="footer" class="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <section class="footer-brand">
+                <a class="footer-logo" href="{% url 'home' %}">
+                    <img src="{% static 'images/losari-computer-mark.jpg' %}" alt="Losari Computer">
+                    <span>Losari<br><b>Computer</b></span>
+                </a>
+                <p>{{ footer_setting.deskripsi|default:"Partner teknologi untuk kebutuhan kuliah, kerja, desain, dan gaming." }}</p>
+                <div class="footer-socials" aria-label="Media sosial Losari Computer">
+                    {% for social in footer_setting.socials.all %}
+                        {% if social.aktif %}<a href="{{ social.url }}" aria-label="{{ social.nama }}" target="_blank" rel="noopener"><img src="{{ social.ikon.url }}" alt="{{ social.nama }}"></a>{% endif %}
+                    {% empty %}
+                        <span class="footer-social-empty">Ikon sosial belum diatur</span>
+                    {% endfor %}
+                </div>
+                <p class="footer-copyright">&copy; {% now "Y" %} Losari Computer.<br>Semua hak dilindungi.</p>
+            </section>
+
+            <section class="footer-column">
+                <h2>Layanan</h2>
+                <a href="{% url 'shop' %}">Belanja laptop</a>
+                <a href="{% url 'article_list' %}">Artikel teknologi</a>
+                <a href="{% url 'shop' %}">Konsultasi produk</a>
+                <a href="#footer">Garansi toko</a>
+                <h2 class="footer-subheading">Jam pelayanan</h2>
+                <p>{{ footer_setting.jam_pelayanan|default:"Senin - Jumat | 08.00 - 17.00 WIB"|linebreaksbr }}</p>
+            </section>
+
+            <section class="footer-column">
+                <h2>Belanja</h2>
+                {% for category in footer_categories %}
+                    <a href="{% url 'shop' %}?kategori={{ category.slug }}">{{ category.nama }}</a>
+                {% empty %}
+                    <a href="{% url 'shop' %}">Semua produk</a>
+                {% endfor %}
+                <h2 class="footer-subheading">Tentang kami</h2>
+                <a href="{% url 'article_list' %}">Berita &amp; tips</a>
+                <a href="#footer">Hubungi kami</a>
+            </section>
+
+            <section class="footer-column footer-contact">
+                <h2>Alamat toko</h2>
+                <p>{{ footer_setting.alamat|default:"Jl. Raya Losari No. 9\nLosari, Brebes, Jawa Tengah"|linebreaksbr }}</p>
+                <h2 class="footer-subheading">Kontak kami</h2>
+                <a href="https://wa.me/{{ footer_setting.whatsapp|default:'6281234567890' }}" target="_blank" rel="noopener">WhatsApp Customer Service</a>
+                <a href="mailto:{{ footer_setting.email|default:'hello@losaricomputer.com' }}">{{ footer_setting.email|default:"hello@losaricomputer.com" }}</a>
+                <h2 class="footer-subheading">Metode pembayaran</h2>
+                <div class="payment-list" aria-label="Metode pembayaran">
+                    {% for payment in footer_setting.payments.all %}
+                        {% if payment.aktif and payment.ikon %}<span title="{{ payment.nama }}"><img src="{{ payment.ikon.url }}" alt="Logo {{ payment.nama }}"></span>{% endif %}
+                    {% empty %}
+                        <span>QRIS</span><span>BRI</span><span>BNI</span><span>Mandiri</span>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+        <div class="footer-bottom">
+            <span>Belanja nyaman, perangkat terjamin.</span>
+            <span>Losari Computer &middot; IT Solution</span>
+        </div>
+    </div>
+</footer>
 <script>
     const userMenu = document.querySelector(".user-menu");
     const userToggle = userMenu?.querySelector(".user-toggle");
+    const nav = document.querySelector(".nav");
+    const menuToggle = document.querySelector(".menu-toggle");
 
     userToggle?.addEventListener("click", () => {
         const isOpen = userMenu.classList.toggle("is-open");
         userToggle.setAttribute("aria-expanded", String(isOpen));
     });
 
+    menuToggle?.addEventListener("click", () => {
+        const isOpen = nav.classList.toggle("is-menu-open");
+        document.body.classList.toggle("menu-open", isOpen);
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
     document.addEventListener("click", (event) => {
         if (!userMenu?.contains(event.target)) {
             userMenu?.classList.remove("is-open");
             userToggle?.setAttribute("aria-expanded", "false");
+        }
+        if (!nav?.contains(event.target)) {
+            nav?.classList.remove("is-menu-open");
+            document.body.classList.remove("menu-open");
+            menuToggle?.setAttribute("aria-expanded", "false");
         }
     });
 </script>

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container article-detail-layout">
     <article class="article-detail">
-        <p class="article-breadcrumb"><a href="{% url 'home' %}">Beranda</a><span>›</span><a href="{% url 'article_list' %}">{{ article.category }}</a></p>
+        <p class="article-breadcrumb"><a href="{% url 'home' %}">Beranda</a><span>›</span><a href="{% url 'article_list' %}">{{ article.category.nama_category }}</a></p>
         <h1>{{ article.title_articles }}</h1>
         <div class="article-byline">
             <div class="article-byline-copy">
@@ -35,7 +35,7 @@
                 {% if related.images %}<img src="{{ related.images.url }}" alt="{{ related.title_articles }}">{% else %}<span>LC</span>{% endif %}
             </div>
             <div class="related-copy">
-                <span class="related-label">Artikel terbaru</span>
+                <span class="related-label">{{ related.category.nama_category }}</span>
                 <h3>{{ related.title_articles }}</h3>
                 <p>{{ related.created_at|date:"d F Y" }} &middot; {{ related.views }} views</p>
             </div>

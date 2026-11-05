@@ -117,12 +117,251 @@ def default_article_slug():
     return f"artikel-{uuid.uuid4().hex[:12]}"
 
 
+def default_article_category_slug():
+    return f"kategori-artikel-{uuid.uuid4().hex[:8]}"
+
+
+def rename_mitra_deepublish_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"mitra-{uuid.uuid4().hex[:10]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("mitra-deepublish", filename)
+
+
 def rename_article_image(instance, filename):
     extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
     filename = f"{instance.slug or 'artikel'}-{uuid.uuid4().hex[:8]}"
     if extension:
         filename = f"{filename}.{extension}"
     return os.path.join("artikel", filename)
+
+
+def rename_footer_icon(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"{instance.nama.lower().replace(' ', '-')}-{uuid.uuid4().hex[:8]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("footer", filename)
+
+
+class FooterSetting(models.Model):
+    nama_toko = models.CharField(max_length=120, default="Losari Computer")
+    deskripsi = models.CharField(
+        max_length=255,
+        default="Partner teknologi untuk kebutuhan kuliah, kerja, desain, dan gaming.",
+    )
+    alamat = models.TextField(
+        default="Jl. Raya Losari No. 9\nLosari, Brebes, Jawa Tengah"
+    )
+    jam_pelayanan = models.CharField(
+        max_length=150, default="Senin - Jumat | 08.00 - 17.00 WIB"
+    )
+    email = models.EmailField(default="hello@losaricomputer.com")
+    whatsapp = models.CharField(max_length=20, default="6281234567890")
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Pengaturan footer"
+        verbose_name_plural = "Pengaturan footer"
+
+    def __str__(self):
+        return self.nama_toko
+
+
+class FooterSocial(models.Model):
+    footer = models.ForeignKey(
+        FooterSetting, on_delete=models.CASCADE, related_name="socials"
+    )
+    nama = models.CharField(max_length=40)
+    url = models.URLField(max_length=255)
+    ikon = models.ImageField(upload_to=rename_footer_icon)
+    urutan = models.PositiveIntegerField(default=0)
+    aktif = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["urutan", "nama"]
+        verbose_name = "Ikon sosial footer"
+        verbose_name_plural = "Ikon sosial footer"
+
+    def __str__(self):
+        return self.nama
+
+
+def rename_footer_payment_icon(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"payment-{instance.nama.lower()}-{uuid.uuid4().hex[:8]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("footer", filename)
+
+
+def rename_about_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"about-{instance.pk or 'profile'}-{uuid.uuid4().hex[:8]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("about", filename)
+
+
+class AboutSetting(models.Model):
+    logo = models.ImageField(upload_to=rename_about_image, blank=True)
+    judul = models.CharField(max_length=180, default="Tentang Losari Computer")
+    tagline = models.CharField(
+        max_length=255,
+        default="Partner teknologi terpercaya untuk kebutuhan digital Anda.",
+    )
+    deskripsi = models.TextField(
+        default="Losari Computer hadir untuk membantu masyarakat mendapatkan perangkat teknologi berkualitas dengan layanan yang jujur, ramah, dan profesional."
+    )
+    sejarah = models.TextField(
+        default="Berawal dari usaha mikro yang melayani kebutuhan komputer dan laptop di Losari, kami terus berkembang melalui kepercayaan pelanggan dan komitmen pada kualitas."
+    )
+    ceo_nama = models.CharField(max_length=120, default="CEO Losari Computer")
+    ceo_jabatan = models.CharField(max_length=120, default="Founder & CEO")
+    ceo_foto = models.ImageField(upload_to=rename_about_image, blank=True)
+    visi = models.TextField(
+        default="Menjadi partner teknologi pilihan yang membantu setiap orang tumbuh dan produktif."
+    )
+    misi = models.TextField(
+        default="Menyediakan produk terpercaya, memberikan konsultasi yang jujur, dan menghadirkan layanan purna jual yang dapat diandalkan."
+    )
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Pengaturan tentang kami"
+        verbose_name_plural = "Pengaturan tentang kami"
+
+    def __str__(self):
+        return self.judul
+
+
+def rename_testimonial_photo(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"customer-{uuid.uuid4().hex[:10]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("testimoni", filename)
+
+
+class Testimoni(models.Model):
+    pengguna = models.OneToOneField(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="testimoni",
+        verbose_name="Akun pelanggan",
+    )
+    nama_pelanggan = models.CharField(max_length=120, verbose_name="Nama pelanggan")
+    kota = models.CharField(max_length=80, blank=True, verbose_name="Kota")
+    produk = models.CharField(max_length=150, blank=True, verbose_name="Produk yang dibeli")
+    foto = models.ImageField(
+        upload_to=rename_testimonial_photo,
+        blank=True,
+        verbose_name="Foto pelanggan",
+    )
+    rating = models.PositiveSmallIntegerField(
+        default=5,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name="Rating",
+    )
+    pesan = models.TextField(verbose_name="Testimoni")
+    aktif = models.BooleanField(default=True, verbose_name="Tampilkan")
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-dibuat_pada", "-pk"]
+        verbose_name = "Testimoni pelanggan"
+        verbose_name_plural = "Testimoni pelanggan"
+
+    @property
+    def display_name(self):
+        if self.pengguna:
+            full_name = self.pengguna.get_full_name().strip()
+            if full_name:
+                return full_name
+            admin_profile = getattr(self.pengguna, "admin_profile", None)
+            if admin_profile and admin_profile.nama_panggilan:
+                return admin_profile.nama_panggilan
+            return self.pengguna.username
+        return self.nama_pelanggan
+
+    @property
+    def display_photo(self):
+        if self.pengguna:
+            user_profile = getattr(self.pengguna, "pengguna", None)
+            if user_profile and user_profile.photo:
+                return user_profile.photo
+            admin_profile = getattr(self.pengguna, "admin_profile", None)
+            if admin_profile and admin_profile.photo:
+                return admin_profile.photo
+        return self.foto
+
+    def __str__(self):
+        return f"{self.nama_pelanggan} - {self.rating}/5"
+
+
+class FooterPayment(models.Model):
+    footer = models.ForeignKey(
+        FooterSetting, on_delete=models.CASCADE, related_name="payments"
+    )
+    nama = models.CharField(max_length=40)
+    ikon = models.ImageField(upload_to=rename_footer_payment_icon)
+    urutan = models.PositiveIntegerField(default=0)
+    aktif = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["urutan", "nama"]
+        verbose_name = "Ikon pembayaran footer"
+        verbose_name_plural = "Ikon pembayaran footer"
+
+    def __str__(self):
+        return self.nama
+
+
+class KategoriArtikel(models.Model):
+    nama_category = models.CharField(
+        max_length=80,
+        unique=True,
+        verbose_name="Nama kategori",
+    )
+    slug = models.SlugField(
+        max_length=100,
+        unique=True,
+        default=default_article_category_slug,
+        verbose_name="Slug",
+    )
+    status_category = models.BooleanField(
+        default=True,
+        verbose_name="Kategori aktif",
+    )
+
+    class Meta:
+        ordering = ["nama_category"]
+        verbose_name = "Kategori artikel"
+        verbose_name_plural = "Kategori artikel"
+
+    def __str__(self):
+        return self.nama_category
+
+
+class MitraDeepublish(models.Model):
+    nama = models.CharField(max_length=120, verbose_name="Nama mitra")
+    gambar = models.ImageField(
+        upload_to=rename_mitra_deepublish_image,
+        verbose_name="Logo mitra",
+    )
+    aktif = models.BooleanField(default=True, verbose_name="Tampilkan")
+    urutan = models.PositiveIntegerField(default=0, verbose_name="Urutan")
+
+    class Meta:
+        ordering = ["urutan", "nama"]
+        verbose_name = "Mitra Deepublish"
+        verbose_name_plural = "Mitra Deepublish"
+
+    def __str__(self):
+        return self.nama
 
 
 class Artikel(models.Model):
@@ -140,11 +379,12 @@ class Artikel(models.Model):
         verbose_name="Deskripsi SEO",
         help_text="Ringkasan singkat yang tampil di kartu artikel dan mesin pencari.",
     )
-    category = models.CharField(
-        max_length=80,
-        default="BERITA TERKINI",
+    category = models.ForeignKey(
+        KategoriArtikel,
+        on_delete=models.PROTECT,
+        related_name="artikel",
         verbose_name="Kategori berita",
-        help_text="Contoh: BERITA TERKINI, TIPS TEKNOLOGI, atau PROMO.",
+        help_text="Pilih kategori artikel yang aktif.",
     )
     content = models.TextField(verbose_name="Isi artikel")
     authors = models.CharField(

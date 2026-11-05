@@ -32,6 +32,8 @@ urlpatterns = [
     path("shop/", views.shop, name="shop"),
     path("artikel/", views.article_list, name="article_list"),
     path("artikel/<slug:slug>/", views.article_detail, name="article_detail"),
+    path("tentang-kami/", views.about, name="about"),
+    path("testimoni/", views.testimonials, name="testimonials"),
 ]
 
 if settings.DEBUG:

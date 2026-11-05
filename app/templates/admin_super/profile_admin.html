@@ -18,6 +18,7 @@
         .logout { width:calc(100% - 24px); margin:160px 12px 0; padding:15px; color:#cbd5e1; background:#ffffff0d; border:1px solid #ffffff12; border-radius:12px; cursor:pointer; font:700 12px inherit; }
         .logout:hover { color:#fff; background:#ffffff1a; } .main { width:100%; min-width:0; } .topbar { display:flex; align-items:center; min-height:82px; padding:16px 40px; background:#fff; border-bottom:1px solid var(--line); }
         .topbar h1 { margin:0; font-size:22px; letter-spacing:-.02em; } .topbar p { margin:5px 0 0; color:var(--muted); font-size:13px; } .content { max-width:900px; padding:35px 40px 55px; }
+        .admin-footer { display:flex; justify-content:space-between; gap:16px; margin:0 40px 24px; padding-top:18px; color:#94a3b8; border-top:1px solid var(--line); font-size:11px; }
         .section { padding:24px; background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 4px 18px #0f172a08; } .section h2 { margin:0 0 20px; color:#991b1b; font-size:17px; }
         .field { margin:18px 0; } label { display:block; margin-bottom:8px; font-weight:700; } input,select { width:100%; min-height:42px; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; } input:focus,select:focus { outline:3px solid #fee2e2; border-color:var(--blue); }
         .errorlist { color:#b91c1c; } .actions { display:flex; justify-content:flex-end; margin-top:22px; } button.save { padding:12px 24px; color:#fff; background:linear-gradient(135deg,var(--blue),#991b1b); border:0; border-radius:8px; cursor:pointer; font-weight:700; }
@@ -44,6 +45,7 @@
                 <form method="post" enctype="multipart/form-data">{% csrf_token %}{% for field in form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<div class="actions"><button class="save" type="submit">Simpan profil</button></div></form>
             </div>
         </section>
+        <footer class="admin-footer"><span>&copy; {% now "Y" %} Losari Computer</span><span>Profil Administrator &middot; Sistem terintegrasi database</span></footer>
     </main>
 </div>
 </body>

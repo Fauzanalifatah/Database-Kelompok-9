@@ -23,7 +23,7 @@
                 {% endif %}
             </a>
             <div class="article-list-body">
-                <p class="article-list-label">{{ article.category }}</p>
+                <p class="article-list-label">{{ article.category.nama_category }}</p>
                 <h2><a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a></h2>
                 <p class="article-list-summary">{{ article.desc_seo }}</p>
                 <p class="article-list-meta">Oleh <strong>{{ article.authors|default:"Losari Computer" }}</strong> <span>·</span> {{ article.created_at|date:"l, F d, Y" }}</p>
@@ -36,5 +36,8 @@
         </div>
         {% endfor %}
     </div>
+    {% if articles %}
+    <button class="article-load-more" type="button">Muat postingan lainnya</button>
+    {% endif %}
 </div>
 {% endblock %}

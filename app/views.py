@@ -3,23 +3,43 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .decorators_admin import admin_required
-from .form_admin import formProfile
+from .form_admin import (
+    FooterPaymentForm,
+    FooterPaymentAddForm,
+    FooterSettingForm,
+    FooterSocialForm,
+    FooterSocialAddForm,
+    MitraDeepublishForm,
+    AboutSettingForm,
+    TestimoniPublicForm,
+    formProfile,
+)
 from .forms import RegistrationForm
 from .models import (
     Artikel,
+    KategoriArtikel,
+    MitraDeepublish,
     ArtikelView,
     Kategori,
     Produk,
     Provinsi,
     UserAdmin,
     UserPengguna,
+    FooterSetting,
+    FooterPayment,
+    FooterSocial,
+    AboutSetting,
+    Testimoni,
 )
+
+FOOTER_SOCIAL_PLATFORMS = ("Instagram", "TikTok", "WhatsApp")
+FOOTER_PAYMENT_PLATFORMS = ("QRIS", "BRI", "BNI", "Mandiri")
 
 
 @admin_required
@@ -34,7 +54,124 @@ def index(request):
         .first()
     )
 
-    if request.method == "POST":
+    footer_setting, _ = FooterSetting.objects.get_or_create(pk=1)
+    about_setting, _ = AboutSetting.objects.get_or_create(pk=1)
+    profile_form = formProfile(
+        instance=user_admin,
+        user=request.user,
+        member=user_pengguna,
+    )
+    if request.method == "POST" and request.POST.get("form_type") == "about":
+        about_form = AboutSettingForm(
+            request.POST, request.FILES, instance=about_setting
+        )
+        if about_form.is_valid():
+            about_form.save()
+            messages.success(request, "Profil Tentang Kami berhasil diperbarui.")
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal memperbarui Tentang Kami.")
+    elif request.method == "POST" and request.POST.get("form_type") == "mitra_deepublish":
+        mitra_id = request.POST.get("mitra_id")
+        instance = (
+            MitraDeepublish.objects.filter(pk=mitra_id).first()
+            if mitra_id
+            else None
+        )
+        mitra_form = MitraDeepublishForm(
+            request.POST, request.FILES, instance=instance
+        )
+        if mitra_form.is_valid():
+            mitra = mitra_form.save(commit=False)
+            if not mitra.pk:
+                mitra.urutan = MitraDeepublish.objects.count()
+            mitra.save()
+            messages.success(request, "Mitra Deepublish berhasil disimpan.")
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal menyimpan mitra. Periksa nama dan gambar.")
+    elif request.method == "POST" and request.POST.get("form_type") == "social_add":
+        social_form = FooterSocialAddForm(request.POST, request.FILES)
+        if social_form.is_valid():
+            social = social_form.save(commit=False)
+            social.footer = footer_setting
+            social.urutan = footer_setting.socials.count()
+            social.save()
+            messages.success(request, "Ikon sosial media berhasil ditambahkan.")
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal menambahkan ikon sosial media.")
+    elif request.method == "POST" and request.POST.get("form_type") == "social":
+        social_name = request.POST.get("social_name", "")
+        if not social_name:
+            messages.error(request, "Platform sosial media tidak valid.")
+            return redirect("app:dashboard")
+        social = footer_setting.socials.filter(nama=social_name).first()
+        social_is_new = social is None
+        if social is None:
+            social = FooterSocial(
+                footer=footer_setting,
+                nama=social_name,
+                urutan=footer_setting.socials.count(),
+            )
+        social_form = FooterSocialForm(
+            request.POST, request.FILES, instance=social
+        )
+        if social_form.is_valid():
+            social = social_form.save(commit=False)
+            social.footer = footer_setting
+            social.nama = social_name
+            if social_is_new:
+                social.urutan = footer_setting.socials.count()
+            social.save()
+            messages.success(
+                request, f"Ikon {social_name} berhasil diperbarui."
+            )
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal memperbarui ikon. Periksa isian form.")
+    elif request.method == "POST" and request.POST.get("form_type") == "footer":
+        footer_form = FooterSettingForm(request.POST, instance=footer_setting)
+        if footer_form.is_valid():
+            footer_form.save()
+            messages.success(request, "Pengaturan footer berhasil diperbarui.")
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal memperbarui footer. Periksa isian form.")
+    elif request.method == "POST" and request.POST.get("form_type") == "payment_add":
+        payment_form = FooterPaymentAddForm(request.POST, request.FILES)
+        if payment_form.is_valid():
+            payment = payment_form.save(commit=False)
+            payment.footer = footer_setting
+            payment.urutan = footer_setting.payments.count()
+            payment.save()
+            messages.success(request, "Metode pembayaran berhasil ditambahkan.")
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal menambahkan metode pembayaran.")
+    elif request.method == "POST" and request.POST.get("form_type") == "payment":
+        payment_name = request.POST.get("payment_name", "")
+        if not payment_name:
+            messages.error(request, "Metode pembayaran tidak valid.")
+            return redirect("app:dashboard")
+        payment = footer_setting.payments.filter(nama=payment_name).first()
+        payment_is_new = payment is None
+        if payment is None:
+            payment = FooterPayment(
+                footer=footer_setting,
+                nama=payment_name,
+                urutan=footer_setting.payments.count(),
+            )
+        payment_form = FooterPaymentForm(
+            request.POST, request.FILES, instance=payment
+        )
+        if payment_form.is_valid():
+            payment = payment_form.save(commit=False)
+            payment.footer = footer_setting
+            payment.nama = payment_name
+            if payment_is_new:
+                payment.urutan = footer_setting.payments.count()
+            payment.save()
+            messages.success(
+                request, f"Logo {payment_name} berhasil diperbarui."
+            )
+            return redirect("app:dashboard")
+        messages.error(request, "Gagal memperbarui logo pembayaran.")
+    elif request.method == "POST":
         profile_form = formProfile(
             request.POST,
             request.FILES,
@@ -65,8 +202,57 @@ def index(request):
             messages.success(request, "Profil admin berhasil diperbarui.")
             return redirect("app:dashboard")
         messages.error(request, "Gagal memperbarui profil. Periksa isian form.")
-    else:
-        profile_form = formProfile(instance=user_admin, user=request.user)
+    footer_form = FooterSettingForm(instance=footer_setting)
+    about_form = AboutSettingForm(instance=about_setting)
+    mitra_deepublish_forms = [
+        {"item": item, "form": MitraDeepublishForm(instance=item)}
+        for item in MitraDeepublish.objects.all()
+    ]
+    footer_social_forms = []
+    for social_name in FOOTER_SOCIAL_PLATFORMS:
+        social = footer_setting.socials.filter(nama=social_name).first()
+        footer_social_forms.append(
+            {
+                "name": social_name,
+                "form": FooterSocialForm(instance=social),
+                "social": social,
+            }
+        )
+    for social in footer_setting.socials.exclude(
+        nama__in=FOOTER_SOCIAL_PLATFORMS
+    ):
+        footer_social_forms.insert(
+            0,
+            {
+                "name": social.nama,
+                "form": FooterSocialForm(instance=social),
+                "social": social,
+            },
+        )
+    footer_payment_forms = []
+    for payment_name in FOOTER_PAYMENT_PLATFORMS:
+        payment = footer_setting.payments.filter(nama=payment_name).first()
+        footer_payment_forms.append(
+            {
+                "name": payment_name,
+                "form": FooterPaymentForm(instance=payment),
+                "payment": payment,
+            }
+        )
+    for payment in footer_setting.payments.exclude(
+        nama__in=FOOTER_PAYMENT_PLATFORMS
+    ):
+        footer_payment_forms.insert(
+            0,
+            {
+                "name": payment.nama,
+                "form": FooterPaymentForm(instance=payment),
+                "payment": payment,
+            },
+        )
+    footer_social_add_form = FooterSocialAddForm()
+    footer_payment_add_form = FooterPaymentAddForm()
+    mitra_deepublish_add_form = MitraDeepublishForm()
 
     today = timezone.localdate()
     dashboard_context = {
@@ -101,6 +287,16 @@ def index(request):
                 "profile_user": request.user,
                 "profile_member": user_pengguna,
                 "is_admin": True,
+                "footer_setting": footer_setting,
+                "footer_form": footer_form,
+                "footer_social_forms": footer_social_forms,
+                "footer_payment_forms": footer_payment_forms,
+                "footer_social_add_form": footer_social_add_form,
+                "footer_payment_add_form": footer_payment_add_form,
+                "about_setting": about_setting,
+                "about_form": about_form,
+                "mitra_deepublish_forms": mitra_deepublish_forms,
+                "mitra_deepublish_add_form": mitra_deepublish_add_form,
             }
         )
         return render(request, "app/dashboard.html", dashboard_context)
@@ -169,6 +365,7 @@ def home(request):
             "latest_articles": Artikel.objects.filter(published=True).order_by(
                 "-created_at"
             )[:3],
+            "mitra_deepublish": MitraDeepublish.objects.filter(aktif=True),
             "products": products,
             "selected_category": selected_category,
             "query": query,
@@ -176,20 +373,100 @@ def home(request):
     )
 
 
+def about(request):
+    about_setting, _ = AboutSetting.objects.get_or_create(pk=1)
+    return render(request, "storefront/about.html", {"about_setting": about_setting})
+
+
+def testimonials(request):
+    items = list(
+        Testimoni.objects.filter(aktif=True).select_related(
+            "pengguna",
+            "pengguna__pengguna",
+            "pengguna__admin_profile",
+        )
+    )
+    user_testimonial = (
+        Testimoni.objects.filter(pengguna=request.user).first()
+        if request.user.is_authenticated
+        else None
+    )
+    testimonial_form = None
+    if request.user.is_authenticated and user_testimonial is None:
+        testimonial_form = TestimoniPublicForm(
+            request.POST or None,
+            request.FILES or None,
+        )
+        if request.method == "POST":
+            if testimonial_form.is_valid():
+                testimonial = testimonial_form.save(commit=False)
+                testimonial.pengguna = request.user
+                testimonial.nama_pelanggan = (
+                    request.user.get_full_name().strip()
+                    or request.user.username
+                )
+                testimonial.aktif = True
+                try:
+                    testimonial.save()
+                except IntegrityError:
+                    messages.error(
+                        request,
+                        "Akun Anda sudah memiliki satu testimoni.",
+                    )
+                else:
+                    messages.success(
+                        request,
+                        "Terima kasih, testimoni Anda berhasil ditambahkan.",
+                    )
+                    return redirect("testimonials")
+            else:
+                messages.error(request, "Periksa kembali isian testimoni Anda.")
+    total_reviews = len(items)
+    average_rating = (
+        sum(item.rating for item in items) / total_reviews if total_reviews else 0
+    )
+    return render(
+        request,
+        "storefront/testimonials.html",
+        {
+            "testimonials": items,
+            "total_reviews": total_reviews,
+            "average_rating": average_rating,
+            "testimonial_form": testimonial_form,
+            "user_testimonial": user_testimonial,
+        },
+    )
+
+
 def article_list(request):
-    articles = Artikel.objects.filter(published=True)
+    articles = (
+        Artikel.objects.filter(
+            published=True,
+            category__status_category=True,
+        )
+        .select_related("category")
+        .order_by("-created_at", "-pk")
+    )
+    if request.GET.get("semua") != "1":
+        articles = articles[:5]
     return render(
         request,
         "storefront/article_list.html",
-        {"articles": articles},
+        {
+            "articles": articles,
+            "article_categories": KategoriArtikel.objects.filter(
+                status_category=True
+            ),
+        },
     )
 
 
 def article_detail(request, slug):
     article = get_object_or_404(
-        Artikel,
+        Artikel.objects.select_related("category"),
         slug=slug,
         published=True,
+        category__status_category=True,
     )
     if request.user.is_authenticated:
         visitor_key = f"user:{request.user.pk}"

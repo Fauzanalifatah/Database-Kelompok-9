@@ -2,6 +2,12 @@ from django.contrib import admin
 
 from .models import (
     Artikel,
+    KategoriArtikel,
+    MitraDeepublish,
+    AboutSetting,
+    FooterSetting,
+    FooterPayment,
+    FooterSocial,
     ItemPesanan,
     Kategori,
     Pesanan,
@@ -11,7 +17,47 @@ from .models import (
     Provinsi,
     UserAdmin,
     UserPengguna,
+    Testimoni,
 )
+
+
+@admin.register(AboutSetting)
+class AboutSettingAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ("Identitas bisnis", {"fields": ("logo", "judul", "tagline", "deskripsi")}),
+        ("Perjalanan bisnis", {"fields": ("sejarah",)}),
+        ("Profil CEO", {"fields": ("ceo_nama", "ceo_jabatan", "ceo_foto")}),
+        ("Arah bisnis", {"fields": ("visi", "misi")}),
+    )
+
+
+@admin.register(Testimoni)
+class TestimoniAdmin(admin.ModelAdmin):
+    list_display = (
+        "nama_pelanggan",
+        "pengguna",
+        "produk",
+        "rating",
+        "aktif",
+        "dibuat_pada",
+    )
+    list_filter = ("aktif", "rating")
+    search_fields = ("nama_pelanggan", "kota", "produk", "pesan")
+
+
+class FooterSocialInline(admin.TabularInline):
+    model = FooterSocial
+    extra = 1
+
+
+class FooterPaymentInline(admin.TabularInline):
+    model = FooterPayment
+    extra = 0
+
+
+@admin.register(FooterSetting)
+class FooterSettingAdmin(admin.ModelAdmin):
+    inlines = [FooterSocialInline, FooterPaymentInline]
 
 
 @admin.register(Artikel)
@@ -25,10 +71,32 @@ class ArtikelAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     )
-    list_filter = ("published", "created_at", "updated_at")
-    search_fields = ("title_articles", "category", "desc_seo", "content")
+    list_filter = ("category", "published", "created_at", "updated_at")
+    search_fields = (
+        "title_articles",
+        "category__nama_category",
+        "desc_seo",
+        "content",
+    )
     prepopulated_fields = {"slug": ("title_articles",)}
     readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(KategoriArtikel)
+class KategoriArtikelAdmin(admin.ModelAdmin):
+    list_display = ("nama_category", "slug", "status_category")
+    list_filter = ("status_category",)
+    search_fields = ("nama_category",)
+    prepopulated_fields = {"slug": ("nama_category",)}
+
+
+@admin.register(MitraDeepublish)
+class MitraDeepublishAdmin(admin.ModelAdmin):
+    list_display = ("nama", "aktif", "urutan")
+    list_filter = ("aktif",)
+    search_fields = ("nama",)
+    list_editable = ("aktif", "urutan")
+    fields = ("nama", "gambar")
 
 
 @admin.register(Kategori)

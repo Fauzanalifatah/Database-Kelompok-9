@@ -57,6 +57,7 @@
         .logout-button { color: #b91c1c; background: #fff; border: 1px solid #fecaca; cursor: pointer; font: inherit; }
         .logout-button:hover { background: #fef2f2; }
         .content { max-width: 1400px; padding: 35px 40px 55px; }
+        .admin-footer { display:flex; justify-content:space-between; gap:16px; margin:0 40px 24px; padding-top:18px; color:#94a3b8; border-top:1px solid var(--line); font-size:11px; }
         .welcome { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
         .welcome h2 { margin: 0; font-size: 27px; letter-spacing: -.04em; }
         .welcome p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
@@ -141,6 +142,42 @@
         .profile-field label { color: var(--text); font-size: 12px; font-weight: 700; }
         .profile-field input, .profile-field select { display: block; width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; }
         .profile-field input:focus, .profile-field select:focus { outline: 3px solid var(--blue-soft); border-color: var(--blue); }
+        .footer-settings-panel { scroll-margin-top: 20px; }
+        .footer-settings-panel textarea { min-height: 90px; width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; resize: vertical; }
+        .about-settings-panel textarea { min-height: 100px; width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; resize: vertical; }
+        .testimonial-settings-panel { scroll-margin-top: 20px; }
+        .testimonial-admin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .testimonial-admin-card { min-width: 0; padding: 18px; background: #f8fafc; border: 1px solid var(--line); border-radius: 12px; }
+        .testimonial-admin-card h3 { margin: 0 0 16px; font-size: 15px; }
+        .testimonial-admin-add { background: #fff; border-style: dashed; }
+        .testimonial-admin-empty { grid-column: 1/-1; padding: 20px; color: var(--muted); background: #f8fafc; border: 1px dashed var(--line); border-radius: 10px; font-size: 13px; }
+        .footer-settings-panel input[type="file"] { padding: 9px; }
+        .footer-social-form { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+        .footer-social-form h3 { margin: 0 0 15px; color: var(--text); font-size: 14px; }
+        .footer-social-form small { display: block; margin-top: 10px; color: var(--muted); font-size: 11px; }
+        .footer-social-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 14px; }
+        .footer-social-card { display: flex; min-width: 0; flex-direction: column; padding: 17px; background: #f8fafc; border: 1px solid var(--line); border-radius: 12px; }
+        .footer-social-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; color: var(--text); font-size: 13px; }
+        .footer-social-card-heading img { width: 34px; height: 34px; padding: 3px; object-fit: contain; background: #fff; border: 1px solid #e2e8f0; border-radius: 50%; }
+        .footer-social-card-heading .footer-round-icon { border-radius: 50%; }
+        .footer-social-card .profile-field { margin-bottom: 12px; }
+        .footer-social-card .profile-field input { min-height: 40px; }
+        .footer-social-card form { display: grid; flex: 1; align-content: start; }
+        .footer-social-card .save-profile { width: 100%; margin-top: auto; padding: 10px 12px; font-size: 11px; }
+        .checkbox-field { display: flex; align-items: center; justify-content: space-between; min-height: 38px; margin-top: 2px; padding: 8px 10px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .checkbox-field label { margin: 0; color: var(--muted); font-size: 11px; font-weight: 600; }
+        .checkbox-field input[type="checkbox"] { width: 18px !important; height: 18px; min-height: 18px !important; margin: 0; padding: 0 !important; accent-color: var(--blue); cursor: pointer; }
+        .footer-add-card { min-width: 0; padding: 17px; background: #fff; border: 1px dashed #dc2626; border-radius: 12px; }
+        .footer-add-card > strong { display: block; margin-bottom: 14px; color: var(--text); font-size: 13px; }
+        .footer-add-card .profile-field { margin-bottom: 12px; }
+        .footer-add-card .profile-field input { min-height: 40px; }
+        .footer-add-card .save-profile { width: 100%; padding: 10px 12px; font-size: 11px; }
+        .footer-add-card .checkbox-field { margin-top: 2px; }
+        .footer-add-icon { display: grid; width: 28px; height: 28px; margin-bottom: 8px; place-items: center; color: #fff; background: var(--blue); border-radius: 50%; font-size: 21px; line-height: 1; }
+        .footer-social-list { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 20px; color: var(--muted); font-size: 12px; }
+        .footer-social-list strong { flex-basis: 100%; color: var(--text); }
+        .footer-social-list span { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; background: var(--blue-soft); border: 1px solid #fecaca; border-radius: 7px; }
+        .footer-social-list img { width: 18px; height: 18px; object-fit: contain; }
         .profile-field ul.errorlist { margin: 0; padding: 0; color: #b91c1c; font-size: 12px; list-style: none; }
         .profile-actions { display: flex; justify-content: flex-end; margin-top: 4px; }
         .save-profile { padding: 11px 20px; color: #fff; background: linear-gradient(135deg, var(--blue), #991b1b); border: 0; border-radius: 8px; cursor: pointer; font: 700 12px inherit; }
@@ -148,8 +185,9 @@
         @media (max-width: 1050px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .panels { grid-template-columns: 1fr; } }
         @media (max-width: 1050px) { .profile-summary { grid-template-columns: minmax(190px, .7fr) minmax(0, 1.5fr); gap: 16px; } .profile-info-grid { gap: 10px; } .profile-info-card { padding: 13px; } }
         @media (max-width: 850px) { .profile-summary { grid-template-columns: 1fr; gap: 20px; } .profile-photo { min-height: 260px; } }
-        @media (max-width: 900px) { .profile-edit-grid { grid-template-columns: 1fr; } .profile-field-wide { grid-column: auto; } }
+        @media (max-width: 900px) { .profile-edit-grid { grid-template-columns: 1fr; } .profile-field-wide { grid-column: auto; } .footer-social-grid, .testimonial-admin-grid { grid-template-columns: 1fr; } }
         @media (max-width: 700px) { .layout { display: block; }                 .sidebar { position: fixed; z-index: 20; top: 0; bottom: 0; left: 0; width: min(290px, 86vw); min-height: 100vh; padding: 18px 16px; overflow-y: auto; transform: translateX(-105%); transition: transform .25s ease; box-shadow: 12px 0 30px #00000030; } body.menu-open { overflow: hidden; } body.menu-open .sidebar { transform: translateX(0); } body.menu-open .sidebar-overlay { display: block; position: fixed; z-index: 10; inset: 0; background: #0f172a80; } .sidebar-close { display: grid; position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; place-items: center; color: #fff; background: #ffffff18; border: 1px solid #ffffff35; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; } .brand { margin: 0 0 23px; padding-right: 52px; } .brand-copy { min-width: 0; overflow: hidden; } .brand-name { overflow: hidden; text-overflow: ellipsis; } .sidebar nav { display: grid; gap: 5px; } .menu-label, .sidebar-footer { display: none; } .sidebar-logout-form { margin-top: auto; } .sidebar-logout { margin: 0 12px; } .nav-link { white-space: normal; } .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 16px 18px; } .topbar-heading { display: flex; min-width: 0; align-items: center; gap: 9px; } .topbar-heading > div { min-width: 0; } .topbar h1, .topbar p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .menu-toggle { display: inline-grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; color: #991b1b; background: #fff1f2; border: 1px solid #fecaca; border-radius: 9px; cursor: pointer; } .menu-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; } .user-area { width: auto; min-width: 0; flex: 0 0 auto; justify-content: flex-end; gap: 6px; } .user-badge { min-width: 0; } .user-name { max-width: 82px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .admin-link { white-space: nowrap; } .content { padding: 24px 20px 40px; } .profile-grid, .profile-readonly, .profile-edit-grid { grid-template-columns: 1fr; } .profile-field-wide { grid-column: auto; } .profile-actions { justify-content: stretch; } .save-profile { width: 100%; } .profile-photo { width: 100%; } }
+        @media (max-width: 700px) { .admin-footer { flex-direction:column; gap:5px; margin:0 20px 20px; } }
         @media (max-width: 500px) { .profile-info-grid { grid-template-columns: 1fr; } .profile-photo { min-height: 0; padding: 22px 14px; } .profile-photo-frame { width: 132px; height: 132px; flex-basis: 132px; } .profile-camera { right: -3px; bottom: 3px; width: 39px; height: 39px; } .profile-role { font-size: 12px; } .profile-account-note { max-width: 190px; } }
         @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-role { display: none; } .user-name { display: block; max-width: 58px; font-size: 10px; } .avatar { width: 32px; height: 32px; flex-basis: 32px; border-width: 2px; } .admin-link { margin-left: 0; padding: 8px 9px; font-size: 10px; } .panel-body { overflow-x: hidden; } table { min-width: 430px; } .panel-title { padding: 18px; } .panel-body { padding: 8px 18px 18px; } }
         @media (min-width: 901px) {
@@ -214,6 +252,15 @@
             <a class="nav-link" href="/admin/app/artikel/">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>Artikel
             </a>
+            <a class="nav-link" href="#pengaturan-footer">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span>Pengaturan Footer
+            </a>
+            <a class="nav-link" href="#pengaturan-tentang">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>Tentang Kami
+            </a>
+            <a class="nav-link" href="#pengaturan-mitra">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg></span>Mitra Deepublish
+            </a>
         </nav>
         <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan melalui admin Losari Computer.</div>
         <form class="sidebar-logout-form" method="post" action="{% url 'app:logout' %}">
@@ -268,6 +315,119 @@
                 </div>
             </section>
             {% endif %}
+            {% if is_admin %}
+            <section class="panel profile-edit-panel about-settings-panel" id="pengaturan-tentang">
+                <div class="panel-title"><div><h2>Pengaturan Tentang Kami</h2><p>Kelola logo, profil CEO, sejarah, visi, dan misi yang tampil di halaman publik.</p></div><a href="{% url 'about' %}" target="_blank" rel="noopener">Lihat halaman</a></div>
+                <div class="panel-body">
+                    <form method="post" enctype="multipart/form-data" class="profile-form">
+                        {% csrf_token %}<input type="hidden" name="form_type" value="about">
+                        <div class="profile-edit-grid">
+                            {% for field in about_form %}<div class="profile-field {% if field.name == 'deskripsi' or field.name == 'sejarah' or field.name == 'visi' or field.name == 'misi' %}profile-field-wide{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                        </div>
+                        <div class="profile-actions"><button class="save-profile" type="submit">Simpan Tentang Kami</button></div>
+                    </form>
+                </div>
+            </section>
+            {% endif %}
+            {% if is_admin %}
+            <section class="panel profile-edit-panel" id="pengaturan-mitra">
+                <div class="panel-title"><div><h2>Mitra Deepublish</h2><p>Kelola nama dan logo mitra yang tampil di homepage.</p></div><a href="{% url 'home' %}" target="_blank" rel="noopener">Lihat homepage</a></div>
+                <div class="panel-body">
+                    <div class="testimonial-admin-grid">
+                    {% for mitra_item in mitra_deepublish_forms %}
+                    <div class="testimonial-admin-card">
+                        {% if mitra_item.item.gambar %}<img src="{{ mitra_item.item.gambar.url }}" alt="{{ mitra_item.item.nama }}" style="display:block;max-width:180px;max-height:80px;margin-bottom:16px;object-fit:contain;">{% endif %}
+                        <form method="post" enctype="multipart/form-data" class="profile-form">
+                            {% csrf_token %}<input type="hidden" name="form_type" value="mitra_deepublish"><input type="hidden" name="mitra_id" value="{{ mitra_item.item.pk }}">
+                            {% for field in mitra_item.form %}<div class="profile-field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                            <div class="profile-actions"><button class="save-profile" type="submit">Simpan mitra</button></div>
+                        </form>
+                    </div>
+                    {% empty %}
+                    <div class="testimonial-admin-empty">Belum ada mitra. Tambahkan mitra pertama di bawah ini.</div>
+                    {% endfor %}
+                    <div class="testimonial-admin-card testimonial-admin-add">
+                        <h3>Tambah mitra baru</h3>
+                        <form method="post" enctype="multipart/form-data" class="profile-form">
+                            {% csrf_token %}<input type="hidden" name="form_type" value="mitra_deepublish">
+                            {% for field in mitra_deepublish_add_form %}<div class="profile-field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                            <div class="profile-actions"><button class="save-profile" type="submit">Tambah mitra</button></div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+            {% if is_admin %}
+            <section class="panel profile-edit-panel footer-settings-panel" id="pengaturan-footer">
+                <div class="panel-title"><div><h2>Pengaturan footer website</h2><p>Ubah informasi footer dan tambahkan ikon sosial media berbentuk gambar.</p></div></div>
+                <div class="panel-body">
+                    <form method="post" enctype="multipart/form-data" class="profile-form">
+                        {% csrf_token %}<input type="hidden" name="form_type" value="footer">
+                        <div class="profile-edit-grid">
+                            {% for field in footer_form %}<div class="profile-field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                        </div>
+                        <div class="profile-actions"><button class="save-profile" type="submit">Simpan pengaturan footer</button></div>
+                    </form>
+                    <div class="footer-social-form">
+                            <h3>Ikon sosial media</h3>
+                            <div class="footer-social-grid">
+                                {% for social_item in footer_social_forms %}
+                                <div class="footer-social-card">
+                                    <div class="footer-social-card-heading">
+                                        <strong>{{ social_item.name }}</strong>
+                                        {% if social_item.social and social_item.social.ikon %}<img src="{{ social_item.social.ikon.url }}" alt="Ikon {{ social_item.name }}">{% endif %}
+                                    </div>
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}<input type="hidden" name="form_type" value="social"><input type="hidden" name="social_name" value="{{ social_item.name }}">
+                                        {% for field in social_item.form %}<div class="profile-field {% if field.name == 'aktif' %}checkbox-field{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                                        <button class="save-profile" type="submit">Simpan {{ social_item.name }}</button>
+                                    </form>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="footer-add-card">
+                                <span class="footer-add-icon">+</span>
+                                <strong>Tambah sosial media</strong>
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}<input type="hidden" name="form_type" value="social_add">
+                                    {% for field in footer_social_add_form %}<div class="profile-field {% if field.name == 'aktif' %}checkbox-field{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                                    <button class="save-profile" type="submit">Tambah ikon</button>
+                                </form>
+                            </div>
+                            <small>Setiap platform memiliki form sendiri. Unggah gambar PNG/JPG transparan agar ikon tampil rapi.</small>
+                    </div>
+                    <div class="footer-social-form">
+                        <h3>Ikon metode pembayaran</h3>
+                        <div class="footer-social-grid footer-payment-grid">
+                            {% for payment_item in footer_payment_forms %}
+                            <div class="footer-social-card">
+                                <div class="footer-social-card-heading">
+                                    <strong>{{ payment_item.name }}</strong>
+                                    {% if payment_item.payment and payment_item.payment.ikon %}<img class="footer-round-icon" src="{{ payment_item.payment.ikon.url }}" alt="Logo {{ payment_item.name }}">{% endif %}
+                                </div>
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}<input type="hidden" name="form_type" value="payment"><input type="hidden" name="payment_name" value="{{ payment_item.name }}">
+                                    {% for field in payment_item.form %}<div class="profile-field {% if field.name == 'aktif' %}checkbox-field{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                                    <button class="save-profile" type="submit">Simpan {{ payment_item.name }}</button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                            <div class="footer-add-card">
+                                <span class="footer-add-icon">+</span>
+                                <strong>Tambah pembayaran</strong>
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}<input type="hidden" name="form_type" value="payment_add">
+                                    {% for field in footer_payment_add_form %}<div class="profile-field {% if field.name == 'aktif' %}checkbox-field{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+                                    <button class="save-profile" type="submit">Tambah logo</button>
+                                </form>
+                            </div>
+                        </div>
+                        <small>Upload logo pembayaran dalam format PNG/JPG. Logo akan tampil bulat di footer website.</small>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
             <section class="cards">
                 <article class="card"><div class="card-head"><span class="card-label">Total Produk</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span></div><div class="card-value">{{ total_produk }}</div><div class="card-note">Produk tersimpan</div><a class="card-link" href="/admin/app/produk/">Kelola produk →</a></article>
                 <article class="card"><div class="card-head"><span class="card-label">Total Artikel</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span></div><div class="card-value">{{ total_artikel }}</div><div class="card-note">{{ artikel_terbit }} artikel ditampilkan</div><a class="card-link" href="/admin/app/artikel/">Kelola artikel →</a></article>
@@ -281,6 +441,7 @@
                 <article class="panel"><div class="panel-title"><div><h2>Akses cepat</h2><p>Jalankan tugas umum dengan cepat</p></div></div><div class="panel-body"><div class="quick-links"><a class="quick-link" href="/admin/app/produk/add/"><span>Tambah produk baru</span><span>›</span></a><a class="quick-link" href="/admin/app/artikel/add/"><span>Tambah artikel baru</span><span>›</span></a><a class="quick-link" href="/admin/app/kategori/add/"><span>Tambah kategori</span><span>›</span></a><a class="quick-link" href="/admin/app/pesanan/"><span>Periksa pesanan</span><span>›</span></a><a class="quick-link" href="/admin/"><span>Kelola administrasi</span><span>›</span></a></div></div></article>
             </section>
         </main>
+        <footer class="admin-footer"><span>&copy; {% now "Y" %} Losari Computer</span><span>Dashboard Administrator &middot; Sistem terintegrasi database</span></footer>
     </div>
 </div>
 </body>
