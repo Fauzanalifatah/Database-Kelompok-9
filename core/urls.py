@@ -32,6 +32,12 @@ urlpatterns = [
     path("shop/", views.shop, name="shop"),
     path("artikel/", views.article_list, name="article_list"),
     path("artikel/<slug:slug>/", views.article_detail, name="article_detail"),
+    path("blog/", views.blog_pengguna_list, name="blog_pengguna_list"),
+    path(
+        "blog/<slug:slug>/",
+        views.blog_pengguna_detail,
+        name="blog_pengguna_detail",
+    ),
     path("tentang-kami/", views.about, name="about"),
     path("testimoni/", views.testimonials, name="testimonials"),
 ]

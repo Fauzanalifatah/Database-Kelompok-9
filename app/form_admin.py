@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 
 from .models import (
     AboutSetting,
@@ -9,6 +10,13 @@ from .models import (
     Provinsi,
     Testimoni,
     UserAdmin,
+    UserPengguna,
+    Pesanan,
+    Artikel,
+    KategoriArtikel,
+    Produk,
+    ProdukGambar,
+    ProdukKeunggulan,
 )
 
 
@@ -182,10 +190,144 @@ class TestimoniForm(forms.ModelForm):
 class MitraDeepublishForm(forms.ModelForm):
     class Meta:
         model = MitraDeepublish
-        fields = ["nama", "gambar"]
+        fields = ["nama", "gambar", "aktif", "urutan"]
         widgets = {
             "gambar": forms.FileInput(attrs={"accept": "image/*"}),
         }
+
+
+class AdminPelangganForm(forms.ModelForm):
+    nama = forms.CharField(max_length=150, label="Nama pelanggan", required=False)
+    telp = forms.CharField(max_length=15, label="Nomor telepon", required=False)
+    alamat = forms.CharField(
+        label="Alamat",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 3}),
+    )
+
+    class Meta:
+        model = User
+        fields = ["nama", "email", "telp", "alamat", "is_active"]
+        labels = {
+            "email": "Email",
+            "is_active": "Akun aktif",
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.member = kwargs.pop("member", None)
+        super().__init__(*args, **kwargs)
+        if self.member:
+            self.fields["nama"].initial = self.instance.get_full_name()
+            self.fields["telp"].initial = self.member.telp
+            self.fields["alamat"].initial = self.member.alamat
+    def save(self, commit=True):
+        user = self.instance
+        user.first_name = self.cleaned_data["nama"]
+        user.email = self.cleaned_data["email"]
+        user.is_active = self.cleaned_data["is_active"]
+        if commit:
+            user.save(update_fields=["first_name", "email", "is_active"])
+        if self.member:
+            self.member.telp = self.cleaned_data["telp"]
+            self.member.alamat = self.cleaned_data["alamat"]
+            self.member.save(update_fields=["telp", "alamat"])
+        return user
+
+
+class AdminPesananStatusForm(forms.ModelForm):
+    class Meta:
+        model = Pesanan
+        fields = ["status"]
+        labels = {"status": "Status pesanan"}
+
+
+class AdminArtikelForm(forms.ModelForm):
+    slug = forms.SlugField(required=False)
+
+    class Meta:
+        model = Artikel
+        fields = [
+            "title_articles",
+            "slug",
+            "desc_seo",
+            "category",
+            "authors",
+            "content",
+            "images",
+            "published",
+        ]
+        widgets = {
+            "content": forms.Textarea(attrs={"rows": 18}),
+            "images": forms.FileInput(attrs={"accept": "image/*"}),
+        }
+
+
+class AdminProdukForm(forms.ModelForm):
+    slug = forms.SlugField(required=False)
+
+    class Meta:
+        model = Produk
+        fields = [
+            "nama",
+            "slug",
+            "merek",
+            "kategori",
+            "deskripsi",
+            "spesifikasi",
+            "harga",
+            "diskon_persen",
+            "stok",
+            "kondisi",
+            "gambar",
+            "unggulan",
+            "aktif",
+        ]
+        widgets = {
+            "deskripsi": forms.Textarea(attrs={"rows": 6}),
+            "spesifikasi": forms.Textarea(
+                attrs={"rows": 5, "placeholder": '{"RAM": "16 GB", "Storage": "512 GB"}'}
+            ),
+            "gambar": forms.FileInput(attrs={"accept": "image/*"}),
+        }
+
+    def clean_spesifikasi(self):
+        value = self.cleaned_data["spesifikasi"]
+        if isinstance(value, str):
+            import json
+
+            try:
+                value = json.loads(value or "{}")
+            except json.JSONDecodeError as error:
+                raise forms.ValidationError(
+                    "Spesifikasi harus berupa JSON yang valid."
+                ) from error
+        if not isinstance(value, dict):
+            raise forms.ValidationError("Spesifikasi harus berupa objek JSON.")
+        return value
+
+
+class AdminProdukGambarForm(forms.ModelForm):
+    gambar = forms.ImageField(required=False)
+
+    class Meta:
+        model = ProdukGambar
+        fields = ("tipe", "gambar", "urutan")
+
+
+ProdukGambarFormSet = forms.inlineformset_factory(
+    Produk,
+    ProdukGambar,
+    form=AdminProdukGambarForm,
+    extra=1,
+    can_delete=True,
+)
+ProdukKeunggulanFormSet = forms.inlineformset_factory(
+    Produk,
+    ProdukKeunggulan,
+    fields=("judul", "deskripsi", "ikon", "warna", "urutan"),
+    extra=2,
+    can_delete=True,
+)
 
 
 class TestimoniPublicForm(forms.ModelForm):

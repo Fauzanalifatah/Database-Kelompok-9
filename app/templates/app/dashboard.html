@@ -19,10 +19,10 @@
             --background: #f7f9fc;
         }
         * { box-sizing: border-box; }
-        body { margin: 0; color: var(--text); background: var(--background); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        body { margin: 0; overflow-x: hidden; color: var(--text); background: var(--background); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         a { color: inherit; text-decoration: none; }
-        .layout { display: flex; min-height: 100vh; }
-        .sidebar { display: flex; flex-direction: column; width: 256px; min-height: 100vh; flex-shrink: 0; padding: 27px 16px; color: #fee2e2; background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d); }
+        .layout { display: flex; align-items: stretch; min-height: 100vh; }
+        .sidebar { position: sticky; top: 0; display: flex; align-self: flex-start; flex-direction: column; width: 256px; height: 100vh; flex-shrink: 0; padding: 27px 16px; overflow-y: auto; color: #fee2e2; background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d); }
         .menu-toggle, .sidebar-close { display: none; }
         .sidebar-overlay { display: none; }
         .brand { display: flex; align-items: center; gap: 10px; margin: 0 12px 48px; color: #fff; }
@@ -37,12 +37,12 @@
         .nav-icon { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; color: #94a3b8; }
         .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
         .nav-link.active .nav-icon, .nav-link:hover .nav-icon { color: #fecaca; }
-        .sidebar-footer { margin: 160px 12px 0; padding: 15px; color: #cbd5e1; background: #ffffff0d; border: 1px solid #ffffff12; border-radius: 12px; font-size: 12px; line-height: 1.5; }
+        .sidebar-footer { margin: auto 12px 0; padding: 15px; color: #cbd5e1; background: #ffffff0d; border: 1px solid #ffffff12; border-radius: 12px; font-size: 12px; line-height: 1.5; }
         .sidebar-footer strong { display: block; margin-bottom: 4px; color: #fff; }
         .sidebar-logout { width: calc(100% - 24px); margin: auto 12px 0; padding: 11px 18px; color: #fee2e2; background: #ffffff0d; border: 1px solid #ffffff24; border-radius: 8px; cursor: pointer; font: 700 13px inherit; }
-        .sidebar-logout-form { display: flex; margin-top: auto; padding-top: 18px; }
+        .sidebar-logout-form { display: flex; margin-top: 0; padding-top: 18px; }
         .sidebar-logout:hover { color: #fff; background: #ffffff1a; }
-        .main { width: 100%; min-width: 0; }
+        .main { width: 100%; min-width: 0; min-height: 100vh; overflow: hidden; }
         .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 82px; padding: 16px 40px; background: var(--surface); border-bottom: 1px solid var(--line); }
         .topbar h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
         .topbar p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
@@ -118,7 +118,7 @@
         .panel-title p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
         .panel-title a { color: var(--blue); font-size: 12px; font-weight: 750; }
         .panel-body { padding: 8px 23px 21px; }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 100%; min-width: 560px; border-collapse: collapse; }
         th, td { padding: 15px 4px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         th { color: var(--muted); font-size: 11px; font-weight: 750; text-transform: uppercase; }
         tr:last-child td { border-bottom: 0; }
@@ -189,15 +189,11 @@
         @media (max-width: 700px) { .layout { display: block; }                 .sidebar { position: fixed; z-index: 20; top: 0; bottom: 0; left: 0; width: min(290px, 86vw); min-height: 100vh; padding: 18px 16px; overflow-y: auto; transform: translateX(-105%); transition: transform .25s ease; box-shadow: 12px 0 30px #00000030; } body.menu-open { overflow: hidden; } body.menu-open .sidebar { transform: translateX(0); } body.menu-open .sidebar-overlay { display: block; position: fixed; z-index: 10; inset: 0; background: #0f172a80; } .sidebar-close { display: grid; position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; place-items: center; color: #fff; background: #ffffff18; border: 1px solid #ffffff35; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; } .brand { margin: 0 0 23px; padding-right: 52px; } .brand-copy { min-width: 0; overflow: hidden; } .brand-name { overflow: hidden; text-overflow: ellipsis; } .sidebar nav { display: grid; gap: 5px; } .menu-label, .sidebar-footer { display: none; } .sidebar-logout-form { margin-top: auto; } .sidebar-logout { margin: 0 12px; } .nav-link { white-space: normal; } .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 16px 18px; } .topbar-heading { display: flex; min-width: 0; align-items: center; gap: 9px; } .topbar-heading > div { min-width: 0; } .topbar h1, .topbar p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .menu-toggle { display: inline-grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; color: #991b1b; background: #fff1f2; border: 1px solid #fecaca; border-radius: 9px; cursor: pointer; } .menu-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; } .user-area { width: auto; min-width: 0; flex: 0 0 auto; justify-content: flex-end; gap: 6px; } .user-badge { min-width: 0; } .user-name { max-width: 82px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .admin-link { white-space: nowrap; } .content { padding: 24px 20px 40px; } .profile-grid, .profile-readonly, .profile-edit-grid { grid-template-columns: 1fr; } .profile-field-wide { grid-column: auto; } .profile-actions { justify-content: stretch; } .save-profile { width: 100%; } .profile-photo { width: 100%; } }
         @media (max-width: 700px) { .admin-footer { flex-direction:column; gap:5px; margin:0 20px 20px; } }
         @media (max-width: 500px) { .profile-info-grid { grid-template-columns: 1fr; } .profile-photo { min-height: 0; padding: 22px 14px; } .profile-photo-frame { width: 132px; height: 132px; flex-basis: 132px; } .profile-camera { right: -3px; bottom: 3px; width: 39px; height: 39px; } .profile-role { font-size: 12px; } .profile-account-note { max-width: 190px; } }
-        @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-role { display: none; } .user-name { display: block; max-width: 58px; font-size: 10px; } .avatar { width: 32px; height: 32px; flex-basis: 32px; border-width: 2px; } .admin-link { margin-left: 0; padding: 8px 9px; font-size: 10px; } .panel-body { overflow-x: hidden; } table { min-width: 430px; } .panel-title { padding: 18px; } .panel-body { padding: 8px 18px 18px; } }
+        @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .welcome { align-items: flex-start; flex-direction: column; } .user-role { display: none; } .user-name { display: block; max-width: 58px; font-size: 10px; } .avatar { width: 32px; height: 32px; flex-basis: 32px; border-width: 2px; } .admin-link { margin-left: 0; padding: 8px 9px; font-size: 10px; } .panel-body { overflow-x: auto; } table { min-width: 430px; } .panel-title { padding: 18px; } .panel-body { padding: 8px 18px 18px; } }
         @media (min-width: 901px) {
             .profile-info-grid { height: 100%; }
         }
         @media (max-width: 1100px) {
-            .sidebar { width: 220px; }
-            .brand { gap: 8px; margin-right: 8px; margin-left: 8px; }
-            .brand-logo { width: 40px; height: 40px; flex-basis: 40px; }
-            .brand-name { font-size: 14px; }
             .content { padding-right: 28px; padding-left: 28px; }
             .topbar { padding-right: 28px; padding-left: 28px; }
             .profile-summary { grid-template-columns: 1fr; gap: 18px; }
@@ -240,29 +236,29 @@
             <a class="nav-link" href="{% url 'home' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Katalog Laptop
             </a>
-            <a class="nav-link" href="/admin/app/produk/">
+            <a class="nav-link" href="{% url 'app:produk_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span>Produk
             </a>
-            <a class="nav-link" href="/admin/app/userpengguna/">
+            <a class="nav-link" href="{% url 'app:pelanggan_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 8h2"></path><path d="M20 7v2"></path></svg></span>Pelanggan
             </a>
-            <a class="nav-link" href="/admin/app/pesanan/">
+            <a class="nav-link" href="{% url 'app:pesanan_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6z"></path><path d="M9 3v18"></path><path d="M15 3v18"></path><path d="M9 7h6"></path></svg></span>Pesanan
             </a>
-            <a class="nav-link" href="/admin/app/artikel/">
+            <a class="nav-link" href="{% url 'app:artikel_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>Artikel
             </a>
-            <a class="nav-link" href="#pengaturan-footer">
+            <a class="nav-link" href="{% url 'app:footer_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span>Pengaturan Footer
             </a>
-            <a class="nav-link" href="#pengaturan-tentang">
+            <a class="nav-link" href="{% url 'app:about_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>Tentang Kami
             </a>
-            <a class="nav-link" href="#pengaturan-mitra">
+            <a class="nav-link" href="{% url 'app:mitra_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg></span>Mitra Deepublish
             </a>
         </nav>
-        <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan melalui admin Losari Computer.</div>
+        <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan langsung melalui dashboard Losari Computer.</div>
         <form class="sidebar-logout-form" method="post" action="{% url 'app:logout' %}">
             {% csrf_token %}
             <button class="sidebar-logout" type="submit">Logout</button>
@@ -315,6 +311,7 @@
                 </div>
             </section>
             {% endif %}
+            {% comment %}
             {% if is_admin %}
             <section class="panel profile-edit-panel about-settings-panel" id="pengaturan-tentang">
                 <div class="panel-title"><div><h2>Pengaturan Tentang Kami</h2><p>Kelola logo, profil CEO, sejarah, visi, dan misi yang tampil di halaman publik.</p></div><a href="{% url 'about' %}" target="_blank" rel="noopener">Lihat halaman</a></div>
@@ -428,17 +425,18 @@
                 </div>
             </section>
             {% endif %}
+            {% endcomment %}
             <section class="cards">
-                <article class="card"><div class="card-head"><span class="card-label">Total Produk</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span></div><div class="card-value">{{ total_produk }}</div><div class="card-note">Produk tersimpan</div><a class="card-link" href="/admin/app/produk/">Kelola produk →</a></article>
-                <article class="card"><div class="card-head"><span class="card-label">Total Artikel</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span></div><div class="card-value">{{ total_artikel }}</div><div class="card-note">{{ artikel_terbit }} artikel ditampilkan</div><a class="card-link" href="/admin/app/artikel/">Kelola artikel →</a></article>
-                <article class="card"><div class="card-head"><span class="card-label">Total Pelanggan</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 5.5a3 3 0 0 1 0 5.8"></path><path d="M17 14a6.5 6.5 0 0 1 4.5 6"></path></svg></span></div><div class="card-value">{{ total_anggota }}</div><div class="card-note">Profil pelanggan</div><a class="card-link" href="/admin/app/userpengguna/">Lihat pelanggan →</a></article>
+                <article class="card"><div class="card-head"><span class="card-label">Total Produk</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span></div><div class="card-value">{{ total_produk }}</div><div class="card-note">Produk tersimpan</div><a class="card-link" href="{% url 'app:produk_manager' %}">Kelola produk →</a></article>
+                <article class="card"><div class="card-head"><span class="card-label">Total Artikel</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span></div><div class="card-value">{{ total_artikel }}</div><div class="card-note">{{ artikel_terbit }} artikel ditampilkan</div><a class="card-link" href="{% url 'app:artikel_manager' %}">Kelola artikel →</a></article>
+                <article class="card"><div class="card-head"><span class="card-label">Total Pelanggan</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 5.5a3 3 0 0 1 0 5.8"></path><path d="M17 14a6.5 6.5 0 0 1 4.5 6"></path></svg></span></div><div class="card-value">{{ total_anggota }}</div><div class="card-note">Profil pelanggan</div><a class="card-link" href="{% url 'app:pelanggan_manager' %}">Lihat pelanggan →</a></article>
                 <article class="card"><div class="card-head"><span class="card-label">Provinsi</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span></div><div class="card-value">{{ total_provinsi }}</div><div class="card-note">{{ provinsi_aktif }} provinsi aktif</div><a class="card-link" href="/admin/app/provinsi/">Kelola wilayah →</a></article>
                 <article class="card"><div class="card-head"><span class="card-label">Akun Terdaftar</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 3v4"></path><path d="M17 5h4"></path></svg></span></div><div class="card-value">{{ total_user }}</div><div class="card-note">{{ total_admin }} profil administrator</div><a class="card-link" href="/admin/auth/user/">Kelola akun →</a></article>
             </section>
             <section class="panels">
                 <article class="panel"><div class="panel-title"><div><h2>Produk terbaru</h2><p>Produk yang terakhir ditambahkan ke katalog</p></div><a href="/admin/app/produk/">Lihat semua</a></div><div class="panel-body">{% if produk_terbaru %}<table><thead><tr><th>Produk</th><th>Status</th><th>Aksi</th></tr></thead><tbody>{% for produk in produk_terbaru %}<tr><td><span class="product-name">{{ produk.nama }}</span><span class="product-meta">{{ produk.merek|default:"Merek belum diisi" }}</span></td><td>{% if produk.aktif %}<span class="status">Aktif</span>{% else %}<span class="status" style="color:#b91c1c;background:#fef2f2;border-color:#fecaca">Nonaktif</span>{% endif %}</td><td><a class="product-action" href="/admin/app/produk/{{ produk.id }}/change/">Detail</a></td></tr>{% endfor %}</tbody></table>{% else %}<div class="empty"><strong>Belum ada produk</strong>Tambahkan produk pertama ke katalog Losari Computer.</div>{% endif %}</div></article>
                 <article class="panel"><div class="panel-title"><div><h2>Artikel terbaru</h2><p>Artikel yang terakhir dikelola admin</p></div><a href="/admin/app/artikel/">Lihat semua</a></div><div class="panel-body">{% if artikel_terbaru %}<table><thead><tr><th>Artikel</th><th>Status</th><th>Dilihat</th><th>Aksi</th></tr></thead><tbody>{% for artikel in artikel_terbaru %}<tr><td><span class="product-name">{{ artikel.title_articles }}</span><span class="product-meta">{{ artikel.authors|default:"Penulis belum diisi" }}</span></td><td>{% if artikel.published %}<span class="status">Tayang</span>{% else %}<span class="status" style="color:#b91c1c;background:#fef2f2;border-color:#fecaca">Draft</span>{% endif %}</td><td>{{ artikel.views }}</td><td><a class="product-action" href="/admin/app/artikel/{{ artikel.id }}/change/">Edit</a></td></tr>{% endfor %}</tbody></table>{% else %}<div class="empty"><strong>Belum ada artikel</strong>Tambahkan artikel pertama untuk ditampilkan di website.</div>{% endif %}</div></article>
-                <article class="panel"><div class="panel-title"><div><h2>Akses cepat</h2><p>Jalankan tugas umum dengan cepat</p></div></div><div class="panel-body"><div class="quick-links"><a class="quick-link" href="/admin/app/produk/add/"><span>Tambah produk baru</span><span>›</span></a><a class="quick-link" href="/admin/app/artikel/add/"><span>Tambah artikel baru</span><span>›</span></a><a class="quick-link" href="/admin/app/kategori/add/"><span>Tambah kategori</span><span>›</span></a><a class="quick-link" href="/admin/app/pesanan/"><span>Periksa pesanan</span><span>›</span></a><a class="quick-link" href="/admin/"><span>Kelola administrasi</span><span>›</span></a></div></div></article>
+                <article class="panel"><div class="panel-title"><div><h2>Akses cepat</h2><p>Jalankan tugas umum dengan cepat</p></div></div><div class="panel-body"><div class="quick-links"><a class="quick-link" href="/admin/app/produk/add/"><span>Tambah produk baru</span><span>›</span></a><a class="quick-link" href="/admin/app/artikel/add/"><span>Tambah artikel baru</span><span>›</span></a><a class="quick-link" href="/admin/app/kategori/add/"><span>Tambah kategori</span><span>›</span></a><a class="quick-link" href="{% url 'app:pesanan_manager' %}"><span>Kelola pesanan</span><span>›</span></a><a class="quick-link" href="/admin/"><span>Kelola administrasi</span><span>›</span></a></div></div></article>
             </section>
         </main>
         <footer class="admin-footer"><span>&copy; {% now "Y" %} Losari Computer</span><span>Dashboard Administrator &middot; Sistem terintegrasi database</span></footer>

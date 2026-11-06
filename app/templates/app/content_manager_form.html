@@ -1,0 +1,22 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<div class="toolbar"><div><h2>{{ heading }}</h2><p class="muted">Simpan perubahan untuk memperbarui tampilan website.</p></div><a class="button secondary" href="{{ cancel_url }}">Kembali</a></div>
+<form class="form-card" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+    <div class="form-grid">
+    {% for field in form %}
+        <div class="field {% if field.name == 'content' or field.name == 'deskripsi' or field.name == 'spesifikasi' %}full{% endif %} {% if field.field.widget.input_type == 'checkbox' %}check{% endif %}">
+            {{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}
+        </div>
+    {% endfor %}
+    </div>
+    {% if image_formset %}
+    <h3 class="section-title">Galeri produk</h3>{{ image_formset.management_form }}
+    <div class="form-grid">{% for inline_form in image_formset %}{{ inline_form.id }}{% for field in inline_form.visible_fields %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}{% endfor %}</div>
+    <h3 class="section-title">Keunggulan produk</h3>{{ benefit_formset.management_form }}
+    <div class="form-grid">{% for inline_form in benefit_formset %}{{ inline_form.id }}{% for field in inline_form.visible_fields %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}{% endfor %}</div>
+    {% endif %}
+    <div class="form-actions"><button class="button" type="submit">Simpan {{ item_label }}</button><a class="button secondary" href="{{ cancel_url }}">Batal</a></div>
+</form>
+{% endblock %}

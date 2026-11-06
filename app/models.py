@@ -428,6 +428,78 @@ class Artikel(models.Model):
         return len(self.content or "")
 
 
+def rename_blog_user_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"{instance.slug or 'blog'}-{uuid.uuid4().hex[:8]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("blog-pengguna", filename)
+
+
+class BlogPengguna(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="blog_pengguna",
+        verbose_name="Penulis",
+    )
+    title = models.CharField(max_length=200, verbose_name="Judul blog")
+    slug = models.SlugField(
+        max_length=220,
+        unique=True,
+        default=default_article_slug,
+    )
+    summary = models.CharField(max_length=300, verbose_name="Ringkasan")
+    content = models.TextField(verbose_name="Isi blog")
+    image = models.ImageField(
+        upload_to=rename_blog_user_image,
+        null=True,
+        blank=True,
+        verbose_name="Gambar blog",
+    )
+    published = models.BooleanField(
+        default=True,
+        verbose_name="Tampilkan di website",
+    )
+    views = models.PositiveIntegerField(default=0, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Blog pengguna"
+        verbose_name_plural = "Blog pengguna"
+        indexes = [models.Index(fields=["published", "-created_at"])]
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def character_count(self):
+        return len(self.content or "")
+
+
+def rename_blog_inline_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
+    filename = f"inline-{uuid.uuid4().hex[:12]}"
+    if extension:
+        filename = f"{filename}.{extension}"
+    return os.path.join("blog-pengguna", "inline", filename)
+
+
+class BlogPenggunaImage(models.Model):
+    blog = models.ForeignKey(
+        BlogPengguna,
+        on_delete=models.CASCADE,
+        related_name="inline_images",
+    )
+    image = models.ImageField(upload_to=rename_blog_inline_image)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at", "pk"]
+
+
 class ArtikelView(models.Model):
     artikel = models.ForeignKey(
         Artikel,

@@ -1,0 +1,22 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<div class="toolbar"><div><h2>Pengaturan Footer</h2><p class="muted">Kelola informasi toko, sosial media, dan metode pembayaran.</p></div><a class="button secondary" href="{{ public_url }}" target="_blank" rel="noopener">Lihat website</a></div>
+<form class="form-card" method="post">
+    {% csrf_token %}<input type="hidden" name="form_type" value="footer">
+    <h3 class="section-title">Informasi toko</h3>
+    <div class="form-grid">{% for field in footer_form %}<div class="field {% if field.name == 'deskripsi' or field.name == 'alamat' %}full{% endif %}">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}</div>
+    <div class="form-actions"><button class="button" type="submit">Simpan footer</button></div>
+</form>
+<section class="form-card" style="margin-top:22px">
+    <h3 class="section-title">Sosial media</h3>
+    <div class="form-grid">{% for item in footer_social_forms %}<form method="post" enctype="multipart/form-data" class="field"><input type="hidden" name="form_type" value="social"><input type="hidden" name="social_name" value="{{ item.name }}">{% csrf_token %}<strong>{{ item.name }}</strong>{% for field in item.form %}{{ field.label_tag }}{{ field }}{{ field.errors }}{% endfor %}<button class="button" type="submit">Simpan {{ item.name }}</button></form>{% endfor %}</div>
+    <h4 class="section-title">Tambah platform lain</h4>
+    <form method="post" enctype="multipart/form-data" class="form-grid"><input type="hidden" name="form_type" value="social_add">{% csrf_token %}{% for field in footer_social_add_form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<div class="form-actions"><button class="button" type="submit">Tambah sosial media</button></div></form>
+</section>
+<section class="form-card" style="margin-top:22px">
+    <h3 class="section-title">Metode pembayaran</h3>
+    <div class="form-grid">{% for item in footer_payment_forms %}<form method="post" enctype="multipart/form-data" class="field"><input type="hidden" name="form_type" value="payment"><input type="hidden" name="payment_name" value="{{ item.name }}">{% csrf_token %}<strong>{{ item.name }}</strong>{% for field in item.form %}{{ field.label_tag }}{{ field }}{{ field.errors }}{% endfor %}<button class="button" type="submit">Simpan {{ item.name }}</button></form>{% endfor %}</div>
+    <h4 class="section-title">Tambah metode lain</h4>
+    <form method="post" enctype="multipart/form-data" class="form-grid"><input type="hidden" name="form_type" value="payment_add">{% csrf_token %}{% for field in footer_payment_add_form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<div class="form-actions"><button class="button" type="submit">Tambah pembayaran</button></div></form>
+</section>
+{% endblock %}

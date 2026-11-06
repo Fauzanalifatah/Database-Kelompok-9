@@ -1,0 +1,167 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} - Losari Computer</title>
+    <style>
+        :root { --red:#991b1b; --red-soft:#fef2f2; --text:#172033; --muted:#64748b; --line:#e2e8f0; }
+        * { box-sizing:border-box; } body { margin:0; overflow-x:hidden; color:var(--text); background:#f7f9fc; font:14px Arial,sans-serif; }
+        a { color:inherit; text-decoration:none; } .layout { display:flex; align-items:stretch; min-height:100vh; }
+        .sidebar { position:sticky; top:0; display:flex; align-self:flex-start; flex-direction:column; width:256px; height:100vh; flex:0 0 256px; padding:27px 16px; overflow-y:auto; color:#fee2e2; background:linear-gradient(180deg,#450a0a,#991b1b 72%,#7f1d1d); }
+        .brand { display:flex; align-items:center; gap:10px; margin:0 12px 48px; color:#fff; }
+        .brand-logo { display:block; width:44px; height:44px; padding:4px; flex:0 0 44px; object-fit:contain; background:linear-gradient(135deg,#ef4444,#7f1d1d); border-radius:10px; box-shadow:0 6px 14px #991b1b55; }
+        .brand-copy { min-width:0; flex:1 1 auto; overflow:hidden; }
+        .brand-name { display:block; color:#fff; font-size:15px; font-weight:800; line-height:1.15; overflow-wrap:anywhere; }
+        .brand-subtitle { display:block; margin-top:4px; color:#fecaca; font-size:9px; font-weight:500; line-height:1.25; overflow-wrap:anywhere; }
+        .menu-label { margin:0 12px 10px; color:#64748b; font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+        .nav-link { display:flex; align-items:center; gap:12px; margin:5px 0; padding:13px 12px; color:#cbd5e1; border:1px solid transparent; border-radius:10px; font-size:14px; font-weight:600; transition:.2s ease; }
+        .nav-link:hover,.nav-link.active { color:#fff; background:#ffffff12; border-color:#ffffff12; }
+        .nav-link.active { box-shadow:inset 3px 0 #fecaca; }
+        .nav-icon { display:inline-flex; width:22px; height:22px; align-items:center; justify-content:center; color:#94a3b8; }
+        .nav-icon svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
+        .nav-link.active .nav-icon,.nav-link:hover .nav-icon { color:#fecaca; }
+        .sidebar-footer { margin:auto 12px 0; padding:15px; color:#cbd5e1; background:#ffffff0d; border:1px solid #ffffff12; border-radius:12px; font-size:12px; line-height:1.5; }
+        .sidebar-footer strong { display:block; margin-bottom:4px; color:#fff; }
+        .sidebar-logout { width:calc(100% - 24px); margin:auto 12px 0; padding:11px 18px; color:#fee2e2; background:#ffffff0d; border:1px solid #ffffff24; border-radius:8px; cursor:pointer; font:700 13px inherit; }
+        .sidebar-logout-form { display:flex; margin-top:0; padding-top:18px; }
+        .sidebar-logout:hover { color:#fff; background:#ffffff1a; }
+        .sidebar-overlay { display:none; } .main { flex:1; min-width:0; min-height:100vh; } .topbar { display:flex; align-items:center; gap:14px; padding:24px 40px; background:#fff; border-bottom:1px solid var(--line); }
+        .menu-toggle, .sidebar-close { display:none; }
+        .menu-toggle svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-width:2; }
+        .topbar-copy { min-width:0; } .topbar-heading { display:flex; min-width:0; align-items:center; gap:9px; }
+        .topbar h1 { margin:0; font-size:24px; } .topbar p { margin:6px 0 0; color:var(--muted); }
+        .content { width:100%; max-width:1200px; min-width:0; padding:30px 40px 60px; } .toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:22px; }
+        .toolbar h2 { margin:0; } .button { display:inline-block; padding:10px 15px; color:#fff; background:#dc2626; border:0; border-radius:8px; cursor:pointer; font-weight:700; }
+        .button.secondary { color:var(--red); background:var(--red-soft); } .message { margin-bottom:16px; padding:12px 15px; color:#166534; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; }
+        .table-card,.form-card { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 4px 18px #0f172a08; overflow:hidden; }
+        .table-card { overflow-x:auto; }
+        table { width:100%; min-width:680px; table-layout:fixed; border-collapse:collapse; } .col-content { width:50%; } .col-status { width:14%; } .col-date { width:22%; } .col-actions { width:14%; }
+        th,td { padding:16px 22px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle; } th { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; } tbody tr:last-child td { border-bottom:0; } tbody tr:hover { background:#fffafa; }
+        .content-item { display:flex; align-items:center; gap:12px; min-width:0; } .content-copy { display:flex; min-width:0; flex-direction:column; gap:5px; } .content-copy strong { overflow:hidden; font-size:15px; text-overflow:ellipsis; white-space:nowrap; } .content-copy .muted { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .thumb { width:64px; height:52px; flex:0 0 64px; object-fit:cover; border-radius:8px; background:#fee2e2; } .thumb-placeholder { display:block; } .muted { color:var(--muted); } .date-cell { white-space:nowrap; } .actions { display:flex; align-items:center; gap:14px; white-space:nowrap; } .actions form { margin:0; } .action { padding:0; color:#b91c1c; background:none; border:0; cursor:pointer; font:700 14px inherit; }
+        .status-badge { display:inline-flex; padding:5px 9px; color:#166534; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:999px; font-size:12px; font-weight:700; } .status-badge.is-draft { color:#92400e; background:#fffbeb; border-color:#fde68a; }
+        .form-card { min-width:0; padding:25px; } .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; } .field { display:flex; min-width:0; flex-direction:column; gap:7px; } .field.full { grid-column:1/-1; }
+        .record-field { max-width:620px; margin-bottom:18px; } .order-summary { padding:16px; color:var(--muted); background:#f8fafc; border:1px solid var(--line); border-radius:8px; line-height:1.55; } .order-summary p { margin:0 0 8px; } .order-summary ul { margin:8px 0 0; padding-left:20px; }
+        label { font-weight:700; } input,select,textarea { width:100%; min-width:0; max-width:100%; padding:11px 12px; border:1px solid #cbd5e1; border-radius:7px; font:inherit; } textarea { resize:vertical; } .help { margin:0; color:var(--muted); font-size:12px; }
+        .check { flex-direction:row; align-items:center; } .check input { width:auto; } .errorlist { margin:0; padding:0; color:#b91c1c; list-style:none; font-size:12px; }
+        .section-title { margin:28px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line); } .form-actions { display:flex; gap:10px; margin-top:25px; }
+        @media(max-width:900px) {
+            .content { padding-left:24px; padding-right:24px; }
+            .col-content { width:42%; } .col-status { width:15%; } .col-date { width:25%; } .col-actions { width:18%; }
+            th,td { padding-left:14px; padding-right:14px; }
+            .toolbar { align-items:flex-start; }
+        }
+        @media(max-width:1100px) {
+            .content { padding-right:28px; padding-left:28px; }
+            .topbar { padding-right:28px; padding-left:28px; }
+        }
+        @media(max-width:700px) {
+            body.menu-open { overflow:hidden; }
+            .layout { display:block; }
+            .sidebar-overlay { position:fixed; z-index:10; inset:0; display:block; width:100%; height:100%; padding:0; background:#0f172a80; border:0; cursor:pointer; opacity:0; pointer-events:none; }
+            .sidebar { position:fixed; z-index:20; top:0; bottom:0; left:0; display:flex; width:min(290px,86vw); min-height:100vh; padding:18px 16px; overflow-y:auto; box-shadow:12px 0 30px #00000030; transform:translateX(-105%); transition:transform .25s ease; }
+            body.menu-open .sidebar { transform:translateX(0); }
+            body.menu-open .sidebar-overlay { opacity:1; pointer-events:auto; }
+            .sidebar-close { display:grid; position:absolute; top:12px; right:12px; width:32px; height:32px; place-items:center; color:#fff; background:#ffffff18; border:1px solid #ffffff35; border-radius:8px; cursor:pointer; font-size:20px; line-height:1; }
+            .brand { margin:0 0 23px; padding-right:52px; }
+            .sidebar nav { display:grid; gap:5px; }
+            .menu-label,.sidebar-footer { display:none; }
+            .sidebar-logout-form { margin-top:auto; }
+            .sidebar-logout { margin:0 12px; }
+            .nav-link { white-space:normal; }
+            .topbar { display:flex; align-items:center; gap:10px; padding:16px 18px; }
+            .topbar-heading { min-width:0; }
+            .topbar h1,.topbar p { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+            .menu-toggle { display:inline-grid; width:36px; height:36px; flex:0 0 36px; place-items:center; color:#991b1b; background:#fff1f2; border:1px solid #fecaca; border-radius:9px; cursor:pointer; }
+            .content { padding:24px 20px 40px; }
+            .topbar h1 { font-size:21px; }
+            .topbar p { font-size:13px; line-height:1.45; }
+            .toolbar { flex-direction:column; align-items:stretch; gap:14px; margin-bottom:18px; }
+            .toolbar h2 { font-size:20px; }
+            .toolbar .button { align-self:stretch; text-align:center; }
+            .form-grid { grid-template-columns:1fr; }
+            .field.full { grid-column:auto; }
+            .table-card { overflow-x:auto; border-radius:12px; }
+            table, thead, tbody, tr, td { display:block; width:100%; }
+            table { table-layout:auto; }
+            thead { display:none; }
+            tbody tr { padding:16px; border-bottom:1px solid var(--line); }
+            tbody tr:last-child { border-bottom:0; }
+            tbody td { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 0; border:0; }
+            tbody td::before { flex:0 0 84px; color:var(--muted); font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; }
+            tbody td:nth-child(1)::before { content:"Konten"; }
+            tbody td:nth-child(2)::before { content:"Status"; }
+            tbody td:nth-child(3)::before { content:"Diperbarui"; }
+            tbody td:nth-child(4)::before { content:"Aksi"; }
+            .content-item { flex:1; min-width:0; justify-content:flex-end; }
+            .content-copy { max-width:calc(100% - 76px); }
+            .content-copy strong { white-space:normal; text-align:right; }
+            .content-copy .muted { text-align:right; }
+            .date-cell { white-space:normal; text-align:right; }
+            .actions { justify-content:flex-end; }
+            .empty-row td { display:block; }
+            .empty-row td::before { display:none; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <button class="sidebar-overlay" type="button" aria-label="Tutup menu"></button>
+    <aside class="sidebar">
+        <button class="sidebar-close" type="button" aria-label="Tutup menu">&times;</button>
+        <div class="brand"><img class="brand-logo" src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer"><div class="brand-copy"><strong class="brand-name">Losari Computer</strong><small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small></div></div>
+        <p class="menu-label">Menu utama</p>
+        <nav>
+            <a class="nav-link {% if not section %}active{% endif %}" href="{% url 'app:dashboard' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></span>Dashboard</a>
+            <a class="nav-link" href="{% url 'home' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Katalog Laptop</a>
+            <a class="nav-link {% if section == 'produk' %}active{% endif %}" href="{% url 'app:produk_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span>Produk</a>
+            <a class="nav-link {% if section == 'pelanggan' %}active{% endif %}" href="{% url 'app:pelanggan_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 8h2"></path><path d="M20 7v2"></path></svg></span>Pelanggan</a>
+            <a class="nav-link {% if section == 'pesanan' %}active{% endif %}" href="{% url 'app:pesanan_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6z"></path><path d="M9 3v18"></path><path d="M15 3v18"></path><path d="M9 7h6"></path></svg></span>Pesanan</a>
+            <a class="nav-link {% if section == 'artikel' %}active{% endif %}" href="{% url 'app:artikel_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>Artikel</a>
+            <a class="nav-link {% if section == 'footer' %}active{% endif %}" href="{% url 'app:footer_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span>Pengaturan Footer</a>
+            <a class="nav-link {% if section == 'tentang-kami' %}active{% endif %}" href="{% url 'app:about_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>Tentang Kami</a>
+            <a class="nav-link {% if section == 'mitra' %}active{% endif %}" href="{% url 'app:mitra_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg></span>Mitra Deepublish</a>
+        </nav>
+        <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan melalui admin Losari Computer.</div>
+        <form class="sidebar-logout-form" method="post" action="{% url 'app:logout' %}">{% csrf_token %}<button class="sidebar-logout" type="submit">Logout</button></form>
+    </aside>
+    <main class="main">
+        <header class="topbar">
+            <div class="topbar-heading">
+                <button class="menu-toggle" type="button" aria-label="Buka menu" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <div class="topbar-copy"><h1>{{ heading }}</h1><p>Kelola konten website dengan editor yang lebih mudah.</p></div>
+            </div>
+        </header>
+        <div class="content">
+            {% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+<script>
+    (function () {
+        const body = document.body;
+        const toggle = document.querySelector(".menu-toggle");
+        const close = document.querySelector(".sidebar-close");
+        const overlay = document.querySelector(".sidebar-overlay");
+        const links = document.querySelectorAll(".sidebar a");
+        function setMenu(open) {
+            body.classList.toggle("menu-open", open);
+            if (toggle) toggle.setAttribute("aria-expanded", String(open));
+        }
+        if (toggle) toggle.addEventListener("click", function () {
+            setMenu(!body.classList.contains("menu-open"));
+        });
+        if (close) close.addEventListener("click", function () { setMenu(false); });
+        if (overlay) overlay.addEventListener("click", function () { setMenu(false); });
+        links.forEach(function (link) {
+            link.addEventListener("click", function () { setMenu(false); });
+        });
+    }());
+</script>
+</body>
+</html>

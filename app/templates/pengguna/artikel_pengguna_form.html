@@ -1,0 +1,211 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} - Losari Computer</title>
+    <link rel="stylesheet" href="{% static 'css/user-blog.css' %}">
+</head>
+<body class="blog-editor-body">
+<header class="blog-editor-topbar">
+    <a class="editor-back" href="{% url 'app:blog_pengguna' %}" aria-label="Kembali"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg></a>
+    <strong class="editor-logo">Losari Computer</strong>
+    <div class="editor-context"><span class="editor-state">Blog pengguna</span><small>{{ title }}</small></div>
+    <div class="editor-top-actions">
+        <button class="editor-preview" type="button" id="preview-button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>Pratinjau</button>
+        <button class="editor-publish" type="submit" form="blog-editor-form"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 16 8-16 8 3-8-3-8Z"></path><path d="M7 12h13"></path></svg>Publikasikan</button>
+        <a class="editor-avatar" href="{% url 'app:profile_pengguna' %}">{{ user.first_name|first|default:user.username|first|upper }}</a>
+    </div>
+</header>
+<form method="post" enctype="multipart/form-data" id="blog-editor-form" class="blog-editor-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="editor-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <main class="editor-workspace">
+        <section class="editor-writing-area">
+            <div class="writing-card">
+            <div class="writing-intro"><span class="writing-kicker">EDITOR BLOG</span><p>Tulis ide dan pengalaman Anda untuk dibagikan kepada komunitas.</p></div>
+            <input class="editor-title" type="text" name="title" value="{{ form.title.value|default:'' }}" placeholder="Beri judul blog Anda" maxlength="200" required autofocus aria-label="Judul blog">
+            {% for error in form.title.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            <div class="editor-toolbar" role="toolbar" aria-label="Format tulisan">
+                <div class="toolbar-group"><button type="button" data-command="bold" title="Tebal"><strong>B</strong></button><button type="button" data-command="italic" title="Miring"><em>I</em></button><button type="button" data-command="underline" title="Garis bawah"><u>U</u></button></div>
+                <div class="toolbar-group"><button type="button" data-command="formatBlock" data-value="h2" title="Subjudul">H<small>2</small></button><button type="button" data-command="formatBlock" data-value="p" title="Paragraf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h8a4 4 0 0 1 0 8H9v6M9 5v14"></path></svg></button></div>
+                <div class="toolbar-group"><button type="button" data-command="insertUnorderedList" title="Daftar berpoin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"></path><path d="M4 6h.01M4 12h.01M4 18h.01"></path></svg></button><button type="button" data-command="insertOrderedList" title="Daftar bernomor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"></path><path d="M4 5h1v3M4 8h2M4 11h2l-2 4h2M4 18h2l-2 3h2"></path></svg></button></div>
+                <div class="toolbar-group"><button type="button" data-command="justifyLeft" title="Rata kiri"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h11M4 14h16M4 18h11"></path></svg></button><button type="button" data-command="justifyCenter" title="Rata tengah"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"></path></svg></button><button type="button" data-command="justifyRight" title="Rata kanan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 10h11M4 14h16M9 18h11"></path></svg></button></div>
+                <div class="toolbar-group"><button type="button" data-command="createLink" title="Tambahkan tautan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"></path></svg></button></div>
+                <div class="toolbar-group"><button type="button" id="insert-image-button" title="Tambahkan gambar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 5"></path></svg></button></div>
+            </div>
+            <div class="editor-content" id="editor-content" contenteditable="true" data-placeholder="Mulai tulis blog Anda di sini...">{{ form.content.value|default:''|safe }}</div>
+            <textarea name="content" id="content-input" hidden>{{ form.content.value|default:''|safe }}</textarea>
+            <input type="file" id="inline-image-input" name="inline_images" accept="image/*" multiple hidden>
+            {% for error in form.content.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            <div class="writing-hint">Tips: gunakan paragraf pendek agar blog nyaman dibaca.</div>
+            </div>
+        </section>
+        <aside class="editor-settings">
+            <div class="settings-title"><span class="settings-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"></path><path d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3.1 1.3v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3.1-1.3l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-1.3-3.1h-.2a1.8 1.8 0 0 1 0-3.6h.2a1.8 1.8 0 0 0 1.3-3.1l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3.1-1.3v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3.1 1.3l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 1.3 3.1h.2a1.8 1.8 0 0 1 0 3.6h-.2a1.8 1.8 0 0 0-1.3 3.1Z"></path></svg></span><div><h2>Setelan blog</h2><p>Atur informasi tambahan</p></div></div>
+            <details open>
+                <summary><span class="summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h6M8 17h4"></path></svg></span>Ringkasan blog</summary>
+                <div class="settings-section">
+                    <label for="id_summary">Ringkasan singkat</label>
+                    <p class="settings-help">Tampil sebagai cuplikan di daftar blog.</p>
+                    {{ form.summary }}
+                    {% for error in form.summary.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+            </details>
+            <details open>
+                <summary><span class="summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 5"></path></svg></span>Gambar utama</summary>
+                <div class="settings-section">
+                    <label for="id_image">Gambar sampul</label>
+                    <p class="settings-help">Gunakan gambar yang mewakili isi blog.</p>
+                    {{ form.image }}
+                    {% if article.image %}<img class="editor-image-preview" src="{{ article.image.url }}" alt="Gambar blog saat ini">{% endif %}
+                </div>
+            </details>
+            <details open>
+                <summary><span class="summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>Status publikasi</summary>
+                <div class="settings-section settings-check">
+                    {{ form.published }}<label for="id_published"><strong>Publikasikan blog</strong><small>Blog dapat dilihat pengguna lain.</small></label>
+                </div>
+            </details>
+        </aside>
+    </main>
+</form>
+<div class="preview-overlay" id="preview-overlay" hidden>
+    <div class="preview-overlay-bar">
+        <button type="button" class="preview-close" id="preview-close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>Kembali ke editor</button>
+        <strong>Pratinjau blog</strong>
+        <span>Perubahan belum dipublikasikan</span>
+    </div>
+    <div class="preview-frame" id="preview-frame"></div>
+</div>
+<script>
+    const editor = document.getElementById("editor-content");
+    const contentInput = document.getElementById("content-input");
+    const form = document.getElementById("blog-editor-form");
+    const inlineImageInput = document.getElementById("inline-image-input");
+    let savedSelection = null;
+    const inlineImageFiles = new DataTransfer();
+    const draftKey = `blog-draft-${window.location.pathname}`;
+    function syncContent() { contentInput.value = editor.innerHTML; }
+    function saveDraft() {
+        localStorage.setItem(draftKey, JSON.stringify({
+            title: document.querySelector(".editor-title").value,
+            summary: document.getElementById("id_summary").value,
+            content: editor.innerHTML
+        }));
+    }
+    function restoreDraft() {
+        const draft = localStorage.getItem(draftKey);
+        if (!draft) return;
+        try {
+            const data = JSON.parse(draft);
+            if (data.title) document.querySelector(".editor-title").value = data.title;
+            if (data.summary) document.getElementById("id_summary").value = data.summary;
+            if (data.content) {
+                editor.innerHTML = data.content;
+                syncContent();
+            }
+        } catch (error) {
+            localStorage.removeItem(draftKey);
+        }
+    }
+    restoreDraft();
+    editor.addEventListener("input", syncContent);
+    editor.addEventListener("input", saveDraft);
+    document.querySelector(".editor-title").addEventListener("input", saveDraft);
+    document.getElementById("id_summary").addEventListener("input", saveDraft);
+    form.addEventListener("submit", syncContent);
+    form.addEventListener("submit", () => localStorage.removeItem(draftKey));
+    document.getElementById("insert-image-button").addEventListener("click", () => {
+        const selection = window.getSelection();
+        if (selection.rangeCount) savedSelection = selection.getRangeAt(0).cloneRange();
+        inlineImageInput.click();
+    });
+    inlineImageInput.addEventListener("change", () => {
+        if (!inlineImageInput.files.length) return;
+        const selectedFiles = Array.from(inlineImageInput.files);
+        const startIndex = inlineImageFiles.files.length;
+        selectedFiles.forEach((file) => inlineImageFiles.items.add(file));
+        inlineImageInput.files = inlineImageFiles.files;
+        const selection = window.getSelection();
+        if (savedSelection) {
+            selection.removeAllRanges();
+            selection.addRange(savedSelection);
+        }
+        selectedFiles.forEach((file, index) => {
+            const marker = document.createTextNode(`[[BLOG_IMAGE_${startIndex + index}]]`);
+            const range = selection.rangeCount ? selection.getRangeAt(0) : document.createRange();
+            if (!selection.rangeCount) range.selectNodeContents(editor);
+            range.deleteContents();
+            range.insertNode(marker);
+            range.setStartAfter(marker);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        });
+        syncContent();
+    });
+    document.querySelectorAll("[data-command]").forEach((button) => {
+        button.addEventListener("click", () => {
+            editor.focus();
+            if (button.dataset.command === "createLink") {
+                const url = window.prompt("Masukkan URL:");
+                if (url) document.execCommand("createLink", false, url);
+            } else {
+                document.execCommand(button.dataset.command, false, button.dataset.value || null);
+            }
+            syncContent();
+        });
+    });
+    document.getElementById("preview-button").addEventListener("click", () => {
+        syncContent();
+        saveDraft();
+        const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+        }[character]));
+        const title = escapeHtml(document.querySelector(".editor-title").value || "Tanpa judul");
+        const summary = escapeHtml(document.getElementById("id_summary").value || "Ringkasan blog belum ditambahkan.");
+        const coverInput = document.getElementById("id_image");
+        const inlineFiles = Array.from(inlineImageInput.files);
+        const coverFile = coverInput.files[0];
+        const existingCover = document.querySelector(".editor-image-preview");
+        const readFile = (file) => file ? new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve("");
+            reader.readAsDataURL(file);
+        }) : Promise.resolve("");
+        const showPreview = (coverUrl) => {
+            let content = editor.innerHTML;
+            inlineFiles.forEach((file, index) => {
+                const marker = `[[BLOG_IMAGE_${index}]]`;
+                content = content.replaceAll(
+                    marker,
+                    `<img class="preview-inline-image" src="${URL.createObjectURL(file)}" alt="Gambar blog">`
+                );
+            });
+            document.getElementById("preview-frame").innerHTML = `
+                <div class="preview-watermark">PRATINJAU</div>
+                <header class="preview-top"><div class="preview-brand">Losari Computer</div><nav class="preview-nav"><span>Home</span><span>Shop</span><span>Artikel</span><span>Blog</span><span>Tentang</span></nav></header>
+                <div class="preview-banner">GARANSI TOKO &nbsp; • &nbsp; SIAP KIRIM KE SELURUH KOTA &nbsp; • &nbsp; UNIT TERUJI</div>
+                <main class="preview-layout"><article class="preview-article">
+                    <p class="preview-breadcrumb"><strong>Beranda</strong> › Blog Pengguna</p><h1>${title}</h1>
+                    <div class="preview-byline"><span>Oleh <strong>{{ user.get_full_name|default:user.username }}</strong></span><span>•</span><span>Hari ini</span></div>
+                    <p class="preview-summary">${summary}</p>
+                    ${coverUrl ? `<img class="preview-cover" src="${coverUrl}" alt="Gambar sampul blog">` : ""}
+                    <div class="preview-content">${content}</div>
+                </article><aside class="preview-sidebar"><h2>Blog Pengguna</h2><p>Ini adalah tampilan sementara blog Anda sebelum dipublikasikan.</p><p>Setelah dipublikasikan, pengguna lain dapat membaca tulisan ini melalui menu Blog.</p></aside></main>
+                `;
+            document.getElementById("preview-overlay").hidden = false;
+            document.body.classList.add("preview-open");
+        };
+        readFile(coverFile).then((coverUrl) => showPreview(coverUrl || existingCover?.src || ""));
+    });
+    document.getElementById("preview-close").addEventListener("click", () => {
+        document.getElementById("preview-overlay").hidden = true;
+        document.body.classList.remove("preview-open");
+    });
+</script>
+</body>
+</html>

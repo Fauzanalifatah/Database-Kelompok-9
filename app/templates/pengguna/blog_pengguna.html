@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} - Losari Computer</title>
+    <link rel="stylesheet" href="{% static 'css/user-blog.css' %}">
+</head>
+<body>
+<div class="blog-layout">
+    <button class="blog-menu-toggle" type="button" aria-label="Buka menu">☰</button>
+    <aside class="blog-sidebar">
+        <a class="blog-brand" href="{% url 'home' %}"><img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer">Losari Computer</a>
+        <div class="blog-user">{{ user.get_full_name|default:user.username }}</div>
+        {% if not user.is_staff and not user.is_superuser %}<a class="new-post" href="{% url 'app:artikel_pengguna_tulis' %}">＋ Postingan baru</a>{% endif %}
+        <nav>
+            <a class="active" href="{% url 'app:blog_pengguna' %}">▤ Postingan</a>
+            <a href="{% url 'app:profile_pengguna' %}">Profil saya</a>
+            <a href="{% url 'home' %}">Lihat website</a>
+        </nav>
+        <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola profil dan blog Anda melalui dashboard pengguna Losari Computer.</div>
+        <form method="post" action="{% url 'app:logout' %}" class="logout-form">
+            {% csrf_token %}<button type="submit">Keluar</button>
+        </form>
+    </aside>
+    <main class="blog-main">
+        <header class="blog-header">
+            <div><p class="eyebrow">Blog pribadi</p><h1>Postingan saya</h1></div>
+            {% if not user.is_staff and not user.is_superuser %}<a class="header-button" href="{% url 'app:artikel_pengguna_tulis' %}">Buat postingan</a>{% endif %}
+        </header>
+        {% if messages %}{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}{% endif %}
+        <section class="post-list">
+            {% for article in articles %}
+            <article class="post-row">
+                <div class="post-thumb">{% if article.image %}<img src="{{ article.image.url }}" alt="{{ article.title }}">{% else %}<span>LC</span>{% endif %}</div>
+                <div class="post-copy">
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.summary }}</p>
+                    <small>{{ article.created_at|date:"d M Y" }} · {% if article.published %}Dipublikasikan{% else %}Draf{% endif %}</small>
+                </div>
+                <div class="post-actions">
+                    {% if article.published %}<a href="{% url 'article_detail' article.slug %}">Lihat</a>{% endif %}
+                    <a href="{% url 'app:artikel_pengguna_edit' article.slug %}">Edit</a>
+                    <form method="post" action="{% url 'app:artikel_pengguna_hapus' article.slug %}">{% csrf_token %}<button type="submit">Hapus</button></form>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-posts"><h2>Belum ada postingan</h2>{% if not user.is_staff and not user.is_superuser %}<p>Mulai tulis artikel pertama Anda.</p><a class="header-button" href="{% url 'app:artikel_pengguna_tulis' %}">Tulis artikel</a>{% else %}<p>Blog pengguna hanya dapat ditulis oleh akun pengguna.</p>{% endif %}</div>
+            {% endfor %}
+        </section>
+    </main>
+</div>
+<script>
+    (function () {
+        const layout = document.querySelector(".blog-layout");
+        const toggle = document.querySelector(".blog-menu-toggle");
+        if (toggle) toggle.addEventListener("click", function () { layout.classList.toggle("menu-open"); });
+        document.querySelectorAll(".blog-sidebar a").forEach(function (link) {
+            link.addEventListener("click", function () { layout.classList.remove("menu-open"); });
+        });
+    }());
+</script>
+</body>
+</html>

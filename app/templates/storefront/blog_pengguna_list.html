@@ -1,0 +1,29 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Blog Pengguna - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/user-public-blog.css' %}">{% endblock %}
+{% block content %}
+<section class="user-blog-heading"><div class="container"><div class="user-blog-heading-row"><h1><span>Blog</span> Pengguna</h1><div class="user-blog-heading-actions">{% if user.is_authenticated and not user.is_staff and not user.is_superuser %}<a class="user-blog-write" href="{% url 'app:artikel_pengguna_tulis' %}">Tulis blog</a>{% endif %}<a class="user-blog-home-link" href="{% url 'home' %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5-7 7 7 7"></path></svg><span>Kembali ke beranda</span></a></div></div></div></section>
+<div class="container user-blog-container">
+    <div class="user-blog-list">
+        {% for blog in blogs %}
+        <article class="user-blog-item">
+            <a class="user-blog-image" href="{% url 'blog_pengguna_detail' blog.slug %}">
+                {% if blog.image %}<img src="{{ blog.image.url }}" alt="{{ blog.title }}">{% else %}<span>Blog Pengguna</span>{% endif %}
+            </a>
+            <div class="user-blog-body">
+                <p class="user-blog-label">Blog pengguna</p>
+                <h2><a href="{% url 'blog_pengguna_detail' blog.slug %}">{{ blog.title }}</a></h2>
+                <p class="user-blog-summary">{{ blog.summary }}</p>
+                <p class="user-blog-meta">Oleh <strong>{{ blog.author.get_full_name|default:blog.author.username }}</strong> <span>·</span> {{ blog.created_at|date:"d M Y" }}</p>
+            </div>
+        </article>
+        {% empty %}<div class="user-blog-empty"><h2>Belum ada blog pengguna</h2><p>Blog pengguna yang dipublikasikan akan tampil di sini.</p></div>{% endfor %}
+    </div>
+    {% if blogs %}
+    <div class="user-blog-cta">
+        <a class="user-blog-load-more" href="{% url 'blog_pengguna_list' %}">Muat postingan lainnya</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

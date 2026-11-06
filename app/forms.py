@@ -3,6 +3,37 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
+from .models import BlogPengguna
+
+
+class UserBlogForm(forms.ModelForm):
+    class Meta:
+        model = BlogPengguna
+        fields = [
+            "title",
+            "summary",
+            "content",
+            "image",
+            "published",
+        ]
+        labels = {
+            "title": "Judul blog",
+            "summary": "Ringkasan blog",
+            "content": "Isi blog",
+            "image": "Gambar blog",
+            "published": "Publikasikan sekarang",
+        }
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "Judul blog"}),
+            "summary": forms.TextInput(
+                attrs={"placeholder": "Ringkasan singkat blog"}
+            ),
+            "content": forms.Textarea(
+                attrs={"rows": 14, "placeholder": "Tulis isi blog Anda di sini..."}
+            ),
+            "image": forms.FileInput(attrs={"accept": "image/*"}),
+        }
+
 
 class RegistrationForm(forms.Form):
     username = forms.CharField(

@@ -1,0 +1,25 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<div class="toolbar"><div><h2>{{ heading }}</h2><p class="muted">{{ records|length }} data tersimpan</p></div></div>
+<div class="table-card records-card">
+{% if record_type == "pelanggan" %}
+<table><colgroup><col class="col-content"><col class="col-date"><col class="col-status"><col class="col-actions"></colgroup><thead><tr><th>Pelanggan</th><th>Email</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+{% for record in records %}<tr>
+    <td><div class="content-item">{% if record.photo %}<img class="thumb" src="{{ record.photo.url }}" alt="">{% else %}<span class="thumb thumb-placeholder"></span>{% endif %}<div class="content-copy"><strong>{{ record.user.get_full_name|default:record.user.username }}</strong><span class="muted">@{{ record.user.username }} · {{ record.telp|default:"Telepon belum diisi" }}</span></div></div></td>
+    <td class="date-cell">{{ record.user.email|default:"Email belum diisi" }}</td>
+    <td><span class="status-badge {% if not record.user.is_active %}is-draft{% endif %}">{% if record.user.is_active %}Aktif{% else %}Nonaktif{% endif %}</span></td>
+    <td><div class="actions"><a class="action" href="{% url 'app:pelanggan_manager_edit' record.user.username %}">Edit</a></div></td>
+</tr>{% empty %}<tr class="empty-row"><td colspan="4" class="muted">Belum ada pelanggan.</td></tr>{% endfor %}
+</tbody></table>
+{% else %}
+<table><colgroup><col class="col-content"><col class="col-status"><col class="col-date"><col class="col-actions"></colgroup><thead><tr><th>Pesanan</th><th>Status</th><th>Total</th><th>Aksi</th></tr></thead><tbody>
+{% for record in records %}<tr>
+    <td><div class="content-copy"><strong>{{ record }}</strong><span class="muted">{{ record.pengguna.get_full_name|default:record.pengguna.username }} · {{ record.dibuat_pada|date:"d M Y H:i" }}</span></div></td>
+    <td><span class="status-badge {% if record.status == 'dibatalkan' %}is-draft{% endif %}">{{ record.get_status_display }}</span></td>
+    <td class="date-cell">Rp{{ record.total|floatformat:0 }}</td>
+    <td><div class="actions"><a class="action" href="{% url 'app:pesanan_manager_edit' record.pk %}">Detail / Edit</a></div></td>
+</tr>{% empty %}<tr class="empty-row"><td colspan="4" class="muted">Belum ada pesanan.</td></tr>{% endfor %}
+</tbody></table>
+{% endif %}
+</div>
+{% endblock %}

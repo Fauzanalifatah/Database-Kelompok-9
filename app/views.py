@@ -6,7 +6,10 @@ from django.contrib import messages
 from django.db import IntegrityError, transaction
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.http import Http404
 from django.utils import timezone
+from django.utils.text import slugify
 
 from .decorators_admin import admin_required
 from .form_admin import (
@@ -19,10 +22,17 @@ from .form_admin import (
     AboutSettingForm,
     TestimoniPublicForm,
     formProfile,
+    AdminArtikelForm,
+    AdminProdukForm,
+    ProdukGambarFormSet,
+    ProdukKeunggulanFormSet,
+    AdminPelangganForm,
+    AdminPesananStatusForm,
 )
 from .forms import RegistrationForm
 from .models import (
     Artikel,
+    BlogPengguna,
     KategoriArtikel,
     MitraDeepublish,
     ArtikelView,
@@ -31,6 +41,7 @@ from .models import (
     Provinsi,
     UserAdmin,
     UserPengguna,
+    Pesanan,
     FooterSetting,
     FooterPayment,
     FooterSocial,
@@ -40,6 +51,386 @@ from .models import (
 
 FOOTER_SOCIAL_PLATFORMS = ("Instagram", "TikTok", "WhatsApp")
 FOOTER_PAYMENT_PLATFORMS = ("QRIS", "BRI", "BNI", "Mandiri")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def artikel_manager(request):
+    articles = list(Artikel.objects.select_related("category"))
+    return render(
+        request,
+        "app/content_manager_list.html",
+        {
+            "title": "Kelola Artikel",
+            "heading": "Kelola Artikel",
+            "section": "artikel",
+            "objects": articles,
+            "item_label": "artikel",
+            "add_url": reverse("app:artikel_manager_add"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def artikel_manager_form(request, pk=None):
+    instance = Artikel.objects.filter(pk=pk).first() if pk else None
+    if pk and instance is None:
+        raise Http404
+    form = AdminArtikelForm(request.POST or None, request.FILES or None, instance=instance)
+    if request.method == "POST" and form.is_valid():
+        article = form.save(commit=False)
+        if not article.slug:
+            article.slug = slugify(article.title_articles)
+        article.save()
+        messages.success(request, "Artikel berhasil disimpan.")
+        return redirect("app:artikel_manager")
+    return render(
+        request,
+        "app/content_manager_form.html",
+        {
+            "title": "Edit Artikel",
+            "heading": "Edit Artikel" if instance else "Tambah Artikel",
+            "section": "artikel",
+            "form": form,
+            "item_label": "artikel",
+            "cancel_url": reverse("app:artikel_manager"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def artikel_manager_delete(request, pk):
+    article = get_object_or_404(Artikel, pk=pk)
+    if request.method == "POST":
+        article.delete()
+        messages.success(request, "Artikel berhasil dihapus.")
+    return redirect("app:artikel_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def about_manager(request):
+    setting, _ = AboutSetting.objects.get_or_create(pk=1)
+    form = AboutSettingForm(request.POST or None, request.FILES or None, instance=setting)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Profil Tentang Kami berhasil diperbarui.")
+        return redirect("app:about_manager")
+    return render(
+        request,
+        "app/content_manager_form.html",
+        {
+            "title": "Tentang Kami",
+            "heading": "Pengaturan Tentang Kami",
+            "section": "tentang-kami",
+            "form": form,
+            "item_label": "Tentang Kami",
+            "cancel_url": reverse("app:about_manager"),
+            "public_url": reverse("about"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def mitra_manager(request):
+    return render(
+        request,
+        "app/mitra_manager.html",
+        {
+            "title": "Mitra Deepublish",
+            "heading": "Mitra Deepublish",
+            "objects": MitraDeepublish.objects.all(),
+            "add_url": reverse("app:mitra_manager_add"),
+            "public_url": reverse("home"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def mitra_manager_form(request, pk=None):
+    instance = MitraDeepublish.objects.filter(pk=pk).first() if pk else None
+    if pk and instance is None:
+        raise Http404
+    form = MitraDeepublishForm(request.POST or None, request.FILES or None, instance=instance)
+    if request.method == "POST" and form.is_valid():
+        mitra = form.save(commit=False)
+        if not mitra.pk:
+            mitra.urutan = MitraDeepublish.objects.count()
+        mitra.save()
+        messages.success(request, "Mitra Deepublish berhasil disimpan.")
+        return redirect("app:mitra_manager")
+    return render(
+        request,
+        "app/content_manager_form.html",
+        {
+            "title": "Edit Mitra Deepublish",
+            "heading": "Edit Mitra Deepublish" if instance else "Tambah Mitra Deepublish",
+            "section": "mitra",
+            "form": form,
+            "item_label": "mitra",
+            "cancel_url": reverse("app:mitra_manager"),
+            "public_url": reverse("home"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def mitra_manager_delete(request, pk):
+    mitra = get_object_or_404(MitraDeepublish, pk=pk)
+    if request.method == "POST":
+        mitra.delete()
+        messages.success(request, "Mitra Deepublish berhasil dihapus.")
+    return redirect("app:mitra_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def footer_manager(request):
+    footer_setting, _ = FooterSetting.objects.get_or_create(pk=1)
+    if request.method == "POST":
+        form_type = request.POST.get("form_type")
+        if form_type == "footer":
+            form = FooterSettingForm(request.POST, instance=footer_setting)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Pengaturan footer berhasil diperbarui.")
+                return redirect("app:footer_manager")
+        elif form_type == "social_add":
+            form = FooterSocialAddForm(request.POST, request.FILES)
+            if form.is_valid():
+                social = form.save(commit=False)
+                social.footer = footer_setting
+                social.urutan = footer_setting.socials.count()
+                social.save()
+                messages.success(request, "Ikon sosial media berhasil ditambahkan.")
+                return redirect("app:footer_manager")
+        elif form_type == "social":
+            name = request.POST.get("social_name", "")
+            social = footer_setting.socials.filter(nama=name).first()
+            form = FooterSocialForm(request.POST, request.FILES, instance=social)
+            if form.is_valid() and name:
+                social = form.save(commit=False)
+                social.footer = footer_setting
+                social.nama = name
+                social.urutan = social.urutan or footer_setting.socials.count()
+                social.save()
+                messages.success(request, f"Ikon {name} berhasil diperbarui.")
+                return redirect("app:footer_manager")
+        elif form_type == "payment_add":
+            form = FooterPaymentAddForm(request.POST, request.FILES)
+            if form.is_valid():
+                payment = form.save(commit=False)
+                payment.footer = footer_setting
+                payment.urutan = footer_setting.payments.count()
+                payment.save()
+                messages.success(request, "Metode pembayaran berhasil ditambahkan.")
+                return redirect("app:footer_manager")
+        elif form_type == "payment":
+            name = request.POST.get("payment_name", "")
+            payment = footer_setting.payments.filter(nama=name).first()
+            form = FooterPaymentForm(request.POST, request.FILES, instance=payment)
+            if form.is_valid() and name:
+                payment = form.save(commit=False)
+                payment.footer = footer_setting
+                payment.nama = name
+                payment.urutan = payment.urutan or footer_setting.payments.count()
+                payment.save()
+                messages.success(request, f"Logo {name} berhasil diperbarui.")
+                return redirect("app:footer_manager")
+        else:
+            form = FooterSettingForm(request.POST, instance=footer_setting)
+        messages.error(request, "Gagal menyimpan pengaturan footer. Periksa isian form.")
+
+    footer_form = FooterSettingForm(request.POST if request.method == "POST" and request.POST.get("form_type") == "footer" else None, instance=footer_setting)
+    social_forms = []
+    for name in FOOTER_SOCIAL_PLATFORMS:
+        social = footer_setting.socials.filter(nama=name).first()
+        social_forms.append({"name": name, "form": FooterSocialForm(instance=social), "social": social})
+    for social in footer_setting.socials.exclude(nama__in=FOOTER_SOCIAL_PLATFORMS):
+        social_forms.insert(0, {"name": social.nama, "form": FooterSocialForm(instance=social), "social": social})
+    payment_forms = []
+    for name in FOOTER_PAYMENT_PLATFORMS:
+        payment = footer_setting.payments.filter(nama=name).first()
+        payment_forms.append({"name": name, "form": FooterPaymentForm(instance=payment), "payment": payment})
+    for payment in footer_setting.payments.exclude(nama__in=FOOTER_PAYMENT_PLATFORMS):
+        payment_forms.insert(0, {"name": payment.nama, "form": FooterPaymentForm(instance=payment), "payment": payment})
+    return render(
+        request,
+        "app/footer_manager.html",
+        {
+            "title": "Pengaturan Footer",
+            "heading": "Pengaturan Footer",
+            "footer_form": footer_form,
+            "footer_social_forms": social_forms,
+            "footer_payment_forms": payment_forms,
+            "footer_social_add_form": FooterSocialAddForm(),
+            "footer_payment_add_form": FooterPaymentAddForm(),
+            "public_url": reverse("home"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def produk_manager(request):
+    products = list(Produk.objects.select_related("kategori"))
+    return render(
+        request,
+        "app/content_manager_list.html",
+        {
+            "title": "Kelola Produk",
+            "heading": "Kelola Produk",
+            "section": "produk",
+            "objects": products,
+            "item_label": "produk",
+            "add_url": reverse("app:produk_manager_add"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def produk_manager_form(request, pk=None):
+    instance = Produk.objects.filter(pk=pk).first() if pk else None
+    if pk and instance is None:
+        raise Http404
+    form = AdminProdukForm(request.POST or None, request.FILES or None, instance=instance)
+    image_formset = ProdukGambarFormSet(
+        request.POST or None, request.FILES or None, instance=instance
+    )
+    benefit_formset = ProdukKeunggulanFormSet(request.POST or None, instance=instance)
+    if request.method == "POST" and form.is_valid() and image_formset.is_valid() and benefit_formset.is_valid():
+        product = form.save(commit=False)
+        if not product.slug:
+            product.slug = slugify(product.nama)
+        product.save()
+        image_formset.instance = product
+        image_formset.save()
+        benefit_formset.instance = product
+        benefit_formset.save()
+        messages.success(request, "Produk berhasil disimpan.")
+        return redirect("app:produk_manager")
+    return render(
+        request,
+        "app/content_manager_form.html",
+        {
+            "title": "Edit Produk",
+            "heading": "Edit Produk" if instance else "Tambah Produk",
+            "section": "produk",
+            "form": form,
+            "image_formset": image_formset,
+            "benefit_formset": benefit_formset,
+            "item_label": "produk",
+            "cancel_url": reverse("app:produk_manager"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def produk_manager_delete(request, pk):
+    product = get_object_or_404(Produk, pk=pk)
+    if request.method == "POST":
+        product.delete()
+        messages.success(request, "Produk berhasil dihapus.")
+    return redirect("app:produk_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def pelanggan_manager(request):
+    customers = UserPengguna.objects.select_related("user", "provinsi_anggota").order_by(
+        "-user__date_joined"
+    )
+    return render(
+        request,
+        "app/records_manager.html",
+        {
+            "title": "Kelola Pelanggan",
+            "heading": "Kelola Pelanggan",
+            "section": "pelanggan",
+            "records": customers,
+            "record_type": "pelanggan",
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def pelanggan_manager_form(request, username):
+    member = get_object_or_404(
+        UserPengguna.objects.select_related("user"),
+        user__username=username,
+    )
+    form = AdminPelangganForm(
+        request.POST or None,
+        instance=member.user,
+        member=member,
+    )
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Data pelanggan berhasil diperbarui.")
+        return redirect("app:pelanggan_manager")
+    return render(
+        request,
+        "app/record_form.html",
+        {
+            "title": "Edit Pelanggan",
+            "heading": "Edit Pelanggan",
+            "section": "pelanggan",
+            "form": form,
+            "record_type": "pelanggan",
+            "cancel_url": reverse("app:pelanggan_manager"),
+            "record_name": member.user.get_full_name() or member.user.username,
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def pesanan_manager(request):
+    orders = Pesanan.objects.select_related("pengguna").prefetch_related("item").all()
+    return render(
+        request,
+        "app/records_manager.html",
+        {
+            "title": "Kelola Pesanan",
+            "heading": "Kelola Pesanan",
+            "section": "pesanan",
+            "records": orders,
+            "record_type": "pesanan",
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def pesanan_manager_form(request, pk):
+    order = get_object_or_404(Pesanan.objects.select_related("pengguna"), pk=pk)
+    form = AdminPesananStatusForm(request.POST or None, instance=order)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Status pesanan berhasil diperbarui.")
+        return redirect("app:pesanan_manager")
+    return render(
+        request,
+        "app/record_form.html",
+        {
+            "title": "Edit Pesanan",
+            "heading": "Edit Pesanan",
+            "section": "pesanan",
+            "form": form,
+            "record_type": "pesanan",
+            "cancel_url": reverse("app:pesanan_manager"),
+            "record_name": str(order),
+            "order": order,
+        },
+    )
 
 
 @admin_required
@@ -491,6 +882,31 @@ def article_detail(request, slug):
         request,
         "storefront/article_detail.html",
         {"article": article, "related_articles": related_articles},
+    )
+
+
+def blog_pengguna_list(request):
+    blogs = BlogPengguna.objects.filter(
+        published=True
+    ).select_related("author").order_by("-created_at", "-pk")
+    return render(request, "storefront/blog_pengguna_list.html", {"blogs": blogs})
+
+
+def blog_pengguna_detail(request, slug):
+    blog = get_object_or_404(
+        BlogPengguna.objects.select_related("author"),
+        slug=slug,
+        published=True,
+    )
+    BlogPengguna.objects.filter(pk=blog.pk).update(views=F("views") + 1)
+    blog.refresh_from_db(fields=["views"])
+    related_blogs = BlogPengguna.objects.filter(
+        published=True
+    ).exclude(pk=blog.pk).select_related("author")[:5]
+    return render(
+        request,
+        "storefront/blog_pengguna_detail.html",
+        {"blog": blog, "related_blogs": related_blogs},
     )
 
 

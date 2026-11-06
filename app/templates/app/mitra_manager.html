@@ -1,0 +1,12 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<div class="toolbar"><div><h2>{{ heading }}</h2><p class="muted">{{ objects|length }} mitra tersimpan</p></div><a class="button" href="{{ add_url }}">＋ Tambah Mitra</a></div>
+<div class="table-card"><table><colgroup><col class="col-content"><col class="col-status"><col class="col-date"><col class="col-actions"></colgroup><thead><tr><th>Mitra</th><th>Status</th><th>Urutan</th><th>Aksi</th></tr></thead><tbody>
+{% for object in objects %}<tr>
+    <td><div class="content-item">{% if object.gambar %}<img class="thumb" src="{{ object.gambar.url }}" alt="">{% else %}<span class="thumb thumb-placeholder"></span>{% endif %}<div class="content-copy"><strong>{{ object.nama }}</strong><span class="muted">Logo mitra Deepublish</span></div></div></td>
+    <td><span class="status-badge {% if not object.aktif %}is-draft{% endif %}">{% if object.aktif %}Tayang{% else %}Nonaktif{% endif %}</span></td>
+    <td>{{ object.urutan }}</td>
+    <td><div class="actions"><a class="action" href="{% url 'app:mitra_manager_edit' object.pk %}">Edit</a><form method="post" action="{% url 'app:mitra_manager_delete' object.pk %}">{% csrf_token %}<button class="action" type="submit">Hapus</button></form></div></td>
+</tr>{% empty %}<tr class="empty-row"><td colspan="4" class="muted">Belum ada mitra Deepublish.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

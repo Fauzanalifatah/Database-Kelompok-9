@@ -1,0 +1,12 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<div class="toolbar"><div><h2>{{ heading }}</h2><p class="muted">{{ objects|length }} konten tersimpan</p></div><a class="button" href="{{ add_url }}">＋ Tambah {{ item_label }}</a></div>
+<div class="table-card"><table><colgroup><col class="col-content"><col class="col-status"><col class="col-date"><col class="col-actions"></colgroup><thead><tr><th>Konten</th><th>Status</th><th>Diperbarui</th><th>Aksi</th></tr></thead><tbody>
+{% for object in objects %}<tr>
+    <td><div class="content-item">{% if section == "artikel" and object.images %}<img class="thumb" src="{{ object.images.url }}" alt="">{% elif section == "produk" and object.gambar %}<img class="thumb" src="{{ object.gambar.url }}" alt="">{% else %}<span class="thumb thumb-placeholder"></span>{% endif %}<div class="content-copy"><strong>{% if section == "artikel" %}{{ object.title_articles }}{% else %}{{ object.nama }}{% endif %}</strong><span class="muted">{% if section == "artikel" %}{{ object.authors|default:"Penulis belum diisi" }}{% else %}{{ object.merek|default:"Merek belum diisi" }}{% endif %}</span></div></div></td>
+    <td><span class="status-badge {% if section == "artikel" and not object.published or section == "produk" and not object.aktif %}is-draft{% endif %}">{% if section == "artikel" and object.published or section == "produk" and object.aktif %}Tayang{% else %}Draft{% endif %}</span></td>
+    <td class="date-cell">{% if section == "artikel" %}{{ object.updated_at|date:"d M Y H:i" }}{% else %}{{ object.diperbarui_pada|date:"d M Y H:i" }}{% endif %}</td>
+    <td><div class="actions"><a class="action" href="{% if section == 'artikel' %}{% url 'app:artikel_manager_edit' object.pk %}{% else %}{% url 'app:produk_manager_edit' object.pk %}{% endif %}">Edit</a><form method="post" action="{% if section == 'artikel' %}{% url 'app:artikel_manager_delete' object.pk %}{% else %}{% url 'app:produk_manager_delete' object.pk %}{% endif %}">{% csrf_token %}<button class="action" type="submit">Hapus</button></form></div></td>
+</tr>{% empty %}<tr class="empty-row"><td colspan="4" class="muted">Belum ada {{ item_label }}.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
