@@ -24,7 +24,7 @@
                 <p>{{ footer_setting.deskripsi|default:"Partner teknologi untuk kebutuhan kuliah, kerja, desain, dan gaming." }}</p>
                 <div class="footer-socials" aria-label="Media sosial Losari Computer">
                     {% for social in footer_setting.socials.all %}
-                        {% if social.aktif %}<a href="{{ social.url }}" aria-label="{{ social.nama }}" target="_blank" rel="noopener"><img src="{{ social.ikon.url }}" alt="{{ social.nama }}"></a>{% endif %}
+                        {% if social.aktif %}<a href="{% if social.nomor_telepon %}tel:{{ social.nomor_telepon }}{% else %}{{ social.url }}{% endif %}" aria-label="{{ social.nama }}" {% if not social.nomor_telepon %}target="_blank" rel="noopener"{% endif %}><img src="{{ social.ikon.url }}" alt="{{ social.nama }}"></a>{% endif %}
                     {% empty %}
                         <span class="footer-social-empty">Ikon sosial belum diatur</span>
                     {% endfor %}

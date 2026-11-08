@@ -174,7 +174,8 @@ class FooterSocial(models.Model):
         FooterSetting, on_delete=models.CASCADE, related_name="socials"
     )
     nama = models.CharField(max_length=40)
-    url = models.URLField(max_length=255)
+    url = models.URLField(max_length=255, blank=True)
+    nomor_telepon = models.CharField(max_length=30, blank=True)
     ikon = models.ImageField(upload_to=rename_footer_icon)
     urutan = models.PositiveIntegerField(default=0)
     aktif = models.BooleanField(default=True)
@@ -357,8 +358,8 @@ class MitraDeepublish(models.Model):
 
     class Meta:
         ordering = ["urutan", "nama"]
-        verbose_name = "Mitra Deepublish"
-        verbose_name_plural = "Mitra Deepublish"
+        verbose_name = "Mitra Losari Computer"
+        verbose_name_plural = "Mitra Losari Computer"
 
     def __str__(self):
         return self.nama

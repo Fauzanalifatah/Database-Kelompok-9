@@ -138,6 +138,11 @@
         }
         .button:hover { box-shadow: 0 8px 16px #dc262633; }
         .button:active { transform: translateY(1px); }
+        .social-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 14px; color: var(--muted); font-size: 12px; }
+        .social-divider::before, .social-divider::after { flex: 1; height: 1px; content: ""; background: var(--border); }
+        .google-button { display: flex; min-height: 46px; align-items: center; justify-content: center; gap: 12px; padding: 10px 16px; color: #334155; background: #fff; border: 1px solid #cbd5e1; border-radius: 9px; font-size: 13px; font-weight: 750; text-decoration: none; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+        .google-button svg { width: 20px; height: 20px; flex: 0 0 20px; }
+        .google-button:hover { border-color: #94a3b8; box-shadow: 0 6px 14px #0f172a12; text-decoration: none; transform: translateY(-1px); }
         .switch { margin: 22px 0 0; color: var(--muted); text-align: center; font-size: 13px; line-height: 1.5; }
         a { color: var(--primary-dark); font-weight: 700; text-decoration: none; }
         a:hover { text-decoration: underline; }

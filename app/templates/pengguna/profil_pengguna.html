@@ -37,10 +37,11 @@
             min-height: 100vh;
             flex-shrink: 0;
             padding: 27px 16px;
-            color: #fee2e2;
-            background: linear-gradient(180deg, #450a0a, #991b1b 72%, #7f1d1d);
+            color: #475569;
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
         }
-        .brand { display: flex; align-items: center; gap: 10px; margin: 0 12px 48px; }
+        .brand { display: flex; align-items: center; gap: 10px; margin: 0 12px 48px; color: #172033; }
         .brand-logo {
             display: block;
             width: 44px;
@@ -53,23 +54,24 @@
             box-shadow: 0 6px 14px #991b1b55;
         }
         .brand-copy { min-width: 0; flex: 1 1 auto; overflow: hidden; }
-        .brand-name { display: block; color: #fff; font-size: 15px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+        .brand-name { display: block; color: #172033; font-size: 15px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
         .brand-subtitle {
             display: block;
             margin-top: 4px;
-            color: #fecaca;
+            color: #64748b;
             font-size: 9px;
             line-height: 1.25;
             overflow-wrap: anywhere;
         }
-        .menu-label { margin: 0 12px 10px; color: #64748b; font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        .menu-label { margin: 0 12px 10px; color: #dc2626; font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+        .menu-label-spaced { margin-top: 24px; }
         .nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
             margin: 5px 0;
             padding: 13px 12px;
-            color: #cbd5e1;
+            color: #475569;
             border: 1px solid transparent;
             border-radius: 10px;
             font-size: 14px;
@@ -78,25 +80,25 @@
         }
         .nav-link:hover, .nav-link.active {
             color: #fff;
-            background: #ffffff12;
-            border-color: #ffffff12;
-            box-shadow: inset 3px 0 #fecaca;
+            background: #dc2626;
+            border-color: #ef4444;
+            box-shadow: 0 6px 14px #dc262640;
         }
+        .nav-link.active { box-shadow: inset 3px 0 #fecaca, 0 6px 14px #dc262640; }
         .nav-icon { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; color: #94a3b8; }
         .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
-        .sidebar-footer { margin: auto 12px 0; padding: 15px; color: #cbd5e1; background: #ffffff0d; border: 1px solid #ffffff12; border-radius: 12px; font-size: 12px; line-height: 1.5; }
-        .sidebar-footer strong { display: block; margin-bottom: 4px; color: #fff; }
-        .logout {
-            width: calc(100% - 24px);
-            margin: 0 12px;
-            padding: 11px 18px;
-            color: #fee2e2;
-            background: #ffffff0d;
-            border: 1px solid #ffffff24;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-        }
+        .nav-link.active .nav-icon, .nav-link:hover .nav-icon { color: #fff; }
+        .sidebar-footer { margin: auto 12px 0; padding: 15px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 12px; line-height: 1.5; }
+        .sidebar-footer strong { display: block; margin-bottom: 4px; color: #172033; }
+        .logout { display: flex; position: relative; width: 45px; height: 45px; align-items: center; justify-content: flex-start; margin: 0 12px; padding: 0; overflow: hidden; color: #fff; background: #ff4141; border: 0; border-radius: 50%; cursor: pointer; box-shadow: 2px 2px 10px #00000032; transition: width .3s ease, border-radius .3s ease, transform .15s ease; }
+        .logout .sign { display: flex; width: 100%; align-items: center; justify-content: center; transition: width .3s ease, padding-left .3s ease; }
+        .logout .sign svg { width: 17px; height: 17px; }
+        .logout .sign svg path { fill: #fff; }
+        .logout .logout-text { position: absolute; right: 0; width: 0; overflow: hidden; opacity: 0; color: #fff; font-size: 15px; font-weight: 600; white-space: nowrap; transition: width .3s ease, opacity .3s ease; }
+        .logout:hover { width: 125px; border-radius: 40px; }
+        .logout:hover .sign { width: 30%; padding-left: 20px; }
+        .logout:hover .logout-text { width: 70%; opacity: 1; padding-right: 10px; }
+        .logout:active { transform: translate(2px, 2px); }
         .sidebar > form { display: flex; margin-top: 0; padding-top: 18px; }
         .main { flex: 1; min-width: 0; min-height: 100vh; }
         .topbar {
@@ -392,7 +394,7 @@
             .brand-copy { min-width: 0; overflow: hidden; }
             .brand-name { overflow: hidden; text-overflow: ellipsis; }
             .nav-link { display: flex; padding: 10px; }
-            .logout { margin: 0; width: 100%; }
+            .logout { margin: 0 12px; width: 45px; }
             .topbar, .content { padding: 22px 18px; }
             .topbar-heading { display: flex; align-items: center; gap: 12px; }
             .menu-toggle { display: inline-grid; width: 42px; height: 42px; place-items: center; color: #991b1b; background: #fff1f2; border: 1px solid #fecaca; border-radius: 10px; cursor: pointer; }
@@ -442,16 +444,19 @@
             <img class="brand-logo" src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer">
             <div class="brand-copy"><strong class="brand-name">Losari Computer</strong><small class="brand-subtitle">Laptop pilihan untuk semua kebutuhan</small></div>
         </div>
-        <p class="menu-label">Menu pengguna</p>
+        <p class="menu-label">Menu utama</p>
         <nav>
             <a class="nav-link" href="{% url 'home' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Kembali ke Website</a>
             <a class="nav-link active" href="{% url 'app:profile_pengguna' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span>Profil Saya</a>
+        </nav>
+        <p class="menu-label menu-label-spaced">Konten</p>
+        <nav>
             <a class="nav-link" href="#blog-saya"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8M8 13h8M8 17h5"></path></svg></span>Blog Saya</a>
         </nav>
         <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola profil dan blog Anda melalui dashboard pengguna Losari Computer.</div>
         <form method="post" action="{% url 'app:logout' %}">
             {% csrf_token %}
-            <button class="logout" type="submit">Logout</button>
+            <button class="logout" type="submit"><span class="sign"><svg viewBox="0 0 512 512" aria-hidden="true"><path d="M377.9 105.9 500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9-18.7 0-33.9-15.2-33.9-33.9V320H192c-17.7 0-32-14.3-32-32v-64c0-17.7 14.3-32 32-32h128v-62.1c0-18.7 15.2-33.9 33.9-33.9 9 0 17.6 3.6 24 9.9ZM160 96H96c-17.7 0-32 14.3-32 32v256c0 17.7 32 32 32 32h64c35.3 0 64 28.7 64 64s-28.7 64-64 64H96c-53 0-96-43-96-96V128C0 75 43 32 96 32h64c35.3 0 64 28.7 64 64s-28.7 64-64 64Z"></path></svg></span><span class="logout-text">Logout</span></button>
         </form>
     </aside>
     <main class="main">

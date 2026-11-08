@@ -36,6 +36,12 @@ urlpatterns = [
     ),
     path("dashboard/", views.index, name="dashboard"),
     path("login/", core_views.loginView, name="login"),
+    path("login/google/", core_views.google_login, name="google_login"),
+    path(
+        "login/google/callback/",
+        core_views.google_callback,
+        name="google_callback",
+    ),
     path("register/", core_views.registerView, name="register"),
     path("logout/", core_views.LogoutView, name="logout"),
     path(

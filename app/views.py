@@ -140,8 +140,8 @@ def mitra_manager(request):
         request,
         "app/mitra_manager.html",
         {
-            "title": "Mitra Deepublish",
-            "heading": "Mitra Deepublish",
+            "title": "Mitra Losari Computer",
+            "heading": "Mitra Losari Computer",
             "objects": MitraDeepublish.objects.all(),
             "add_url": reverse("app:mitra_manager_add"),
             "public_url": reverse("home"),
@@ -161,14 +161,14 @@ def mitra_manager_form(request, pk=None):
         if not mitra.pk:
             mitra.urutan = MitraDeepublish.objects.count()
         mitra.save()
-        messages.success(request, "Mitra Deepublish berhasil disimpan.")
+        messages.success(request, "Mitra Losari Computer berhasil disimpan.")
         return redirect("app:mitra_manager")
     return render(
         request,
         "app/content_manager_form.html",
         {
-            "title": "Edit Mitra Deepublish",
-            "heading": "Edit Mitra Deepublish" if instance else "Tambah Mitra Deepublish",
+            "title": "Edit Mitra Losari Computer",
+            "heading": "Edit Mitra Losari Computer" if instance else "Tambah Mitra Losari Computer",
             "section": "mitra",
             "form": form,
             "item_label": "mitra",
@@ -184,7 +184,7 @@ def mitra_manager_delete(request, pk):
     mitra = get_object_or_404(MitraDeepublish, pk=pk)
     if request.method == "POST":
         mitra.delete()
-        messages.success(request, "Mitra Deepublish berhasil dihapus.")
+        messages.success(request, "Mitra Losari Computer berhasil dihapus.")
     return redirect("app:mitra_manager")
 
 
@@ -476,7 +476,7 @@ def index(request):
             if not mitra.pk:
                 mitra.urutan = MitraDeepublish.objects.count()
             mitra.save()
-            messages.success(request, "Mitra Deepublish berhasil disimpan.")
+            messages.success(request, "Mitra Losari Computer berhasil disimpan.")
             return redirect("app:dashboard")
         messages.error(request, "Gagal menyimpan mitra. Periksa nama dan gambar.")
     elif request.method == "POST" and request.POST.get("form_type") == "social_add":

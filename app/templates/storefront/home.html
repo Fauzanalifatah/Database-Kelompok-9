@@ -16,8 +16,10 @@
     {% if mitra_deepublish %}
     <section class="deepublish-partners" aria-labelledby="deepublish-partners-title">
         <p class="deepublish-eyebrow">KOLABORASI</p>
-        <h2 id="deepublish-partners-title">Mitra Deepublish</h2>
-        <div class="deepublish-partner-slider">
+        <h2 id="deepublish-partners-title">Mitra Losari Computer</h2>
+        <div class="deepublish-slider-shell">
+            <button class="deepublish-slider-button deepublish-slider-prev" type="button" aria-label="Lihat mitra sebelumnya">&#8592;</button>
+            <div class="deepublish-partner-slider">
             <div class="deepublish-partner-track">
                 {% for partner in mitra_deepublish %}
                 <div class="deepublish-partner">
@@ -28,10 +30,10 @@
                 </div>
                 {% endfor %}
             </div>
+            </div>
+            <button class="deepublish-slider-button deepublish-slider-next" type="button" aria-label="Lihat mitra berikutnya">&#8594;</button>
         </div>
-        <div class="deepublish-slider-dots" aria-hidden="true">
-            <span class="active"></span><span></span><span></span><span></span><span></span><span></span>
-        </div>
+        <div class="deepublish-slider-dots" aria-label="Navigasi mitra"></div>
     </section>
     {% endif %}
     <section class="home-articles" aria-labelledby="latest-articles-title">
@@ -63,4 +65,57 @@
         </div>
     </section>
 </div>
+<script>
+    (function () {
+        var shell = document.querySelector('.deepublish-slider-shell');
+        var track = document.querySelector('.deepublish-partner-track');
+        var slider = document.querySelector('.deepublish-partner-slider');
+        var dots = document.querySelector('.deepublish-slider-dots');
+        if (!shell || !track || !slider || !dots) {
+            return;
+        }
+        var items = Array.from(track.children);
+        var page = 0;
+        function visibleItems() {
+            return window.matchMedia('(max-width: 560px)').matches ? 2 : 4;
+        }
+        function pageCount() {
+            return Math.max(1, Math.ceil(items.length / visibleItems()));
+        }
+        function render() {
+            var visible = visibleItems();
+            var pages = pageCount();
+            page = Math.min(page, pages - 1);
+            track.style.transform = 'translateX(-' + (page * slider.clientWidth) + 'px)';
+            items.forEach(function (item) {
+                item.style.flexBasis = (100 / visible) + '%';
+            });
+            dots.innerHTML = '';
+            for (var index = 0; index < pages; index += 1) {
+                var dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'deepublish-slider-dot' + (index === page ? ' active' : '');
+                dot.setAttribute('aria-label', 'Halaman mitra ' + (index + 1));
+                dot.addEventListener('click', function () {
+                    page = Number(this.dataset.page);
+                    render();
+                });
+                dot.dataset.page = index;
+                dots.appendChild(dot);
+            }
+            shell.querySelector('.deepublish-slider-prev').disabled = page === 0;
+            shell.querySelector('.deepublish-slider-next').disabled = page === pages - 1;
+        }
+        shell.querySelector('.deepublish-slider-prev').addEventListener('click', function () {
+            page -= 1;
+            render();
+        });
+        shell.querySelector('.deepublish-slider-next').addEventListener('click', function () {
+            page += 1;
+            render();
+        });
+        window.addEventListener('resize', render);
+        render();
+    }());
+</script>
 {% endblock %}

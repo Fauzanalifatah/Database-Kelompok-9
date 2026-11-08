@@ -9,14 +9,37 @@
 </form>
 <section class="form-card" style="margin-top:22px">
     <h3 class="section-title">Sosial media</h3>
-    <div class="form-grid">{% for item in footer_social_forms %}<form method="post" enctype="multipart/form-data" class="field"><input type="hidden" name="form_type" value="social"><input type="hidden" name="social_name" value="{{ item.name }}">{% csrf_token %}<strong>{{ item.name }}</strong>{% for field in item.form %}{{ field.label_tag }}{{ field }}{{ field.errors }}{% endfor %}<button class="button" type="submit">Simpan {{ item.name }}</button></form>{% endfor %}</div>
+    <div class="form-grid">{% for item in footer_social_forms %}<form method="post" enctype="multipart/form-data" class="field"><input type="hidden" name="form_type" value="social"><input type="hidden" name="social_name" value="{{ item.name }}">{% csrf_token %}<strong>{{ item.name }}</strong>{% if item.social and item.social.ikon %}<img class="social-preview" src="{{ item.social.ikon.url }}" alt="Ikon {{ item.name }}">{% endif %}{% for field in item.form %}{{ field.label_tag }}{{ field }}{{ field.errors }}{% endfor %}<button class="button" type="submit">Simpan {{ item.name }}</button></form>{% endfor %}</div>
     <h4 class="section-title">Tambah platform lain</h4>
     <form method="post" enctype="multipart/form-data" class="form-grid"><input type="hidden" name="form_type" value="social_add">{% csrf_token %}{% for field in footer_social_add_form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<div class="form-actions"><button class="button" type="submit">Tambah sosial media</button></div></form>
 </section>
 <section class="form-card" style="margin-top:22px">
     <h3 class="section-title">Metode pembayaran</h3>
-    <div class="form-grid">{% for item in footer_payment_forms %}<form method="post" enctype="multipart/form-data" class="field"><input type="hidden" name="form_type" value="payment"><input type="hidden" name="payment_name" value="{{ item.name }}">{% csrf_token %}<strong>{{ item.name }}</strong>{% for field in item.form %}{{ field.label_tag }}{{ field }}{{ field.errors }}{% endfor %}<button class="button" type="submit">Simpan {{ item.name }}</button></form>{% endfor %}</div>
+    <div class="form-grid">{% for item in footer_payment_forms %}<form method="post" enctype="multipart/form-data" class="field"><input type="hidden" name="form_type" value="payment"><input type="hidden" name="payment_name" value="{{ item.name }}">{% csrf_token %}<strong>{{ item.name }}</strong>{% if item.payment and item.payment.ikon %}<img class="payment-preview" src="{{ item.payment.ikon.url }}" alt="Logo {{ item.name }}">{% endif %}{% for field in item.form %}{{ field.label_tag }}{{ field }}{{ field.errors }}{% endfor %}<button class="button" type="submit">Simpan {{ item.name }}</button></form>{% endfor %}</div>
     <h4 class="section-title">Tambah metode lain</h4>
     <form method="post" enctype="multipart/form-data" class="form-grid"><input type="hidden" name="form_type" value="payment_add">{% csrf_token %}{% for field in footer_payment_add_form %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}<div class="form-actions"><button class="button" type="submit">Tambah pembayaran</button></div></form>
 </section>
+<script>
+    document.querySelectorAll('form input[name="form_type"][value="social"], form input[name="form_type"][value="social_add"], form input[name="form_type"][value="payment"]').forEach(function (marker) {
+        var input = marker.form.querySelector('input[type="file"]');
+        if (!input) {
+            return;
+        }
+        var previewClass = marker.value.indexOf('social') === 0 ? 'social-preview' : 'payment-preview';
+        input.addEventListener('change', function () {
+            var file = input.files && input.files[0];
+            if (!file || !file.type.startsWith('image/')) {
+                return;
+            }
+            var preview = input.form.querySelector('.' + previewClass);
+            if (!preview) {
+                preview = document.createElement('img');
+                preview.className = previewClass;
+                preview.alt = previewClass === 'social-preview' ? 'Pratinjau ikon sosial media' : 'Pratinjau logo pembayaran';
+                input.form.insertBefore(preview, input.form.querySelector('label[for="' + input.id + '"]') || input);
+            }
+            preview.src = URL.createObjectURL(file);
+        });
+    });
+</script>
 {% endblock %}

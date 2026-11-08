@@ -21,7 +21,7 @@
         </nav>
         <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola profil dan blog Anda melalui dashboard pengguna Losari Computer.</div>
         <form method="post" action="{% url 'app:logout' %}" class="logout-form">
-            {% csrf_token %}<button type="submit">Keluar</button>
+            {% csrf_token %}<button type="submit"><span class="sign"><svg viewBox="0 0 512 512" aria-hidden="true"><path d="M377.9 105.9 500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9-18.7 0-33.9-15.2-33.9-33.9V320H192c-17.7 0-32-14.3-32-32v-64c0-17.7 14.3-32 32-32h128v-62.1c0-18.7 15.2-33.9 33.9-33.9 9 0 17.6 3.6 24 9.9ZM160 96H96c-17.7 0-32 14.3-32 32v256c0 17.7 32 32 32 32h64c35.3 0 64 28.7 64 64s-28.7 64-64 64H96c-53 0-96-43-96-96V128C0 75 43 32 96 32h64c35.3 0 64 28.7 64 64s-28.7 64-64 64Z"></path></svg></span><span class="logout-text">Logout</span></button>
         </form>
     </aside>
     <main class="blog-main">

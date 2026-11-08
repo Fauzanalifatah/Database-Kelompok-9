@@ -94,7 +94,12 @@ class FooterSettingForm(forms.ModelForm):
 
 
 class FooterSocialForm(forms.ModelForm):
-    url = forms.URLField(required=False)
+    url = forms.URLField(required=False, label="Link URL")
+    nomor_telepon = forms.CharField(
+        required=False,
+        label="Nomor telepon",
+        help_text="Isi URL atau nomor telepon. Salah satu wajib diisi.",
+    )
     aktif = forms.BooleanField(required=False, initial=True)
     ikon = forms.ImageField(required=False)
 
@@ -102,11 +107,15 @@ class FooterSocialForm(forms.ModelForm):
         cleaned_data = super().clean()
         if not self.instance.pk and not cleaned_data.get("ikon"):
             self.add_error("ikon", "Unggah gambar ikon untuk sosial media ini.")
+        if not cleaned_data.get("url") and not cleaned_data.get("nomor_telepon"):
+            raise forms.ValidationError("Isi link URL atau nomor telepon.")
+        if cleaned_data.get("url") and cleaned_data.get("nomor_telepon"):
+            raise forms.ValidationError("Isi salah satu saja: link URL atau nomor telepon.")
         return cleaned_data
 
     class Meta:
         model = FooterSocial
-        fields = ["url", "ikon", "aktif"]
+        fields = ["url", "nomor_telepon", "ikon", "aktif"]
         widgets = {
             "ikon": forms.FileInput(attrs={"accept": "image/*"}),
         }
@@ -133,7 +142,7 @@ class FooterSocialAddForm(FooterSocialForm):
     nama = forms.CharField(max_length=40, label="Nama platform")
 
     class Meta(FooterSocialForm.Meta):
-        fields = ["nama", "url", "ikon", "aktif"]
+        fields = ["nama", "url", "nomor_telepon", "ikon", "aktif"]
 
 
 class FooterPaymentAddForm(FooterPaymentForm):

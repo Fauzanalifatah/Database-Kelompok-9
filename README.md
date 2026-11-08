@@ -525,6 +525,29 @@ Isi `requirements.txt` menyediakan:
 - `django-jazzmin>=3.0,<4.0`: tema antarmuka modern untuk Django Admin;
 - `PyMySQL>=1.1,<2.0`: driver Python untuk koneksi MySQL/MariaDB.
 
+### Login cepat dengan Google
+
+Login Google tersedia pada halaman `/app/login/`. Buat OAuth Client ID
+bertipe **Web application** di Google Cloud Console, lalu tambahkan URL
+berikut sebagai authorized redirect URI:
+
+```text
+http://127.0.0.1:8000/app/login/google/callback/
+```
+
+Jalankan server dengan environment variable berikut. Jangan simpan secret di
+source code atau commit ke Git:
+
+```powershell
+$env:GOOGLE_CLIENT_ID = "client-id-dari-google"
+$env:GOOGLE_CLIENT_SECRET = "client-secret-dari-google"
+$env:GOOGLE_REDIRECT_URI = "http://127.0.0.1:8000/app/login/google/callback/"
+.\venvku\Scripts\python.exe manage.py runserver
+```
+
+Saat login berhasil, aplikasi mencari akun berdasarkan email Google. Jika
+belum ada, akun `User` dan profil `UserPengguna` baru dibuat di database.
+
 Instal dependency jika diperlukan:
 
 ```powershell
