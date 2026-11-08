@@ -3,11 +3,38 @@
 {% block title %}Tentang Kami - Losari Computer{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/about.css' %}">{% endblock %}
 {% block content %}
-<section class="about-hero"><div class="container about-hero-grid"><div><p class="about-eyebrow">Mengenal lebih dekat</p><h1>{{ about_setting.judul }}</h1><p class="about-tagline">{{ about_setting.tagline }}</p><a class="button" href="{% url 'shop' %}">Jelajahi produk</a></div><div class="about-logo-card">{% if about_setting.logo %}<img src="{{ about_setting.logo.url }}" alt="Logo Losari Computer">{% else %}<img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer">{% endif %}</div></div></section>
+<section class="about-hero">
+    <div class="about-mobile-image"><img src="{% static 'images/Toko UMKM Losari Computer.jpeg' %}" alt="Toko Losari Computer"></div>
+    <div class="about-hero-glow about-hero-glow-one"></div>
+    <div class="about-hero-glow about-hero-glow-two"></div>
+    <div class="container about-hero-grid">
+        <div class="about-hero-copy">
+            <p class="about-eyebrow">Mengenal lebih dekat</p>
+            <h1>{{ about_setting.judul }}</h1>
+            <p class="about-tagline">{{ about_setting.tagline }}</p>
+            <a class="button" href="{% url 'shop' %}">
+                Jelajahi produk
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd"></path>
+                </svg>
+            </a>
+        </div>
+        <div class="about-logo-card">
+            <span class="about-logo-ring about-logo-ring-one"></span>
+            <span class="about-logo-ring about-logo-ring-two"></span>
+            {% if about_setting.logo %}<img src="{{ about_setting.logo.url }}" alt="Logo Losari Computer">{% else %}<img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer">{% endif %}
+        </div>
+    </div>
+</section>
 <main class="container about-content">
-    <section class="about-panel"><div class="about-section-label">01 / Tentang kami</div><div><h2>Teknologi yang dekat dengan kebutuhan Anda</h2><p>{{ about_setting.deskripsi|linebreaksbr }}</p></div></section>
-    <section class="about-panel"><div class="about-section-label">02 / Perjalanan kami</div><div><h2>Berawal dari kepercayaan</h2><p>{{ about_setting.sejarah|linebreaksbr }}</p></div></section>
-    <section class="about-ceo"><div class="about-ceo-photo">{% if about_setting.ceo_foto %}<img src="{{ about_setting.ceo_foto.url }}" alt="{{ about_setting.ceo_nama }}">{% else %}<span>CEO</span>{% endif %}</div><div class="about-ceo-copy"><p class="about-eyebrow">Kepemimpinan</p><h2>{{ about_setting.ceo_nama }}</h2><p class="about-ceo-title">{{ about_setting.ceo_jabatan }}</p><p>“Kami percaya teknologi terbaik adalah teknologi yang benar-benar membantu manusia bekerja, belajar, dan berkembang.”</p></div></section>
+    <section class="about-intro about-panel"><div class="about-section-label"><span>01</span> Tentang kami</div><div><h2>Teknologi yang dekat dengan kebutuhan Anda</h2><p>{{ about_setting.deskripsi|linebreaksbr }}</p></div></section>
+    <section class="about-panel"><div class="about-section-label"><span>02</span> Perjalanan kami</div><div><h2>Berawal dari kepercayaan</h2><p>{{ about_setting.sejarah|linebreaksbr }}</p></div></section>
+    <section class="about-highlights" aria-label="Komitmen Losari Computer">
+        <article><span class="about-highlight-icon">01</span><h3>Produk terpercaya</h3><p>Unit teruji untuk menemani kebutuhan digital Anda.</p></article>
+        <article><span class="about-highlight-icon">02</span><h3>Konsultasi jujur</h3><p>Rekomendasi yang disesuaikan dengan kebutuhan dan anggaran.</p></article>
+        <article><span class="about-highlight-icon">03</span><h3>Layanan berkelanjutan</h3><p>Dukungan yang tetap hadir setelah pembelian.</p></article>
+    </section>
+    <section class="about-ceo"><div class="about-ceo-photo">{% if about_setting.ceo_foto %}<img src="{{ about_setting.ceo_foto.url }}" alt="{{ about_setting.ceo_nama }}">{% else %}<span>CEO</span>{% endif %}</div><div class="about-ceo-copy"><p class="about-eyebrow">Kepemimpinan</p><h2>{{ about_setting.ceo_nama }}</h2><p class="about-ceo-title">{{ about_setting.ceo_jabatan }}</p><blockquote>“Kami percaya teknologi terbaik adalah teknologi yang benar-benar membantu manusia bekerja, belajar, dan berkembang.”</blockquote></div></section>
     <section class="about-values"><article><span>03</span><h2>Visi</h2><p>{{ about_setting.visi|linebreaksbr }}</p></article><article><span>04</span><h2>Misi</h2><p>{{ about_setting.misi|linebreaksbr }}</p></article></section>
 </main>
 {% endblock %}

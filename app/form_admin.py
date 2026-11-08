@@ -321,22 +321,93 @@ class AdminProdukGambarForm(forms.ModelForm):
     class Meta:
         model = ProdukGambar
         fields = ("tipe", "gambar", "urutan")
+        labels = {
+            "tipe": "Jenis foto",
+            "gambar": "Pilih foto produk",
+            "urutan": "Urutan",
+        }
+        widgets = {
+            "gambar": forms.FileInput(attrs={"accept": "image/*"}),
+            "urutan": forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["tipe"].help_text = "Pilih bagian produk yang terlihat pada foto."
+        self.fields["gambar"].help_text = "Gunakan foto yang terang dan tidak buram."
 
 
-ProdukGambarFormSet = forms.inlineformset_factory(
-    Produk,
-    ProdukGambar,
-    form=AdminProdukGambarForm,
-    extra=1,
-    can_delete=True,
-)
-ProdukKeunggulanFormSet = forms.inlineformset_factory(
-    Produk,
-    ProdukKeunggulan,
-    fields=("judul", "deskripsi", "ikon", "warna", "urutan"),
-    extra=2,
-    can_delete=True,
-)
+class AdminProdukKeunggulanForm(forms.ModelForm):
+    class Meta:
+        model = ProdukKeunggulan
+        fields = ("judul", "deskripsi", "ikon", "warna", "urutan")
+        labels = {
+            "judul": "Nama keunggulan",
+            "deskripsi": "Penjelasan singkat",
+            "ikon": "Ikon",
+            "warna": "Warna ikon",
+            "urutan": "Urutan",
+        }
+        widgets = {
+            "judul": forms.TextInput(attrs={"placeholder": "Contoh: Garansi resmi"}),
+            "deskripsi": forms.TextInput(
+                attrs={"placeholder": "Contoh: Aman digunakan dan bergaransi"}
+            ),
+            "warna": forms.HiddenInput(),
+            "urutan": forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["judul"].help_text = "Tulis keunggulan dalam 2–4 kata."
+        self.fields["deskripsi"].help_text = "Jelaskan manfaatnya secara singkat."
+        self.fields["ikon"].help_text = "Pilih ikon yang paling sesuai."
+        self.fields["warna"].help_text = "Pilih warna yang sesuai dengan ikon."
+
+
+class ProdukGambarFormSet(forms.BaseInlineFormSet):
+    slot_types = ("depan", "keyboard", "panel", "cek")
+
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        if index is None:
+            return
+        form.fields["urutan"].initial = index
+        if not form.instance.pk and index < len(self.slot_types):
+            form.fields["tipe"].initial = self.slot_types[index]
+
+
+class ProdukKeunggulanFormSet(forms.BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        if index is not None:
+            form.fields["urutan"].initial = index
+
+
+def create_produk_gambar_formset(*args, instance=None, **kwargs):
+    existing_count = instance.galeri.count() if instance and instance.pk else 0
+    formset_class = forms.inlineformset_factory(
+        Produk,
+        ProdukGambar,
+        form=AdminProdukGambarForm,
+        formset=ProdukGambarFormSet,
+        extra=max(0, 4 - existing_count),
+        can_delete=True,
+    )
+    return formset_class(*args, instance=instance, **kwargs)
+
+
+def create_produk_keunggulan_formset(*args, instance=None, **kwargs):
+    existing_count = instance.keunggulan.count() if instance and instance.pk else 0
+    formset_class = forms.inlineformset_factory(
+        Produk,
+        ProdukKeunggulan,
+        form=AdminProdukKeunggulanForm,
+        formset=ProdukKeunggulanFormSet,
+        extra=max(0, 2 - existing_count),
+        can_delete=True,
+    )
+    return formset_class(*args, instance=instance, **kwargs)
 
 
 class TestimoniPublicForm(forms.ModelForm):

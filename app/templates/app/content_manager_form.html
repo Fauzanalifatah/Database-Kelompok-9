@@ -12,11 +12,92 @@
     {% endfor %}
     </div>
     {% if image_formset %}
-    <h3 class="section-title">Galeri produk</h3>{{ image_formset.management_form }}
-    <div class="form-grid">{% for inline_form in image_formset %}{{ inline_form.id }}{% for field in inline_form.visible_fields %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}{% endfor %}</div>
-    <h3 class="section-title">Keunggulan produk</h3>{{ benefit_formset.management_form }}
-    <div class="form-grid">{% for inline_form in benefit_formset %}{{ inline_form.id }}{% for field in inline_form.visible_fields %}<div class="field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}{% endfor %}</div>
+    <section class="admin-extra-section">
+        <div class="section-heading">
+            <div><h3 class="section-title">Galeri produk</h3><p class="section-help">Tambahkan foto dari beberapa sisi agar pelanggan lebih yakin sebelum membeli.</p></div>
+            <span class="section-count">4 foto utama</span>
+        </div>
+        {{ image_formset.management_form }}
+        <div class="extra-form-grid">
+        {% for inline_form in image_formset %}
+            <article class="extra-form-card gallery-form-card">
+                {{ inline_form.id }}{{ inline_form.urutan }}
+                <div class="extra-form-card-heading"><span class="slot-number">{{ forloop.counter }}</span><div><strong>Foto {{ forloop.counter }}</strong><small>Contoh: tampak depan, keyboard, atau layar</small></div></div>
+                {% if inline_form.instance.gambar %}<img class="gallery-preview" src="{{ inline_form.instance.gambar.url }}" alt="Foto {{ inline_form.instance.get_tipe_display }}" data-preview-image>{% else %}<div class="gallery-preview gallery-preview-empty" data-preview-image><span>Preview foto</span></div>{% endif %}
+                {% for field in inline_form.visible_fields %}
+                    {% if field.name != "urutan" and field.name != "DELETE" %}<div class="field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endif %}
+                {% endfor %}
+                {% if inline_form.DELETE %}<label class="delete-field">{{ inline_form.DELETE }} Hapus foto ini</label>{% endif %}
+            </article>
+        {% endfor %}
+        </div>
+    </section>
+    <section class="admin-extra-section">
+        <div class="section-heading">
+            <div><h3 class="section-title">Keunggulan produk</h3><p class="section-help">Isi manfaat utama produk dengan kalimat singkat dan mudah dipahami.</p></div>
+            <div class="section-heading-actions"><span class="section-count" data-benefit-count>{{ benefit_formset.total_form_count }} keunggulan</span><button class="add-inline-button" type="button" data-add-benefit>+ Tambah keunggulan</button></div>
+        </div>
+        {{ benefit_formset.management_form }}
+        <div class="extra-form-grid" data-benefit-grid>
+        {% for inline_form in benefit_formset %}
+            <article class="extra-form-card benefit-form-card">
+                {{ inline_form.id }}{{ inline_form.urutan }}
+                <div class="extra-form-card-heading"><span class="slot-number">{{ forloop.counter }}</span><div><strong>Keunggulan {{ forloop.counter }}</strong><small>Contoh: Garansi resmi atau siap pakai</small></div></div>
+                {% for field in inline_form.visible_fields %}
+                    {% if field.name != "urutan" and field.name != "warna" and field.name != "DELETE" %}<div class="field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endif %}
+                {% endfor %}
+                {{ inline_form.warna }}{% if inline_form.DELETE %}<label class="delete-field">{{ inline_form.DELETE }} Hapus keunggulan ini</label>{% endif %}
+            </article>
+        {% endfor %}
+        </div>
+        <template data-benefit-template>
+            <article class="extra-form-card benefit-form-card">
+                {{ benefit_formset.empty_form.id }}{{ benefit_formset.empty_form.urutan }}
+                <div class="extra-form-card-heading"><span class="slot-number">__number__</span><div><strong>Keunggulan __number__</strong><small>Contoh: Garansi resmi atau siap pakai</small></div></div>
+                {% for field in benefit_formset.empty_form.visible_fields %}
+                    {% if field.name != "urutan" and field.name != "warna" and field.name != "DELETE" %}<div class="field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endif %}
+                {% endfor %}
+                {{ benefit_formset.empty_form.warna }}
+            </article>
+        </template>
+    </section>
     {% endif %}
     <div class="form-actions"><button class="button" type="submit">Simpan {{ item_label }}</button><a class="button secondary" href="{{ cancel_url }}">Batal</a></div>
 </form>
+<script>
+document.querySelectorAll('input[type="file"][accept="image/*"]').forEach(function (input) {
+    input.addEventListener("change", function () {
+        var card = input.closest(".gallery-form-card");
+        var preview = card && card.querySelector("[data-preview-image]");
+        var file = input.files && input.files[0];
+        if (!preview || !file) return;
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("gallery-preview-empty");
+        preview.innerHTML = "";
+    });
+});
+
+var addBenefitButton = document.querySelector("[data-add-benefit]");
+var benefitGrid = document.querySelector("[data-benefit-grid]");
+var benefitTemplate = document.querySelector("[data-benefit-template]");
+var benefitTotal = document.getElementById("id_{{ benefit_formset.prefix }}-TOTAL_FORMS");
+var benefitCount = document.querySelector("[data-benefit-count]");
+
+if (addBenefitButton && benefitGrid && benefitTemplate && benefitTotal) {
+    addBenefitButton.addEventListener("click", function () {
+        var index = Number(benefitTotal.value);
+        var card = document.createElement("div");
+        card.innerHTML = benefitTemplate.innerHTML
+            .replace(/__prefix__/g, index)
+            .replace(/__number__/g, index + 1);
+        var newCard = card.firstElementChild;
+        var orderField = newCard.querySelector("[name$='-urutan']");
+        if (orderField) orderField.value = index;
+        benefitGrid.appendChild(newCard);
+        benefitTotal.value = index + 1;
+        benefitCount.textContent = benefitTotal.value + " keunggulan";
+        newCard.querySelector("input, select").focus();
+    });
+}
+</script>
 {% endblock %}

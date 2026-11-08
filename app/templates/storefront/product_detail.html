@@ -32,7 +32,14 @@
             <div class="trust-grid">
                 {% for benefit in benefits %}
                 <div class="trust-card">
-                    <span class="trust-icon trust-icon-{{ benefit.warna }} icon-{{ benefit.ikon }}" aria-hidden="true"></span>
+                    <span class="trust-icon trust-icon-{{ benefit.warna }}" aria-hidden="true">
+                        {% if benefit.ikon == "shield" %}<svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-2.8 8.3-7 10-4.2-1.7-7-5.5-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-4.8"></path></svg>
+                        {% elif benefit.ikon == "star" %}<svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg>
+                        {% elif benefit.ikon == "gift" %}<svg viewBox="0 0 24 24"><path d="M4 10h16v10H4V10ZM3 7h18v3H3V7ZM12 7v13"></path><path d="M12 7H8.5a2.5 2.5 0 1 1 2.5-2.5V7ZM12 7h3.5A2.5 2.5 0 1 0 13 4.5V7Z"></path></svg>
+                        {% elif benefit.ikon == "box" %}<svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"></path><path d="M4 8v9l8 4 8-4V8M12 12v9"></path></svg>
+                        {% else %}<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>
+                        {% endif %}
+                    </span>
                     <div><strong>{{ benefit.judul }}</strong><small>{{ benefit.deskripsi }}</small></div>
                 </div>
                 {% endfor %}

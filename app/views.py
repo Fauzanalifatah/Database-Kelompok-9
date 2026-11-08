@@ -24,8 +24,8 @@ from .form_admin import (
     formProfile,
     AdminArtikelForm,
     AdminProdukForm,
-    ProdukGambarFormSet,
-    ProdukKeunggulanFormSet,
+    create_produk_gambar_formset,
+    create_produk_keunggulan_formset,
     AdminPelangganForm,
     AdminPesananStatusForm,
 )
@@ -300,10 +300,12 @@ def produk_manager_form(request, pk=None):
     if pk and instance is None:
         raise Http404
     form = AdminProdukForm(request.POST or None, request.FILES or None, instance=instance)
-    image_formset = ProdukGambarFormSet(
+    image_formset = create_produk_gambar_formset(
         request.POST or None, request.FILES or None, instance=instance
     )
-    benefit_formset = ProdukKeunggulanFormSet(request.POST or None, instance=instance)
+    benefit_formset = create_produk_keunggulan_formset(
+        request.POST or None, instance=instance
+    )
     if request.method == "POST" and form.is_valid() and image_formset.is_valid() and benefit_formset.is_valid():
         product = form.save(commit=False)
         if not product.slug:
