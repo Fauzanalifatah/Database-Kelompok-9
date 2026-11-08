@@ -4,8 +4,20 @@
 <form class="form-card" method="post">
     {% csrf_token %}
     {% for field in form %}
-    <div class="field record-field">{{ field.label_tag }}{{ field }}{{ field.errors }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}</div>
+        {% if field.name != "password_baru" and field.name != "konfirmasi_password" %}
+        <div class="field record-field">{{ field.label_tag }}{{ field }}{{ field.errors }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}</div>
+        {% endif %}
     {% endfor %}
+    {% if form.password_baru %}
+    <section class="password-section">
+        <h3 class="section-title">Ganti kata sandi</h3>
+        <p class="help">Isi bagian ini hanya jika ingin mengganti kata sandi pelanggan. Kata sandi lama tidak ditampilkan.</p>
+        <div class="password-grid">
+            <div class="field record-field">{{ form.password_baru.label_tag }}{{ form.password_baru }}{{ form.password_baru.errors }}{% if form.password_baru.help_text %}<p class="help">{{ form.password_baru.help_text }}</p>{% endif %}</div>
+            <div class="field record-field">{{ form.konfirmasi_password.label_tag }}{{ form.konfirmasi_password }}{{ form.konfirmasi_password.errors }}</div>
+        </div>
+    </section>
+    {% endif %}
     {% if order %}
     <h3 class="section-title">Ringkasan pesanan</h3>
     <div class="order-summary"><p><strong>Pelanggan:</strong> {{ order.pengguna.get_full_name|default:order.pengguna.username }}</p><p><strong>Alamat pengiriman:</strong> {{ order.alamat_pengiriman }}</p><ul>{% for item in order.item.all %}<li>{{ item.nama_produk }} × {{ item.jumlah }} — Rp{{ item.subtotal|floatformat:0 }}</li>{% endfor %}</ul></div>

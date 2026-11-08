@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 
 from .models import (
     AboutSetting,
@@ -208,6 +209,23 @@ class MitraDeepublishForm(forms.ModelForm):
 class AdminPelangganForm(forms.ModelForm):
     nama = forms.CharField(max_length=150, label="Nama pelanggan", required=False)
     telp = forms.CharField(max_length=15, label="Nomor telepon", required=False)
+    password_baru = forms.CharField(
+        label="Kata sandi baru",
+        required=False,
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={"autocomplete": "new-password", "placeholder": "Kosongkan jika tidak ingin mengganti"}
+        ),
+        help_text="Kosongkan jika kata sandi pelanggan tidak ingin diubah.",
+    )
+    konfirmasi_password = forms.CharField(
+        label="Konfirmasi kata sandi",
+        required=False,
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={"autocomplete": "new-password", "placeholder": "Ulangi kata sandi baru"}
+        ),
+    )
     alamat = forms.CharField(
         label="Alamat",
         required=False,
@@ -229,13 +247,39 @@ class AdminPelangganForm(forms.ModelForm):
             self.fields["nama"].initial = self.instance.get_full_name()
             self.fields["telp"].initial = self.member.telp
             self.fields["alamat"].initial = self.member.alamat
+
+    def clean_password_baru(self):
+        password = self.cleaned_data.get("password_baru")
+        if password:
+            validate_password(password, self.instance)
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password_baru")
+        confirmation = cleaned_data.get("konfirmasi_password")
+        if password or confirmation:
+            if not password:
+                self.add_error("password_baru", "Isi kata sandi baru.")
+            if password != confirmation:
+                self.add_error(
+                    "konfirmasi_password",
+                    "Konfirmasi kata sandi tidak sama.",
+                )
+        return cleaned_data
+
     def save(self, commit=True):
         user = self.instance
         user.first_name = self.cleaned_data["nama"]
         user.email = self.cleaned_data["email"]
         user.is_active = self.cleaned_data["is_active"]
+        password = self.cleaned_data.get("password_baru")
+        update_fields = ["first_name", "email", "is_active"]
+        if password:
+            user.set_password(password)
+            update_fields.append("password")
         if commit:
-            user.save(update_fields=["first_name", "email", "is_active"])
+            user.save(update_fields=update_fields)
         if self.member:
             self.member.telp = self.cleaned_data["telp"]
             self.member.alamat = self.cleaned_data["alamat"]

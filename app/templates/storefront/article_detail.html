@@ -24,25 +24,5 @@
         <div class="article-content">{{ article.content|linebreaks }}</div>
         <p class="article-author">Ditulis oleh {{ article.authors|default:"Losari Computer" }}</p>
     </article>
-    <aside class="article-sidebar" aria-label="Rekomendasi artikel">
-        <div class="sidebar-heading">
-            <h2>Artikel Pilihan</h2>
-            <span></span>
-        </div>
-        {% for related in related_articles %}
-        <a class="related-article" href="{% url 'article_detail' related.slug %}">
-            <div class="related-image">
-                {% if related.images %}<img src="{{ related.images.url }}" alt="{{ related.title_articles }}">{% else %}<span>LC</span>{% endif %}
-            </div>
-            <div class="related-copy">
-                <span class="related-label">{{ related.category.nama_category }}</span>
-                <h3>{{ related.title_articles }}</h3>
-                <p>{{ related.created_at|date:"d F Y" }} &middot; {{ related.views }} views</p>
-            </div>
-        </a>
-        {% empty %}
-        <p class="related-empty">Belum ada artikel lain.</p>
-        {% endfor %}
-    </aside>
 </div>
 {% endblock %}

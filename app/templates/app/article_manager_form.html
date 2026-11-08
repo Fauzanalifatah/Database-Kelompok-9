@@ -1,0 +1,127 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<div class="article-editor-toolbar">
+    <div>
+        <p class="article-editor-kicker">EDITOR ARTIKEL</p>
+        <h2>{{ heading }}</h2>
+        <p class="muted">Tulis artikel yang informatif dan nyaman dibaca pelanggan.</p>
+    </div>
+    <a class="button secondary" href="{{ cancel_url }}">Kembali</a>
+</div>
+<form class="article-editor-form" method="post" enctype="multipart/form-data" id="article-editor-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="editor-error-box">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="article-editor-layout">
+        <section class="article-writing-card">
+            <div class="article-writing-intro">
+                <span>RUANG MENULIS</span>
+                <small>Bagikan informasi terbaru dari Losari Computer.</small>
+            </div>
+            <div class="article-editor-field title-field">
+                {{ form.title_articles.label_tag }}{{ form.title_articles }}
+                {% if form.title_articles.errors %}{{ form.title_articles.errors }}{% endif %}
+            </div>
+            <div class="article-format-toolbar" aria-label="Format artikel">
+                <span class="article-toolbar-group">
+                    <button type="button" data-command="bold" aria-label="Tebal"><strong>B</strong></button>
+                    <button type="button" data-command="italic" aria-label="Miring"><em>I</em></button>
+                    <button type="button" data-command="underline" aria-label="Garis bawah"><u>U</u></button>
+                </span>
+                <span class="article-toolbar-group">
+                    <button type="button" data-command="formatBlock" data-value="h2" aria-label="Heading 2">H<small>2</small></button>
+                    <button type="button" data-command="formatBlock" data-value="p" aria-label="Paragraf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h8a4 4 0 0 1 0 8H8v6M8 5v14"></path></svg></button>
+                </span>
+                <span class="article-toolbar-group">
+                    <button type="button" data-command="insertUnorderedList" aria-label="Daftar berpoin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"></path><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg></button>
+                    <button type="button" data-command="insertOrderedList" aria-label="Daftar bernomor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"></path><path d="M4 5h1v3M4 8h2M4 11h2l-2 4h2M4 18h2l-2 3h2"></path></svg></button>
+                </span>
+                <span class="article-toolbar-group">
+                    <button type="button" data-command="justifyLeft" aria-label="Rata kiri"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h11M4 14h16M4 18h11"></path></svg></button>
+                    <button type="button" data-command="justifyCenter" aria-label="Rata tengah"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"></path></svg></button>
+                    <button type="button" data-command="justifyRight" aria-label="Rata kanan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 10h11M4 14h16M9 18h11"></path></svg></button>
+                </span>
+                <span class="article-toolbar-group">
+                    <button type="button" data-command="createLink" aria-label="Tambahkan tautan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"></path></svg></button>
+                    <button type="button" data-image-button aria-label="Pilih gambar sampul"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 5"></path></svg></button>
+                </span>
+            </div>
+            <div class="article-content-editor" id="article-content-editor" contenteditable="true" data-placeholder="Mulai tulis isi artikel di sini...">{{ form.content.value|default:""|safe }}</div>
+            {{ form.content.as_hidden }}
+            {% if form.content.errors %}{{ form.content.errors }}{% endif %}
+            <p class="article-editor-tip">Tips: gunakan paragraf pendek, subjudul, dan daftar agar artikel mudah dipahami.</p>
+        </section>
+        <aside class="article-settings-card">
+            <div class="article-settings-heading"><span class="settings-dot"></span><div><h3>Pengaturan artikel</h3><p>Atur informasi pendukung artikel.</p></div></div>
+            <div class="article-setting-field">
+                {{ form.desc_seo.label_tag }}{{ form.desc_seo }}
+                {% if form.desc_seo.help_text %}<small>{{ form.desc_seo.help_text }}</small>{% endif %}{{ form.desc_seo.errors }}
+            </div>
+            <div class="article-setting-field">
+                {{ form.category.label_tag }}{{ form.category }}
+                {% if form.category.help_text %}<small>{{ form.category.help_text }}</small>{% endif %}{{ form.category.errors }}
+            </div>
+            <div class="article-setting-field">
+                {{ form.authors.label_tag }}{{ form.authors }}
+                {% if form.authors.help_text %}<small>{{ form.authors.help_text }}</small>{% endif %}{{ form.authors.errors }}
+            </div>
+            <div class="article-setting-field">
+                {{ form.images.label_tag }}{{ form.images }}
+                {% if form.images.help_text %}<small>{{ form.images.help_text }}</small>{% endif %}{{ form.images.errors }}
+                {% if form.instance.images %}<img class="article-cover-preview" src="{{ form.instance.images.url }}" alt="Gambar artikel saat ini" data-article-preview>{% else %}<div class="article-cover-empty" data-article-preview>Preview gambar artikel</div>{% endif %}
+            </div>
+            <div class="article-setting-field article-slug-field">
+                {{ form.slug.label_tag }}{{ form.slug }}
+                {% if form.slug.help_text %}<small>{{ form.slug.help_text }}</small>{% endif %}{{ form.slug.errors }}
+            </div>
+            <label class="article-publish-toggle">{{ form.published }}<span><strong>Publikasikan artikel</strong><small>Artikel akan tampil di halaman berita.</small></span></label>
+            {{ form.published.errors }}
+            <div class="article-editor-actions"><button class="button" type="submit">Simpan artikel</button><a class="button secondary" href="{{ cancel_url }}">Batal</a></div>
+        </aside>
+    </div>
+</form>
+<script>
+(function () {
+    var editor = document.getElementById("article-content-editor");
+    var contentInput = document.getElementById("id_content");
+    var form = document.getElementById("article-editor-form");
+    if (editor && contentInput && form) {
+        document.querySelectorAll("[data-command]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                editor.focus();
+                if (button.dataset.command === "createLink") {
+                    var url = window.prompt("Masukkan URL tautan:");
+                    if (url) document.execCommand("createLink", false, url);
+                    return;
+                }
+                document.execCommand(button.dataset.command, false, button.dataset.value || null);
+            });
+        });
+        var imageButton = document.querySelector("[data-image-button]");
+        var imageInput = document.getElementById("id_images");
+        if (imageButton && imageInput) imageButton.addEventListener("click", function () {
+            imageInput.focus();
+            imageInput.click();
+        });
+        form.addEventListener("submit", function () {
+            contentInput.value = editor.innerHTML;
+        });
+    }
+    if (imageInput) {
+        imageInput.addEventListener("change", function () {
+            var preview = document.querySelector("[data-article-preview]");
+            var file = imageInput.files && imageInput.files[0];
+            if (!preview || !file) return;
+            if (preview.tagName.toLowerCase() !== "img") {
+                var image = document.createElement("img");
+                image.className = "article-cover-preview";
+                image.dataset.articlePreview = "";
+                preview.replaceWith(image);
+                preview = image;
+            }
+            preview.src = URL.createObjectURL(file);
+            preview.alt = "Preview gambar artikel";
+        });
+    }
+}());
+</script>
+{% endblock %}

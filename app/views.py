@@ -87,7 +87,7 @@ def artikel_manager_form(request, pk=None):
         return redirect("app:artikel_manager")
     return render(
         request,
-        "app/content_manager_form.html",
+        "app/article_manager_form.html",
         {
             "title": "Edit Artikel",
             "heading": "Edit Artikel" if instance else "Tambah Artikel",
@@ -875,15 +875,10 @@ def article_detail(request, slug):
     if created:
         Artikel.objects.filter(pk=article.pk).update(views=F("views") + 1)
     article.refresh_from_db(fields=["views"])
-    related_articles = (
-        Artikel.objects.filter(published=True)
-        .exclude(pk=article.pk)
-        .order_by("-views", "-created_at")[:5]
-    )
     return render(
         request,
         "storefront/article_detail.html",
-        {"article": article, "related_articles": related_articles},
+        {"article": article},
     )
 
 
