@@ -1,12 +1,14 @@
 import os
 import uuid
 from decimal import Decimal, ROUND_HALF_UP
+from html import unescape
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+from django.utils.html import strip_tags
 
 
 User.add_to_class(
@@ -477,7 +479,7 @@ class BlogPengguna(models.Model):
 
     @property
     def character_count(self):
-        return len(self.content or "")
+        return len(unescape(strip_tags(self.content or "")))
 
 
 def rename_blog_inline_image(instance, filename):

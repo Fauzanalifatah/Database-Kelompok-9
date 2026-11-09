@@ -1,20 +1,26 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}{{ blog.title }} - Blog Pengguna{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/user-public-blog.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}">{% endblock %}
 {% block content %}
-<div class="container user-blog-detail-layout">
-    <article class="user-blog-detail">
-        <p class="user-blog-breadcrumb"><a href="{% url 'home' %}">Beranda</a><span>›</span><a href="{% url 'blog_pengguna_list' %}">Blog Pengguna</a></p>
+<div class="container article-detail-layout">
+    <article class="article-detail">
+        <p class="article-breadcrumb"><a href="{% url 'home' %}">Beranda</a><span>›</span><a href="{% url 'blog_pengguna_list' %}">Blog Pengguna</a></p>
         <h1>{{ blog.title }}</h1>
-        <div class="user-blog-byline"><span>Oleh <strong>{{ blog.author.get_full_name|default:blog.author.username }}</strong></span><span> - {{ blog.created_at|date:"l, d F Y" }}</span><span>{{ blog.views }} views</span></div>
-        <p class="user-blog-summary-detail">{{ blog.summary }}</p>
-        {% if blog.image %}<img class="user-blog-detail-image" src="{{ blog.image.url }}" alt="{{ blog.title }}">{% endif %}
-        <div class="user-blog-content">{{ blog.content|safe }}</div>
-        <p class="user-blog-author">Ditulis oleh {{ blog.author.get_full_name|default:blog.author.username }}</p>
+        <div class="article-byline">
+            <div class="article-byline-copy">
+                <span>Oleh <strong>{{ blog.author.get_full_name|default:blog.author.username }}</strong></span>
+                <span> - {{ blog.created_at|date:"l, F d, Y" }}</span>
+            </div>
+            <span class="article-metrics" aria-label="Informasi blog">
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg>{{ blog.character_count }} Characters</span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>{{ blog.views }} views</span>
+            </span>
+        </div>
+        <p class="article-detail-summary">{{ blog.summary }}</p>
+        {% if blog.image %}<img class="article-detail-image" src="{{ blog.image.url }}" alt="{{ blog.title }}">{% endif %}
+        <div class="article-content">{{ blog.content|safe }}</div>
+        <p class="article-author">Ditulis oleh {{ blog.author.get_full_name|default:blog.author.username }}</p>
     </article>
-    <aside class="user-blog-sidebar"><div class="user-blog-sidebar-heading"><h2>Blog lainnya</h2><span></span></div>
-        {% for related in related_blogs %}<a class="user-blog-related" href="{% url 'blog_pengguna_detail' related.slug %}"><div class="user-blog-related-image">{% if related.image %}<img src="{{ related.image.url }}" alt="{{ related.title }}">{% else %}<span>Blog</span>{% endif %}</div><div class="user-blog-related-copy"><h3>{{ related.title }}</h3><p>{{ related.created_at|date:"d M Y" }}</p></div></a>{% empty %}<p class="user-blog-related-empty">Belum ada blog lainnya.</p>{% endfor %}
-    </aside>
 </div>
 {% endblock %}

@@ -897,13 +897,10 @@ def blog_pengguna_detail(request, slug):
     )
     BlogPengguna.objects.filter(pk=blog.pk).update(views=F("views") + 1)
     blog.refresh_from_db(fields=["views"])
-    related_blogs = BlogPengguna.objects.filter(
-        published=True
-    ).exclude(pk=blog.pk).select_related("author")[:5]
     return render(
         request,
         "storefront/blog_pengguna_detail.html",
-        {"blog": blog, "related_blogs": related_blogs},
+        {"blog": blog},
     )
 
 
