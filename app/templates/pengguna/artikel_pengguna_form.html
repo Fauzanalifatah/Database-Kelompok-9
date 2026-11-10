@@ -85,9 +85,38 @@
     const form = document.getElementById("blog-editor-form");
     const inlineImageInput = document.getElementById("inline-image-input");
     let savedSelection = null;
+    let selectedImage = null;
+    let resizeHandle = null;
+    let resizeState = null;
     const inlineImageFiles = new DataTransfer();
     const draftKey = `blog-draft-${window.location.pathname}`;
+    const previewStateKey = `blog-preview-${window.location.pathname}`;
     function syncContent() { contentInput.value = editor.innerHTML; }
+    function removeResizeHandle() {
+        resizeHandle?.remove();
+        resizeHandle = null;
+        resizeState = null;
+    }
+    function positionResizeHandle() {
+        if (!resizeHandle || !selectedImage) return;
+        const bounds = selectedImage.getBoundingClientRect();
+        resizeHandle.style.left = `${bounds.right - 6}px`;
+        resizeHandle.style.top = `${bounds.bottom - 6}px`;
+    }
+    function showResizeHandle() {
+        removeResizeHandle();
+        resizeHandle = document.createElement("span");
+        resizeHandle.className = "editor-image-resize-handle";
+        resizeHandle.setAttribute("aria-label", "Ubah ukuran gambar");
+        document.body.appendChild(resizeHandle);
+        positionResizeHandle();
+    }
+    function selectImage(image) {
+        if (selectedImage) selectedImage.classList.remove("editor-image-selected");
+        selectedImage = image;
+        selectedImage.classList.add("editor-image-selected");
+        showResizeHandle();
+    }
     function saveDraft() {
         localStorage.setItem(draftKey, JSON.stringify({
             title: document.querySelector(".editor-title").value,
@@ -113,10 +142,65 @@
     restoreDraft();
     editor.addEventListener("input", syncContent);
     editor.addEventListener("input", saveDraft);
+    editor.addEventListener("click", (event) => {
+        const image = event.target.closest("img");
+        if (!image || !editor.contains(image)) {
+            if (selectedImage) selectedImage.classList.remove("editor-image-selected");
+            selectedImage = null;
+            removeResizeHandle();
+            return;
+        }
+        selectImage(image);
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNode(image);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    });
+    editor.addEventListener("keydown", (event) => {
+        if (!selectedImage || !editor.contains(selectedImage)) return;
+        if (event.key !== "Backspace" && event.key !== "Delete") return;
+        event.preventDefault();
+        document.execCommand("delete");
+        selectedImage = null;
+        removeResizeHandle();
+    });
+    resizeHandle = null;
+    document.addEventListener("pointerdown", (event) => {
+        if (event.target !== resizeHandle || !selectedImage) return;
+        event.preventDefault();
+        const bounds = selectedImage.getBoundingClientRect();
+        resizeState = {
+            startX: event.clientX,
+            startWidth: bounds.width,
+            ratio: bounds.height / bounds.width,
+        };
+        resizeHandle.setPointerCapture(event.pointerId);
+    });
+    document.addEventListener("pointermove", (event) => {
+        if (!resizeState || !selectedImage) return;
+        const minimum = 80;
+        const maximum = editor.clientWidth;
+        const width = Math.min(maximum, Math.max(minimum, resizeState.startWidth + event.clientX - resizeState.startX));
+        selectedImage.style.width = `${width}px`;
+        selectedImage.style.height = "auto";
+        positionResizeHandle();
+        syncContent();
+    });
+    document.addEventListener("pointerup", () => {
+        if (!resizeState) return;
+        resizeState = null;
+        saveDraft();
+    });
+    window.addEventListener("scroll", positionResizeHandle, true);
+    window.addEventListener("resize", positionResizeHandle);
     document.querySelector(".editor-title").addEventListener("input", saveDraft);
     document.getElementById("id_summary").addEventListener("input", saveDraft);
     form.addEventListener("submit", syncContent);
-    form.addEventListener("submit", () => localStorage.removeItem(draftKey));
+    form.addEventListener("submit", () => {
+        localStorage.removeItem(draftKey);
+        localStorage.removeItem(previewStateKey);
+    });
     document.getElementById("insert-image-button").addEventListener("click", () => {
         const selection = window.getSelection();
         if (selection.rangeCount) savedSelection = selection.getRangeAt(0).cloneRange();
@@ -159,6 +243,8 @@
         });
     });
     document.getElementById("preview-button").addEventListener("click", () => {
+        localStorage.setItem(previewStateKey, "true");
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#preview`);
         syncContent();
         saveDraft();
         const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
@@ -186,16 +272,16 @@
                 );
             });
             document.getElementById("preview-frame").innerHTML = `
-                <div class="preview-watermark">PRATINJAU</div>
-                <header class="preview-top"><div class="preview-brand">Losari Computer</div><nav class="preview-nav"><span>Home</span><span>Shop</span><span>Artikel</span><span>Blog</span><span>Tentang</span></nav></header>
-                <div class="preview-banner">GARANSI TOKO &nbsp; • &nbsp; SIAP KIRIM KE SELURUH KOTA &nbsp; • &nbsp; UNIT TERUJI</div>
+                <div class="preview-watermark" aria-hidden="true">Pratinjau</div>
+                <header class="preview-top"><div class="preview-brand"><strong>Losari Computer</strong></div><nav class="preview-nav"><span>Home</span><span>Shop</span><span>Artikel</span><span class="active">Blog</span><span>Testimoni</span><span>Tentang</span><span class="muted">Service</span><span class="muted">Support</span></nav><span class="preview-user">○</span></header>
+                <div class="preview-banner">GARANSI TOKO &nbsp; • &nbsp; SIAP KIRIM KE SELURUH KOTA &nbsp; • &nbsp; UNIT TERUJI &nbsp; • &nbsp; LAPTOP SECOND BERKUALITAS</div>
                 <main class="preview-layout"><article class="preview-article">
                     <p class="preview-breadcrumb"><strong>Beranda</strong> › Blog Pengguna</p><h1>${title}</h1>
-                    <div class="preview-byline"><span>Oleh <strong>{{ user.get_full_name|default:user.username }}</strong></span><span>•</span><span>Hari ini</span></div>
+                    <div class="preview-byline"><div><span>Oleh <strong>{{ user.get_full_name|default:user.username }}</strong></span><span> - Hari ini</span></div><div class="preview-metrics"><span>◷ ${editor.textContent.length} Characters</span><span>◉ 0 views</span></div></div>
                     <p class="preview-summary">${summary}</p>
                     ${coverUrl ? `<img class="preview-cover" src="${coverUrl}" alt="Gambar sampul blog">` : ""}
                     <div class="preview-content">${content}</div>
-                </article><aside class="preview-sidebar"><h2>Blog Pengguna</h2><p>Ini adalah tampilan sementara blog Anda sebelum dipublikasikan.</p><p>Setelah dipublikasikan, pengguna lain dapat membaca tulisan ini melalui menu Blog.</p></aside></main>
+                </article></main>
                 `;
             document.getElementById("preview-overlay").hidden = false;
             document.body.classList.add("preview-open");
@@ -205,7 +291,12 @@
     document.getElementById("preview-close").addEventListener("click", () => {
         document.getElementById("preview-overlay").hidden = true;
         document.body.classList.remove("preview-open");
+        localStorage.removeItem(previewStateKey);
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
     });
+    if (window.location.hash === "#preview" || localStorage.getItem(previewStateKey) === "true") {
+        document.getElementById("preview-button").click();
+    }
 </script>
 </body>
 </html>

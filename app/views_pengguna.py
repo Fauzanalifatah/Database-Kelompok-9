@@ -86,6 +86,7 @@ def artikel_pengguna_form(request, slug=None):
             article = form.save(commit=False)
             article.author = request.user
             article.save()
+            existing_inline_images = list(article.inline_images.all())
             content = article.content or ""
             inline_images = request.FILES.getlist("inline_images")
             for index, uploaded_image in enumerate(inline_images):
@@ -109,6 +110,10 @@ def artikel_pengguna_form(request, slug=None):
                 flags=re.IGNORECASE | re.DOTALL,
             )
             article.save(update_fields=["content", "updated_at"])
+            for inline_image in existing_inline_images:
+                if inline_image.image.url not in article.content:
+                    inline_image.image.delete(save=False)
+                    inline_image.delete()
             messages.success(request, "Blog berhasil disimpan.")
             return redirect("app:blog_pengguna")
         messages.error(

@@ -15,9 +15,9 @@
         <div class="blog-user">{{ user.get_full_name|default:user.username }}</div>
         {% if not user.is_staff and not user.is_superuser %}<a class="new-post" href="{% url 'app:artikel_pengguna_tulis' %}">＋ Postingan baru</a>{% endif %}
         <nav>
-            <a class="active" href="{% url 'app:blog_pengguna' %}">▤ Postingan</a>
-            <a href="{% url 'app:profile_pengguna' %}">Profil saya</a>
-            <a href="{% url 'home' %}">Lihat website</a>
+            <a class="active" href="{% url 'app:blog_pengguna' %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg>Postingan</a>
+            <a href="{% url 'app:profile_pengguna' %}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg>Profil saya</a>
+            <a href="{% url 'home' %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-7 9 7"></path><path d="M5 10v10h14V10M9 20v-6h6v6"></path></svg>Lihat website</a>
         </nav>
         <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola profil dan blog Anda melalui dashboard pengguna Losari Computer.</div>
         <form method="post" action="{% url 'app:logout' %}" class="logout-form">
@@ -40,7 +40,7 @@
                     <small>{{ article.created_at|date:"d M Y" }} · {% if article.published %}Dipublikasikan{% else %}Draf{% endif %}</small>
                 </div>
                 <div class="post-actions">
-                    {% if article.published %}<a href="{% url 'article_detail' article.slug %}">Lihat</a>{% endif %}
+                    {% if article.published %}<a href="{% url 'blog_pengguna_detail' article.slug %}">Lihat</a>{% endif %}
                     <a href="{% url 'app:artikel_pengguna_edit' article.slug %}">Edit</a>
                     <form method="post" action="{% url 'app:artikel_pengguna_hapus' article.slug %}">{% csrf_token %}<button type="submit">Hapus</button></form>
                 </div>

@@ -1,7 +1,7 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}{{ product.nama }} - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=3">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=4">{% endblock %}
 {% block content %}
 <div class="detail-breadcrumb container"><a href="{% url 'shop' %}">Shop</a><span>/</span><span>{{ product.kategori.nama|default:"Katalog laptop" }}</span><strong>/ {{ product.merek }} {{ product.nama }}</strong></div>
 <main class="container product-page">
@@ -10,6 +10,10 @@
             <div class="gallery-main">
                 {% if primary_gallery_image %}<img src="{{ primary_gallery_image.gambar.url }}" alt="{{ primary_gallery_image.get_tipe_display }} {{ product.nama }}" id="primary-product-image"><span class="image-label">{{ primary_gallery_image.get_tipe_display }}</span>{% elif product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}" id="primary-product-image"><span class="image-label">Gambar produk</span>{% else %}<span aria-hidden="true">&#128187;</span><span class="image-label">Tampak depan</span>{% endif %}
                 {% if product.unggulan %}<span class="tested-label">✓ Unit asli teruji</span>{% endif %}
+            </div>
+            <div class="image-lightbox" id="product-image-lightbox" hidden role="dialog" aria-modal="true" aria-label="Pratinjau gambar produk">
+                <button class="image-lightbox-close" type="button" aria-label="Tutup gambar">&times;</button>
+                <img id="lightbox-product-image" src="" alt="">
             </div>
             <div class="gallery-tabs" aria-label="Galeri gambar produk">
                 <button class="gallery-tab{% if primary_gallery_image.tipe == 'depan' %} selected{% endif %}" type="button"{% if not gallery_by_type.depan %} disabled{% endif %}{% if gallery_by_type.depan %} data-image="{{ gallery_by_type.depan.gambar.url }}"{% endif %} data-label="Tampak Depan">
@@ -95,6 +99,56 @@
     {% endif %}
 </main>
 <script>
+    var galleryMainImage = document.getElementById("primary-product-image");
+    var imageLightbox = document.getElementById("product-image-lightbox");
+    var lightboxImage = document.getElementById("lightbox-product-image");
+    var lightboxClose = imageLightbox ? imageLightbox.querySelector(".image-lightbox-close") : null;
+    var galleryMain = document.querySelector(".gallery-main");
+
+    function updateGalleryBackground() {
+        if (galleryMain && galleryMainImage && galleryMainImage.src) {
+            galleryMain.style.setProperty("--gallery-image", "url('" + galleryMainImage.src.replace(/'/g, "\\'") + "')");
+        }
+    }
+
+    updateGalleryBackground();
+
+    function closeProductImageLightbox() {
+        if (imageLightbox) {
+            imageLightbox.hidden = true;
+            document.body.style.overflow = "";
+        }
+    }
+
+    function openProductImageLightbox() {
+        if (!galleryMainImage || !imageLightbox || !lightboxImage) {
+            return;
+        }
+        lightboxImage.src = galleryMainImage.src;
+        lightboxImage.alt = galleryMainImage.alt;
+        imageLightbox.hidden = false;
+        document.body.style.overflow = "hidden";
+    }
+
+    if (galleryMainImage) {
+        galleryMainImage.addEventListener("click", openProductImageLightbox);
+    }
+    if (lightboxClose) {
+        lightboxClose.addEventListener("click", closeProductImageLightbox);
+    }
+    if (imageLightbox) {
+        imageLightbox.addEventListener("click", function (event) {
+            if (event.target === imageLightbox) {
+                closeProductImageLightbox();
+            }
+        });
+    }
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeProductImageLightbox();
+        }
+    });
+
     document.querySelectorAll(".gallery-tab").forEach(function (tab) {
         tab.addEventListener("click", function () {
             var image = document.getElementById("primary-product-image");
@@ -105,6 +159,7 @@
                 }
                 image.src = tab.dataset.image;
                 image.alt = tab.dataset.label + " {{ product.nama|escapejs }}";
+                updateGalleryBackground();
             }
             if (label) {
                 label.textContent = tab.dataset.label;
