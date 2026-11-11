@@ -1563,3 +1563,391 @@
         width: 100%;
     }
 }
+
+/* ===================================================
+   PESANAN SIAP & ORDER PROGRESS TRACKER STYLES
+   =================================================== */
+
+.status-badge-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+}
+
+.order-tracker-box {
+    margin: 24px 0 28px;
+    padding: 24px 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--co-radius-md);
+}
+
+.order-tracker-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    font-size: 15px;
+    font-weight: 750;
+    color: var(--co-ink);
+}
+
+.order-tracker-title .tracker-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.order-tracker-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    position: relative;
+}
+
+.tracker-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.tracker-icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 2px solid #cbd5e1;
+    margin-bottom: 10px;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+
+.tracker-step.is-done .tracker-icon-badge {
+    background: #dcfce7;
+    color: #16a34a;
+    border-color: #86efac;
+}
+
+.tracker-step.is-current .tracker-icon-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.16);
+    animation: pulse-ring 2.4s infinite;
+}
+
+@keyframes pulse-ring {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+.tracker-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--co-ink);
+    margin-bottom: 4px;
+    line-height: 1.25;
+}
+
+.tracker-status {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.35;
+}
+
+.tracker-step.is-done .tracker-status {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.tracker-step.is-current .tracker-status {
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+/* Shipping Details Grid */
+.shipping-highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 22px 0 26px;
+}
+
+.ship-highlight-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.ship-highlight-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.ship-highlight-copy strong {
+    display: block;
+    font-size: 13px;
+    color: var(--co-ink);
+    margin-bottom: 3px;
+}
+
+.ship-highlight-copy span {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* Actions Bar for Pesanan Siap */
+.ready-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-ready-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 22px;
+    background: #1455d9;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(20, 85, 217, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btn-ready-primary:hover {
+    background: #0b3896;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(20, 85, 217, 0.35);
+}
+
+.btn-ready-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 20px;
+    background: #25d366;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+}
+
+.btn-ready-wa:hover {
+    background: #1eb857;
+    transform: translateY(-1px);
+}
+
+.btn-ready-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background: #fff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-ready-outline:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+
+/* Demo Simulation Alert / Testing Bar */
+.demo-test-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 20px 0;
+    padding: 14px 18px;
+    background: #eff6ff;
+    border: 1px dashed #93c5fd;
+    border-radius: 12px;
+}
+
+.demo-test-bar.is-success {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.demo-test-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.demo-tag {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #1d4ed8;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.demo-test-bar.is-success .demo-tag {
+    background: #16a34a;
+}
+
+.demo-test-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #334155;
+}
+
+.btn-demo-sim {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #1d4ed8;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+
+.btn-demo-sim:hover {
+    background: #1e40af;
+}
+
+.btn-demo-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #fff;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+
+.btn-demo-reset:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+/* Responsive for Tracker & Shipping */
+@media (max-width: 768px) {
+    .order-tracker-steps {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px 12px;
+    }
+
+    .shipping-highlight-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .demo-test-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .btn-demo-sim,
+    .btn-demo-reset {
+        justify-content: center;
+    }
+
+    .ready-action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-ready-primary,
+    .btn-ready-wa,
+    .btn-ready-outline {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Print Stylesheet for Invoices */
+@media print {
+    .topbar,
+    header,
+    .announcement,
+    .stepper-wrap,
+    .status-action-area,
+    .ready-action-buttons,
+    .demo-test-bar,
+    .status-support-bar,
+    footer,
+    .btn-copy-id {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 12pt;
+    }
+
+    .checkout-page {
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    .status-card-shell {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        padding: 20px !important;
+    }
+}
+

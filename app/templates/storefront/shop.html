@@ -1,10 +1,12 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}Shop - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=8">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=13">{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="shop-hero"><img src="{% static 'images/losari-computer-hero.png' %}" alt="Losari Computer - Pusat Laptop dan Solusi Komputer Terpercaya"></div>
+<section class="shop-hero" aria-label="Shop hero banner">
+    <img class="shop-hero-image" src="{% static 'images/losari-computer-hero.png' %}" alt="Losari Computer - Pusat Laptop dan Solusi Komputer Terpercaya">
+</section>
+<div class="container shop-content">
     <div class="shop-heading"><p class="eyebrow shop-eyebrow">Unit tersedia · {{ products|length }} produk</p><h1>Laptop pilihan untukmu</h1></div>
     <form class="shop-toolbar" method="get">
         <div class="shop-search"><span class="search-icon" aria-hidden="true">&#9906;</span><input name="q" value="{{ query }}" placeholder="Cari laptop, mis. ThinkPad, ASUS, MacBook..." aria-label="Cari laptop"></div>

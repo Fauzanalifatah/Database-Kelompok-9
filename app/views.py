@@ -1142,15 +1142,9 @@ def checkout(request, slug):
                 status=503,
             )
         if snap_transaction is not None:
-            return render(
-                request,
-                "storefront/payment_status.html",
-                {
-                    "order": order,
-                    "snap_token": snap_transaction["token"],
-                    "midtrans_client_key": settings.MIDTRANS_CLIENT_KEY,
-                },
-            )
+            if hasattr(request, "session"):
+                request.session[f"snap_{order.nomor}"] = snap_transaction.get("token")
+            return redirect("app:payment_status", nomor=order.nomor)
     return render(
         request,
         "storefront/checkout.html",
@@ -1165,7 +1159,87 @@ def payment_status(request, nomor):
         nomor=nomor,
         pengguna=request.user,
     )
-    return render(request, "storefront/payment_status.html", {"order": order})
+
+    # 1. Fitur simulasi demo untuk pengujian status pembayaran
+    simulasi = request.GET.get("simulasi")
+    if simulasi == "bayar" and order.status == "menunggu":
+        with transaction.atomic():
+            order.status = "dibayar"
+            order.midtrans_transaction_id = f"SIM-{order.nomor.hex[:8].upper()}"
+            order.midtrans_payment_type = "qris / gopay (demo)"
+            if not order.stok_dikurangi:
+                for item in order.item.select_related("produk"):
+                    if item.produk:
+                        item.produk.stok = max(0, item.produk.stok - item.jumlah)
+                        item.produk.save(update_fields=["stok"])
+                order.stok_dikurangi = True
+            order.save()
+            messages.success(request, "Simulasi pembayaran berhasil! Pesanan siap diproses.")
+            return redirect("app:payment_status", nomor=order.nomor)
+    elif simulasi == "reset" and order.status != "menunggu":
+        with transaction.atomic():
+            if order.stok_dikurangi:
+                for item in order.item.select_related("produk"):
+                    if item.produk:
+                        item.produk.stok += item.jumlah
+                        item.produk.save(update_fields=["stok"])
+                order.stok_dikurangi = False
+            order.status = "menunggu"
+            order.save()
+            messages.info(request, "Status pesanan dikembalikan ke 'Menunggu Pembayaran'.")
+            return redirect("app:payment_status", nomor=order.nomor)
+
+    # 2. Cek status otomatis langsung ke API Midtrans jika masih menunggu
+    if order.status == "menunggu" and settings.MIDTRANS_SERVER_KEY:
+        try:
+            import midtransclient
+            core = midtransclient.CoreApi(
+                is_production=settings.MIDTRANS_IS_PRODUCTION,
+                server_key=settings.MIDTRANS_SERVER_KEY,
+            )
+            status_res = core.transactions.status(str(order.nomor))
+            t_status = status_res.get("transaction_status")
+            f_status = status_res.get("fraud_status", "")
+            if t_status in {"capture", "settlement"} and f_status != "challenge":
+                with transaction.atomic():
+                    order.status = "dibayar"
+                    order.midtrans_transaction_id = status_res.get("transaction_id", "")
+                    order.midtrans_payment_type = status_res.get("payment_type", "")
+                    if not order.stok_dikurangi:
+                        for item in order.item.select_related("produk"):
+                            if item.produk:
+                                item.produk.stok = max(0, item.produk.stok - item.jumlah)
+                                item.produk.save(update_fields=["stok"])
+                        order.stok_dikurangi = True
+                    order.save()
+        except Exception:
+            pass
+
+    # 3. Siapkan Snap Token jika pesanan masih dalam status menunggu pembayaran
+    snap_token = request.session.get(f"snap_{order.nomor}")
+    if not snap_token and order.status == "menunggu":
+        try:
+            profile = UserPengguna.objects.filter(user=request.user).first()
+            customer = {
+                "name": order.pengguna.get_full_name() or order.pengguna.username,
+                "email": order.pengguna.email,
+                "phone": profile.telp if profile else "08123456789",
+            }
+            snap_res = create_snap_transaction(order, customer, list(order.item.all()))
+            snap_token = snap_res.get("token")
+            request.session[f"snap_{order.nomor}"] = snap_token
+        except Exception:
+            pass
+
+    return render(
+        request,
+        "storefront/payment_status.html",
+        {
+            "order": order,
+            "snap_token": snap_token,
+            "midtrans_client_key": settings.MIDTRANS_CLIENT_KEY,
+        },
+    )
 
 
 @csrf_exempt

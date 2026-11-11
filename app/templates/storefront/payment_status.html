@@ -1,7 +1,7 @@
 {% extends "storefront/base.html" %}
 {% load static %}
-{% block title %}Status Pesanan #{{ order.nomor|stringformat:".8s"|upper }} - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/checkout.css' %}">{% endblock %}
+{% block title %}{% if order.status == 'dibayar' or order.status == 'diproses' or order.status == 'dikirim' or order.status == 'selesai' %}Pesanan Siap - #{{ order.nomor|stringformat:".8s"|upper }}{% else %}Status Pesanan #{{ order.nomor|stringformat:".8s"|upper }}{% endif %} - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/checkout.css' %}?v=15">{% endblock %}
 
 {% block content %}
 <div class="checkout-page status-page">
@@ -10,6 +10,7 @@
         <!-- Stepper -->
         <div class="stepper-wrap">
             <div class="stepper-track">
+                <!-- Step 1: Data Pembeli -->
                 <div class="step-item is-completed">
                     <span class="step-circle">✓</span>
                     <div class="step-meta">
@@ -18,23 +19,31 @@
                     </div>
                 </div>
                 <div class="step-line is-completed"></div>
-                <div class="step-item {% if order.status == 'dibayar' %}is-completed{% elif order.status == 'dibatalkan' %}is-failed{% else %}is-active{% endif %}">
+
+                <!-- Step 2: Pembayaran -->
+                <div class="step-item {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-completed{% elif order.status == 'dibatalkan' %}is-failed{% else %}is-active{% endif %}">
                     <span class="step-circle">
-                        {% if order.status == 'dibayar' %}✓{% elif order.status == 'dibatalkan' %}×{% else %}2{% endif %}
+                        {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}✓{% elif order.status == 'dibatalkan' %}×{% else %}2{% endif %}
                     </span>
                     <div class="step-meta">
                         <strong class="step-name">Pembayaran</strong>
                         <span class="step-desc">
-                            {% if order.status == 'dibayar' %}Lunas terverifikasi{% elif order.status == 'dibatalkan' %}Dibatalkan{% else %}Menunggu proses{% endif %}
+                            {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}Lunas terverifikasi{% elif order.status == 'dibatalkan' %}Dibatalkan{% else %}Menunggu proses{% endif %}
                         </span>
                     </div>
                 </div>
-                <div class="step-line {% if order.status == 'dibayar' %}is-completed{% endif %}"></div>
-                <div class="step-item {% if order.status == 'dibayar' %}is-active{% endif %}">
-                    <span class="step-circle">3</span>
+                <div class="step-line {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-completed{% endif %}"></div>
+
+                <!-- Step 3: Pesanan Siap -->
+                <div class="step-item {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-active is-completed{% endif %}">
+                    <span class="step-circle">
+                        {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}✓{% else %}3{% endif %}
+                    </span>
                     <div class="step-meta">
                         <strong class="step-name">Pesanan Siap</strong>
-                        <span class="step-desc">Pengemasan & kirim</span>
+                        <span class="step-desc">
+                            {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}Siap dikirim{% else %}Pengemasan & kirim{% endif %}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -46,7 +55,7 @@
             <!-- Hero Status Icon & Headings -->
             <div class="status-hero">
                 <div class="status-icon-wrap status-{{ order.status }}">
-                    {% if order.status == "dibayar" %}
+                    {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     {% elif order.status == "dibatalkan" %}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -54,6 +63,15 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     {% endif %}
                 </div>
+
+                {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
+                <div>
+                    <span class="status-badge-verified">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        PEMBAYARAN LUNAS TERVERIFIKASI
+                    </span>
+                </div>
+                {% endif %}
 
                 <div class="order-id-badge">
                     <span>ID PESANAN #{{ order.nomor|stringformat:".8s"|upper }}</span>
@@ -64,8 +82,8 @@
                 </div>
 
                 <h1 class="status-title">
-                    {% if order.status == "dibayar" %}
-                    Pembayaran Berhasil!
+                    {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
+                    Pesanan Siap Diproses!
                     {% elif order.status == "dibatalkan" %}
                     Pesanan Dibatalkan
                     {% else %}
@@ -74,8 +92,8 @@
                 </h1>
 
                 <p class="status-subtitle">
-                    {% if order.status == "dibayar" %}
-                    Terima kasih atas kepercayaan Anda. Pembayaran telah diverifikasi otomatis dan unit laptop Anda sedang disiapkan untuk pengiriman.
+                    {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
+                    Terima kasih atas pesanan Anda. Pembayaran telah diverifikasi secara otomatis oleh sistem. Unit pesanan Anda saat ini masuk ke antrean pengemasan aman standar Losari Computer dengan Free Bubble Wrap tebal dan proteksi packing kayu sebelum diserahkan ke kurir pengiriman.
                     {% elif order.status == "dibatalkan" %}
                     Transaksi ini dibatalkan atau waktu pembayaran telah kedaluwarsa. Silakan lakukan pemesanan ulang untuk unit yang diinginkan.
                     {% else %}
@@ -83,7 +101,7 @@
                     {% endif %}
                 </p>
 
-                <!-- Action Button for Payment -->
+                <!-- Action Button for Waiting State -->
                 {% if snap_token and order.status == "menunggu" %}
                 <div class="status-action-area">
                     <button class="btn-pay-now" id="pay-button" type="button">
@@ -104,27 +122,93 @@
                     });
                 });
                 </script>
-                {% elif order.status == "dibayar" %}
-                <div class="status-action-area">
-                    <a class="btn-primary-action" href="{% url 'shop' %}">
-                        <span>Belanja Laptop Lainnya</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </div>
-                {% else %}
-                <div class="status-action-area">
-                    <a class="btn-primary-action" href="{% url 'shop' %}">
-                        <span>Pilih Unit Lain di Katalog</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </div>
                 {% endif %}
             </div>
+
+            <!-- Demo Simulation / Testing Bar -->
+            {% if order.status == "menunggu" %}
+            <div class="demo-test-bar">
+                <div class="demo-test-info">
+                    <span class="demo-tag">MODE PENGUJIAN / DEMO</span>
+                    <p>Ingin melihat dan mendemokan tampilan <strong>Pesanan Siap</strong> secara langsung tanpa perlu transfer uang riil?</p>
+                </div>
+                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=bayar" class="btn-demo-sim">
+                    <span>⚡ Simulasi Pembayaran Sukses</span>
+                </a>
+            </div>
+            {% else %}
+            <div class="demo-test-bar is-success">
+                <div class="demo-test-info">
+                    <span class="demo-tag">PENGUJIAN DEMO</span>
+                    <p>Ini adalah tampilan resmi <strong>Pesanan Siap</strong> setelah status pembayaran lunas terverifikasi.</p>
+                </div>
+                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=reset" class="btn-demo-reset">
+                    <span>↩ Reset ke Menunggu Pembayaran</span>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- TAHAPAN PESANAN SIAP (Hanya tampil jika pesanan sudah dibayar/diproses) -->
+            {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
+            <div class="order-tracker-box">
+                <div class="order-tracker-title">
+                    <span>Tahapan Pesanan Anda</span>
+                    <span class="tracker-pill">Status: {% if order.status == 'dibayar' %}Siap Dikemas{% elif order.status == 'diproses' %}Sedang Dikemas{% elif order.status == 'dikirim' %}Dalam Pengiriman{% else %}Selesai{% endif %}</span>
+                </div>
+                <div class="order-tracker-steps">
+                    <div class="tracker-step is-done">
+                        <span class="tracker-icon-badge">✓</span>
+                        <strong class="tracker-name">1. Pesanan Masuk</strong>
+                        <span class="tracker-status">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</span>
+                    </div>
+                    <div class="tracker-step is-done">
+                        <span class="tracker-icon-badge">✓</span>
+                        <strong class="tracker-name">2. Pembayaran Lunas</strong>
+                        <span class="tracker-status">{{ order.midtrans_payment_type|default:"Payment Gateway"|upper }}</span>
+                    </div>
+                    <div class="tracker-step {% if order.status == 'dibayar' or order.status == 'diproses' %}is-current{% else %}is-done{% endif %}">
+                        <span class="tracker-icon-badge">📦</span>
+                        <strong class="tracker-name">3. Pengemasan Unit</strong>
+                        <span class="tracker-status">QC & Packing Kayu</span>
+                    </div>
+                    <div class="tracker-step {% if order.status == 'dikirim' %}is-current{% elif order.status == 'selesai' %}is-done{% endif %}">
+                        <span class="tracker-icon-badge">🚚</span>
+                        <strong class="tracker-name">4. Pengiriman Kurir</strong>
+                        <span class="tracker-status">Estimasi 1-3 Hari</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highlight Layanan Pengiriman & Garansi Toko -->
+            <div class="shipping-highlight-grid">
+                <div class="ship-highlight-card">
+                    <span class="ship-highlight-icon">📦</span>
+                    <div class="ship-highlight-copy">
+                        <strong>Proteksi Pengemasan Toko</strong>
+                        <span>Free Bubble Wrap ekstra tebal dan packing kayu pelindung guncangan kurir.</span>
+                    </div>
+                </div>
+                <div class="ship-highlight-card">
+                    <span class="ship-highlight-icon">🛡️</span>
+                    <div class="ship-highlight-copy">
+                        <strong>Garansi Toko 1 Bulan</strong>
+                        <span>Jaminan tukar unit langsung jika terjadi kendala mesin atau hardware.</span>
+                    </div>
+                </div>
+                <div class="ship-highlight-card">
+                    <span class="ship-highlight-icon">⚡</span>
+                    <div class="ship-highlight-copy">
+                        <strong>Unit Teruji & Siap Pakai</strong>
+                        <span>Unit telah melewati uji kelayakan baterai, keyboard, layar, speaker, & OS.</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
             <!-- Summary Info Grid -->
             <div class="status-info-box">
                 <div class="info-metric">
-                    <span class="metric-label">Total Tagihan</span>
+                    <span class="metric-label">Total Pembayaran</span>
                     <strong class="metric-value metric-price">Rp{{ order.total|floatformat:"0g" }}</strong>
                 </div>
                 <div class="info-metric">
@@ -195,6 +279,28 @@
                         <p>Selesaikan pembayaran, status pesanan akan terverifikasi secara otomatis.</p>
                     </div>
                 </div>
+            </div>
+            {% endif %}
+
+            <!-- Tombol Aksi Pesanan Siap (Cetak Invoice, WhatsApp, Dashboard) -->
+            {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
+            <div class="ready-action-buttons">
+                <button type="button" class="btn-ready-primary" onclick="window.print()">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>Cetak Nota / Invoice</span>
+                </button>
+                <a class="btn-ready-wa" href="https://wa.me/{{ footer_setting.whatsapp|default:'6281234567890' }}?text=Halo%20Losari%20Computer,%20saya%20sudah%20menyelesaikan%20pembayaran%20untuk%20pesanan%20nomor%20{{ order.nomor|stringformat:'.8s'|upper }}%20senilai%20Rp{{ order.total|floatformat:'0g' }}.%20Mohon%20segera%20diproses%20pengirimannya.%20Terima%20kasih!" target="_blank" rel="noopener">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    <span>Konfirmasi ke WhatsApp Admin</span>
+                </a>
+                <a class="btn-ready-outline" href="{% url 'app:profile_pengguna' %}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>Dashboard Pesanan Saya</span>
+                </a>
+                <a class="btn-ready-outline" href="{% url 'shop' %}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Belanja Laptop Lainnya</span>
+                </a>
             </div>
             {% endif %}
 
