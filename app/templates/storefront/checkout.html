@@ -1,5 +1,5 @@
 {% extends "storefront/base.html" %}
-{% load static %}
+{% load static l10n %}
 {% block title %}Checkout - {{ product.merek }} {{ product.nama }} - Losari Computer{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/checkout.css' %}">{% endblock %}
 
@@ -321,10 +321,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const summaryTotal = document.getElementById("summary-total");
     const summaryDiscount = document.getElementById("summary-discount");
 
-    const unitPrice = {{ product.harga_aktif }};
-    const originalPrice = {{ product.harga }};
+    function parseNumericValue(value, fallback = 0) {
+        const parsed = Number(String(value || "").trim());
+        return Number.isFinite(parsed) ? parsed : fallback;
+    }
+
+    const unitPrice = parseNumericValue("{{ product.harga_aktif|unlocalize }}");
+    const originalPrice = parseNumericValue("{{ product.harga|unlocalize }}");
     const hasDiscount = {% if product.memiliki_diskon %}true{% else %}false{% endif %};
-    const maxStock = Math.min({{ product.stok|default:10 }}, 10);
+    const maxStock = Math.min(parseNumericValue("{{ product.stok|default:10|unlocalize }}", 10), 10);
 
     function formatRupiah(num) {
         return "Rp" + new Intl.NumberFormat("id-ID").format(num);
