@@ -60,7 +60,7 @@
                 {% endfor %}
             </div>
             <div class="stock-row"><strong>Kondisi:</strong> {{ product.get_kondisi_display }} <span>•</span> <strong>Stok:</strong> {{ product.stok }} unit</div>
-            <a class="button detail-buy" href="https://wa.me/?text=Saya%20ingin%20membeli%20{{ product.nama|urlencode }}">Tanya & beli produk</a>
+            <a class="button detail-buy" href="{% url 'app:checkout' product.slug %}">Beli sekarang</a>
         </div>
     </section>
     <section class="spec-section"><div class="section-head"><div><p class="eyebrow">Informasi produk</p><h2>Spesifikasi lengkap</h2></div></div><div class="specifications">{% for key, value in product.spesifikasi.items %}<div><strong>{{ key|title }}</strong><span>{{ value }}</span></div>{% empty %}<p class="muted">Spesifikasi belum diisi. Lengkapi melalui admin Django.</p>{% endfor %}</div></section>

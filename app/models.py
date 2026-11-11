@@ -640,6 +640,17 @@ class Produk(models.Model):
         return f"Rp{self.harga_aktif:,.0f}".replace(",", ".")
 
     @property
+    def nilai_diskon(self):
+        if not self.diskon_persen:
+            return Decimal("0")
+        potongan = self.harga * self.diskon_persen / Decimal("100")
+        return potongan.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    @property
+    def nilai_diskon_rupiah(self):
+        return f"Rp{self.nilai_diskon:,.0f}".replace(",", ".")
+
+    @property
     def memiliki_diskon(self):
         return self.diskon_persen >= Decimal("10")
 
@@ -769,8 +780,15 @@ class Pesanan(models.Model):
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="menunggu"
     )
+    provinsi = models.CharField(max_length=100, blank=True, default="", verbose_name="Provinsi")
+    kota = models.CharField(max_length=100, blank=True, default="", verbose_name="Kota / Kabupaten")
+    kecamatan = models.CharField(max_length=100, blank=True, default="", verbose_name="Kecamatan")
     alamat_pengiriman = models.TextField()
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    midtrans_transaction_id = models.CharField(max_length=100, blank=True, default="")
+    midtrans_payment_type = models.CharField(max_length=50, blank=True, default="")
+    midtrans_fraud_status = models.CharField(max_length=30, blank=True, default="")
+    stok_dikurangi = models.BooleanField(default=False)
     dibuat_pada = models.DateTimeField(auto_now_add=True)
     diperbarui_pada = models.DateTimeField(auto_now=True)
 

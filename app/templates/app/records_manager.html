@@ -17,7 +17,7 @@
     <td><div class="content-copy"><strong>{{ record }}</strong><span class="muted">{{ record.pengguna.get_full_name|default:record.pengguna.username }} · {{ record.dibuat_pada|date:"d M Y H:i" }}</span></div></td>
     <td><span class="status-badge {% if record.status == 'dibatalkan' %}is-draft{% endif %}">{{ record.get_status_display }}</span></td>
     <td class="date-cell">Rp{{ record.total|floatformat:0 }}</td>
-    <td><div class="actions"><a class="action" href="{% url 'app:pesanan_manager_edit' record.pk %}">Detail / Edit</a></div></td>
+    <td><div class="actions"><a class="action" href="{% url 'app:pesanan_manager_detail' record.pk %}">Detail / Edit</a></div></td>
 </tr>{% empty %}<tr class="empty-row"><td colspan="4" class="muted">Belum ada pesanan.</td></tr>{% endfor %}
 </tbody></table>
 {% endif %}

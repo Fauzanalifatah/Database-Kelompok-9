@@ -1,0 +1,237 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Status Pesanan #{{ order.nomor|stringformat:".8s"|upper }} - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/checkout.css' %}">{% endblock %}
+
+{% block content %}
+<div class="checkout-page status-page">
+    <div class="container status-container">
+
+        <!-- Stepper -->
+        <div class="stepper-wrap">
+            <div class="stepper-track">
+                <div class="step-item is-completed">
+                    <span class="step-circle">✓</span>
+                    <div class="step-meta">
+                        <strong class="step-name">Data Pembeli</strong>
+                        <span class="step-desc">Terkonfirmasi</span>
+                    </div>
+                </div>
+                <div class="step-line is-completed"></div>
+                <div class="step-item {% if order.status == 'dibayar' %}is-completed{% elif order.status == 'dibatalkan' %}is-failed{% else %}is-active{% endif %}">
+                    <span class="step-circle">
+                        {% if order.status == 'dibayar' %}✓{% elif order.status == 'dibatalkan' %}×{% else %}2{% endif %}
+                    </span>
+                    <div class="step-meta">
+                        <strong class="step-name">Pembayaran</strong>
+                        <span class="step-desc">
+                            {% if order.status == 'dibayar' %}Lunas terverifikasi{% elif order.status == 'dibatalkan' %}Dibatalkan{% else %}Menunggu proses{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="step-line {% if order.status == 'dibayar' %}is-completed{% endif %}"></div>
+                <div class="step-item {% if order.status == 'dibayar' %}is-active{% endif %}">
+                    <span class="step-circle">3</span>
+                    <div class="step-meta">
+                        <strong class="step-name">Pesanan Siap</strong>
+                        <span class="step-desc">Pengemasan & kirim</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Status Card -->
+        <div class="status-card-shell">
+
+            <!-- Hero Status Icon & Headings -->
+            <div class="status-hero">
+                <div class="status-icon-wrap status-{{ order.status }}">
+                    {% if order.status == "dibayar" %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    {% elif order.status == "dibatalkan" %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    {% else %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    {% endif %}
+                </div>
+
+                <div class="order-id-badge">
+                    <span>ID PESANAN #{{ order.nomor|stringformat:".8s"|upper }}</span>
+                    <button type="button" class="btn-copy-id" id="copy-order-btn" data-clipboard="{{ order.nomor }}" title="Salin Nomor Pesanan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <span id="copy-tooltip">Salin</span>
+                    </button>
+                </div>
+
+                <h1 class="status-title">
+                    {% if order.status == "dibayar" %}
+                    Pembayaran Berhasil!
+                    {% elif order.status == "dibatalkan" %}
+                    Pesanan Dibatalkan
+                    {% else %}
+                    Menunggu Pembayaran
+                    {% endif %}
+                </h1>
+
+                <p class="status-subtitle">
+                    {% if order.status == "dibayar" %}
+                    Terima kasih atas kepercayaan Anda. Pembayaran telah diverifikasi otomatis dan unit laptop Anda sedang disiapkan untuk pengiriman.
+                    {% elif order.status == "dibatalkan" %}
+                    Transaksi ini dibatalkan atau waktu pembayaran telah kedaluwarsa. Silakan lakukan pemesanan ulang untuk unit yang diinginkan.
+                    {% else %}
+                    Silakan klik tombol <b>Bayar Sekarang</b> di bawah untuk membuka jendela pembayaran resmi Midtrans. Sistem akan memverifikasi secara otomatis setelah pembayaran berhasil.
+                    {% endif %}
+                </p>
+
+                <!-- Action Button for Payment -->
+                {% if snap_token and order.status == "menunggu" %}
+                <div class="status-action-area">
+                    <button class="btn-pay-now" id="pay-button" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <span>Bayar Sekarang (Midtrans)</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    <p class="pay-methods-hint">🔒 Mendukung QRIS, GoPay, BCA, BRI, BNI, Mandiri & Transfer Bank</p>
+                </div>
+                <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ midtrans_client_key }}"></script>
+                <script>
+                document.querySelector("#pay-button")?.addEventListener("click", () => {
+                    snap.pay("{{ snap_token }}", {
+                        onSuccess: () => location.reload(),
+                        onPending: () => location.reload(),
+                        onError: () => location.reload(),
+                        onClose: () => {}
+                    });
+                });
+                </script>
+                {% elif order.status == "dibayar" %}
+                <div class="status-action-area">
+                    <a class="btn-primary-action" href="{% url 'shop' %}">
+                        <span>Belanja Laptop Lainnya</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+                {% else %}
+                <div class="status-action-area">
+                    <a class="btn-primary-action" href="{% url 'shop' %}">
+                        <span>Pilih Unit Lain di Katalog</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Summary Info Grid -->
+            <div class="status-info-box">
+                <div class="info-metric">
+                    <span class="metric-label">Total Tagihan</span>
+                    <strong class="metric-value metric-price">Rp{{ order.total|floatformat:"0g" }}</strong>
+                </div>
+                <div class="info-metric">
+                    <span class="metric-label">Status Pesanan</span>
+                    <span class="status-pill status-pill-{{ order.status }}">{{ order.get_status_display }}</span>
+                </div>
+                <div class="info-metric">
+                    <span class="metric-label">Waktu Pemesanan</span>
+                    <strong class="metric-value">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</strong>
+                </div>
+                <div class="info-metric">
+                    <span class="metric-label">Nama Pemesan</span>
+                    <strong class="metric-value">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong>
+                </div>
+            </div>
+
+            <!-- Ordered Items Breakdown -->
+            <div class="status-items-section">
+                <h3 class="section-heading">Rincian Unit Pesanan</h3>
+                <div class="status-items-list">
+                    {% for item in order.item.all %}
+                    <div class="status-item-card">
+                        <div class="item-thumb">
+                            {% if item.produk.gambar %}
+                            <img src="{{ item.produk.gambar.url }}" alt="{{ item.nama_produk }}">
+                            {% else %}
+                            <div class="thumb-fallback">💻</div>
+                            {% endif %}
+                        </div>
+                        <div class="item-info">
+                            <h4 class="item-name">{{ item.nama_produk }}</h4>
+                            <span class="item-sub">Harga Satuan: Rp{{ item.harga_satuan|floatformat:"0g" }} &times; {{ item.jumlah }} unit</span>
+                        </div>
+                        <strong class="item-subtotal">Rp{{ item.subtotal|floatformat:"0g" }}</strong>
+                    </div>
+                    {% empty %}
+                    <p class="empty-items">Tidak ada rincian item.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Shipping Destination Box -->
+            <div class="status-address-box">
+                <div class="address-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <div class="address-copy">
+                    <strong>Alamat Pengiriman</strong>
+                    <p>{{ order.alamat_pengiriman }}</p>
+                </div>
+            </div>
+
+            <!-- Quick Instructions for Waiting State -->
+            {% if order.status == "menunggu" %}
+            <div class="payment-steps-guide">
+                <h4 class="guide-title">Cara Menyelesaikan Pembayaran:</h4>
+                <div class="guide-grid">
+                    <div class="guide-item">
+                        <span class="guide-num">1</span>
+                        <p>Klik tombol <b>Bayar Sekarang</b> untuk memunculkan jendela aman Midtrans.</p>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-num">2</span>
+                        <p>Pilih metode yang diinginkan (QRIS, GoPay, atau Transfer Bank / Virtual Account).</p>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-num">3</span>
+                        <p>Selesaikan pembayaran, status pesanan akan terverifikasi secara otomatis.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Support Footer -->
+            <div class="status-support-bar">
+                <span>Butuh bantuan atau konfirmasi pesanan?</span>
+                <a href="https://wa.me/{{ footer_setting.whatsapp|default:'6281234567890' }}?text=Halo%20Losari%20Computer,%20saya%20butuh%20bantuan%20terkait%20pesanan%20nomor%20{{ order.nomor }}" target="_blank" rel="noopener" class="btn-wa-support">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    <span>Hubungi CS WhatsApp</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const copyBtn = document.getElementById("copy-order-btn");
+    const tooltip = document.getElementById("copy-tooltip");
+
+    if (copyBtn) {
+        copyBtn.addEventListener("click", function () {
+            const textToCopy = this.getAttribute("data-clipboard") || "";
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    if (tooltip) tooltip.textContent = "Disalin!";
+                    copyBtn.classList.add("copied");
+                    setTimeout(() => {
+                        if (tooltip) tooltip.textContent = "Salin";
+                        copyBtn.classList.remove("copied");
+                    }, 2000);
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

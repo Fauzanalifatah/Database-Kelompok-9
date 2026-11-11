@@ -1,0 +1,198 @@
+{% extends "app/content_manager.html" %}
+{% load humanize %}
+{% block content %}
+<style>
+    .pesanan-layout { display:grid; grid-template-columns:1.6fr 1fr; gap:20px; align-items:start; }
+    .pesanan-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:16px; }
+    .pesanan-card-title { margin:0 0 14px; padding-bottom:12px; font-size:14px; font-weight:700; color:#172033; border-bottom:1px solid #e2e8f0; }
+    .pesanan-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+    .pesanan-info-item { display:flex; flex-direction:column; gap:3px; }
+    .pesanan-info-item span { color:#64748b; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; }
+    .pesanan-info-item strong { color:#172033; font-size:13px; word-break:break-all; }
+    .pesanan-status-badge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+    .pesanan-status-badge.status-selesai,
+    .pesanan-status-badge.status-dibayar { background:#dcfce7; color:#15803d; }
+    .pesanan-status-badge.status-menunggu,
+    .pesanan-status-badge.status-diproses,
+    .pesanan-status-badge.status-dikirim { background:#fef9c3; color:#854d0e; }
+    .pesanan-status-badge.status-dibatalkan { background:#fef2f2; color:#991b1b; }
+    .pesanan-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+    .pesanan-table th { padding:8px 10px; background:#f8fafc; color:#64748b; font-size:11px; font-weight:700; text-align:left; text-transform:uppercase; letter-spacing:.06em; border-bottom:1px solid #e2e8f0; }
+    .pesanan-table td { padding:10px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+    .pesanan-table tr:last-child td { border-bottom:none; }
+    .pesanan-total-row td { padding:12px 10px; border-top:2px solid #e2e8f0; font-weight:700; font-size:14px; color:#172033; }
+    .midtrans-info { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; font-size:12px; }
+    .midtrans-info-row { display:flex; justify-content:space-between; gap:10px; padding:5px 0; border-bottom:1px solid #f1f5f9; }
+    .midtrans-info-row:last-child { border-bottom:none; }
+    .midtrans-info-row span { color:#64748b; font-weight:600; }
+    .midtrans-info-row strong { color:#172033; text-align:right; }
+    .status-form .field { margin-bottom:14px; }
+    .status-form label { display:block; margin-bottom:5px; font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.05em; }
+    @media(max-width:800px) { .pesanan-layout { grid-template-columns:1fr; } .pesanan-info-grid { grid-template-columns:1fr; } }
+</style>
+
+<div class="toolbar">
+    <div>
+        <h2>{{ heading }}</h2>
+        <p class="muted">Nomor: {{ order.nomor }}</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+        <a class="button secondary" href="{{ cancel_url }}">← Kembali ke Daftar</a>
+    </div>
+</div>
+
+<div class="pesanan-layout">
+    <!-- Kolom Kiri: Info Detail -->
+    <div>
+        <!-- Informasi Pesanan -->
+        <div class="pesanan-card">
+            <h3 class="pesanan-card-title">Informasi Pesanan</h3>
+            <div class="pesanan-info-grid">
+                <div class="pesanan-info-item" style="grid-column:1/-1;">
+                    <span>Nomor Pesanan</span>
+                    <strong>{{ order.nomor }}</strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Status</span>
+                    <strong>
+                        <span class="pesanan-status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+                    </strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Total Pembayaran</span>
+                    <strong>Rp{{ order.total|floatformat:0|intcomma }}</strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Tanggal Dibuat</span>
+                    <strong>{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Terakhir Diperbarui</span>
+                    <strong>{{ order.diperbarui_pada|date:"d M Y, H:i" }} WIB</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Pembeli -->
+        <div class="pesanan-card">
+            <h3 class="pesanan-card-title">Data Pembeli</h3>
+            <div class="pesanan-info-grid">
+                <div class="pesanan-info-item">
+                    <span>Nama Lengkap</span>
+                    <strong>{{ order.pengguna.get_full_name|default:"—" }}</strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Username</span>
+                    <strong>@{{ order.pengguna.username }}</strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Email</span>
+                    <strong>{{ order.pengguna.email|default:"—" }}</strong>
+                </div>
+                <div class="pesanan-info-item">
+                    <span>Nomor HP</span>
+                    <strong>{% if order.pengguna.pengguna and order.pengguna.pengguna.telp %}{{ order.pengguna.pengguna.telp }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="pesanan-info-item" style="grid-column:1/-1;">
+                    <span>Alamat Pengiriman</span>
+                    <strong>{{ order.alamat_pengiriman|default:"—" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Item Pesanan -->
+        <div class="pesanan-card">
+            <h3 class="pesanan-card-title">Detail Item Pesanan</h3>
+            <table class="pesanan-table">
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th style="text-align:right;">Harga Satuan</th>
+                        <th style="text-align:center;">Jumlah</th>
+                        <th style="text-align:right;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.item.all %}
+                    <tr>
+                        <td>
+                            <strong>{{ item.nama_produk }}</strong>
+                            {% if item.produk %}<br><span class="muted" style="font-size:11px;">SKU: {{ item.produk.pk }}</span>{% endif %}
+                        </td>
+                        <td style="text-align:right;">Rp{{ item.harga_satuan|floatformat:0|intcomma }}</td>
+                        <td style="text-align:center;">{{ item.jumlah }}</td>
+                        <td style="text-align:right;">Rp{{ item.subtotal|floatformat:0|intcomma }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="muted" style="text-align:center;padding:20px;">Tidak ada item dalam pesanan ini.</td></tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="pesanan-total-row">
+                        <td colspan="3">Total</td>
+                        <td style="text-align:right;">Rp{{ order.total|floatformat:0|intcomma }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Informasi Pembayaran Midtrans -->
+        <div class="pesanan-card">
+            <h3 class="pesanan-card-title">Informasi Pembayaran Midtrans</h3>
+            <div class="midtrans-info">
+                <div class="midtrans-info-row">
+                    <span>Transaction ID</span>
+                    <strong>{{ order.midtrans_transaction_id|default:"Belum ada" }}</strong>
+                </div>
+                <div class="midtrans-info-row">
+                    <span>Metode Pembayaran</span>
+                    <strong>{{ order.midtrans_payment_type|default:"Belum ada" }}</strong>
+                </div>
+                <div class="midtrans-info-row">
+                    <span>Fraud Status</span>
+                    <strong>{{ order.midtrans_fraud_status|default:"Belum ada" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kolom Kanan: Form Ubah Status -->
+    <div>
+        <div class="pesanan-card">
+            <h3 class="pesanan-card-title">Ubah Status Pesanan</h3>
+            <form method="post" class="status-form">
+                {% csrf_token %}
+                {% if form.errors %}
+                <ul class="errorlist">
+                    {% for field in form %}
+                        {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+                {% for field in form %}
+                <div class="field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+                    {% if field.errors %}<ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="button" style="width:100%;justify-content:center;">Simpan Status</button>
+            </form>
+        </div>
+
+        <!-- Info Singkat -->
+        <div class="pesanan-card" style="background:#fffbeb;border-color:#fde68a;">
+            <h3 class="pesanan-card-title" style="border-color:#fde68a;color:#92400e;">Catatan</h3>
+            <p style="margin:0;font-size:12px;color:#78350f;line-height:1.6;">
+                Perubahan status pesanan akan langsung tersimpan ke database.
+                Pastikan status yang dipilih sudah sesuai dengan kondisi pesanan yang sebenarnya.
+            </p>
+            <p style="margin:10px 0 0;font-size:11px;color:#a16207;">
+                Stok dikurangi: <strong>{% if order.stok_dikurangi %}Ya{% else %}Belum{% endif %}</strong>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

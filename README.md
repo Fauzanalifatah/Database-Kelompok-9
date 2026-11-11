@@ -43,6 +43,7 @@ Pada kondisi saat ini, proyek sudah memiliki:
 - halaman Django Administration untuk mengelola data;
 - service MariaDB dan phpMyAdmin melalui Docker Compose;
 - konfigurasi koneksi Django ke MariaDB.
+- checkout pelanggan dengan Midtrans Snap Sandbox dan notifikasi pembayaran.
 
 Pengelolaan data dilakukan melalui dashboard dan Django
 Administration. Pengembangan katalog e-commerce dapat dilanjutkan dengan
@@ -106,6 +107,31 @@ Nama tabel `app_pesanan` memakai bentuk tunggal karena mengikuti nama model
   kebutuhan laptop.
 - `compose.yaml`: definisi container MariaDB dan phpMyAdmin.
 - `requirements.txt`: dependency Python yang diperlukan proyek.
+
+### Alur checkout Midtrans Sandbox
+
+1. Pengguna login, memilih produk, lalu menekan **Beli sekarang**.
+2. Halaman checkout memvalidasi data penerima dan stok secara atomik.
+3. Server membuat `Pesanan` berstatus “Menunggu pembayaran” dan meminta Snap
+   token ke Midtrans.
+4. Pengguna menyelesaikan pembayaran pada popup Snap Sandbox.
+5. Midtrans mengirim notifikasi ke
+   `/app/midtrans/notification/`. Server memverifikasi `signature_key`,
+   mencocokkan nominal, memperbarui status, dan mengurangi stok satu kali.
+6. Pengguna dapat melihat status pesanan pada halaman status pembayaran.
+
+Konfigurasi lokal menggunakan environment variable berikut:
+
+```text
+MIDTRANS_SERVER_KEY=Mid-server-...
+MIDTRANS_CLIENT_KEY=Mid-client-...
+MIDTRANS_IS_PRODUCTION=false
+```
+
+Set URL **Payment Notification URL** pada Midtrans Sandbox ke URL publik
+aplikasi yang berakhiran `/app/midtrans/notification/`. Untuk pengembangan
+lokal, gunakan tunnel HTTPS seperti ngrok karena Midtrans tidak dapat mengakses
+`localhost` secara langsung. Jangan memasukkan Server Key ke repository.
 
 ## 3. Model Produk dan Pesanan
 

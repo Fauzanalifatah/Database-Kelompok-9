@@ -3,11 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError, transaction
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.http import Http404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import json
+from decimal import Decimal, InvalidOperation
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -47,7 +54,10 @@ from .models import (
     FooterSocial,
     AboutSetting,
     Testimoni,
+    ItemPesanan,
 )
+from .checkout_forms import CheckoutForm
+from .midtrans import create_snap_transaction, is_valid_signature
 
 FOOTER_SOCIAL_PLATFORMS = ("Instagram", "TikTok", "WhatsApp")
 FOOTER_PAYMENT_PLATFORMS = ("QRIS", "BRI", "BNI", "Mandiri")
@@ -437,6 +447,33 @@ def pesanan_manager_form(request, pk):
 
 @admin_required
 @login_required(login_url="app:login")
+def pesanan_manager_detail(request, pk):
+    order = get_object_or_404(
+        Pesanan.objects.select_related("pengguna", "pengguna__pengguna")
+        .prefetch_related("item__produk"),
+        pk=pk,
+    )
+    form = AdminPesananStatusForm(request.POST or None, instance=order)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Status pesanan berhasil diperbarui.")
+        return redirect("app:pesanan_manager_detail", pk=pk)
+    return render(
+        request,
+        "app/pesanan_detail.html",
+        {
+            "title": f"Detail Pesanan {str(order.nomor)[:8].upper()}",
+            "heading": "Detail Pesanan",
+            "section": "pesanan",
+            "order": order,
+            "form": form,
+            "cancel_url": reverse("app:pesanan_manager"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
 def index(request):
     user_admin = UserAdmin.objects.filter(username=request.user).first()
     if user_admin is None:
@@ -648,6 +685,15 @@ def index(request):
     mitra_deepublish_add_form = MitraDeepublishForm()
 
     today = timezone.localdate()
+    total_pesanan = Pesanan.objects.count()
+    pesanan_menunggu = Pesanan.objects.filter(status="menunggu").count()
+    pesanan_dibayar = Pesanan.objects.filter(status="dibayar").count()
+    pesanan_selesai = Pesanan.objects.filter(status="selesai").count()
+    pesanan_terbaru = (
+        Pesanan.objects.select_related("pengguna")
+        .prefetch_related("item")
+        .order_by("-dibuat_pada")[:5]
+    )
     dashboard_context = {
         "title": "Dashboard",
         "heading": "Dashboard",
@@ -662,6 +708,11 @@ def index(request):
         "produk_terbaru": Produk.objects.order_by("-id")[:5],
         "artikel_terbaru": Artikel.objects.order_by("-created_at")[:5],
         "provinsi_aktif": Provinsi.objects.filter(aktif=True).count(),
+        "total_pesanan": total_pesanan,
+        "pesanan_menunggu": pesanan_menunggu,
+        "pesanan_dibayar": pesanan_dibayar,
+        "pesanan_selesai": pesanan_selesai,
+        "pesanan_terbaru": pesanan_terbaru,
     }
 
     dashboard_context["profil_pengguna"] = user_pengguna
@@ -1026,6 +1077,150 @@ def shop(request):
             "budget": budget,
         },
     )
+
+
+@login_required(login_url="app:login")
+def checkout(request, slug):
+    product = get_object_or_404(
+        Produk.objects.select_related("kategori"), slug=slug, aktif=True
+    )
+    profile = UserPengguna.objects.filter(user=request.user).first()
+    initial = {
+        "nama": request.user.get_full_name() or request.user.username,
+        "email": request.user.email,
+        "telp": profile.telp if profile else "",
+        "alamat": profile.alamat if profile else "",
+    }
+    form = CheckoutForm(request.POST or None, initial=initial)
+    if request.method == "POST" and form.is_valid():
+        quantity = form.cleaned_data["jumlah"]
+        snap_transaction = None
+        snap_error = None
+        order = None
+        with transaction.atomic():
+            locked_product = Produk.objects.select_for_update().get(pk=product.pk)
+            if not locked_product.tersedia or locked_product.stok < quantity:
+                form.add_error("jumlah", "Stok produk tidak mencukupi.")
+            else:
+                order = Pesanan.objects.create(
+                    pengguna=request.user,
+                    alamat_pengiriman=form.cleaned_data["alamat"],
+                )
+                ItemPesanan.objects.create(
+                    pesanan=order,
+                    produk=locked_product,
+                    nama_produk=str(locked_product),
+                    harga_satuan=locked_product.harga_aktif,
+                    jumlah=quantity,
+                )
+                order.total = order.hitung_total()
+                order.save(update_fields=["total", "diperbarui_pada"])
+                try:
+                    snap_transaction = create_snap_transaction(
+                        order,
+                        {
+                            "name": form.cleaned_data["nama"],
+                            "email": form.cleaned_data["email"],
+                            "phone": form.cleaned_data["telp"],
+                        },
+                        list(order.item.all()),
+                    )
+                except ImproperlyConfigured as error:
+                    snap_error = str(error)
+                    transaction.set_rollback(True)
+        # Render dilakukan di luar blok atomic agar tidak memicu TransactionManagementError
+        if snap_error:
+            form.add_error(None, snap_error)
+            return render(
+                request,
+                "storefront/checkout.html",
+                {"product": product, "form": form},
+                status=503,
+            )
+        if snap_transaction is not None:
+            return render(
+                request,
+                "storefront/payment_status.html",
+                {
+                    "order": order,
+                    "snap_token": snap_transaction["token"],
+                    "midtrans_client_key": settings.MIDTRANS_CLIENT_KEY,
+                },
+            )
+    return render(
+        request,
+        "storefront/checkout.html",
+        {"product": product, "form": form},
+    )
+
+
+@login_required(login_url="app:login")
+def payment_status(request, nomor):
+    order = get_object_or_404(
+        Pesanan.objects.select_related("pengguna").prefetch_related("item__produk"),
+        nomor=nomor,
+        pengguna=request.user,
+    )
+    return render(request, "storefront/payment_status.html", {"order": order})
+
+
+@csrf_exempt
+@require_POST
+def midtrans_notification(request):
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Payload JSON tidak valid."}, status=400)
+    if not settings.MIDTRANS_SERVER_KEY:
+        return JsonResponse({"error": "Midtrans belum dikonfigurasi."}, status=503)
+    if not is_valid_signature(payload):
+        return JsonResponse({"error": "Signature tidak valid."}, status=403)
+    try:
+        order = Pesanan.objects.get(nomor=payload.get("order_id"))
+    except (Pesanan.DoesNotExist, ValueError):
+        return JsonResponse({"error": "Pesanan tidak ditemukan."}, status=404)
+    try:
+        notification_total = Decimal(str(payload.get("gross_amount")))
+    except (InvalidOperation, TypeError):
+        return JsonResponse({"error": "Nominal transaksi tidak valid."}, status=400)
+    if notification_total != order.total:
+        return JsonResponse({"error": "Nominal transaksi tidak sesuai."}, status=400)
+
+    transaction_status = payload.get("transaction_status")
+    fraud_status = payload.get("fraud_status", "")
+    with transaction.atomic():
+        order = Pesanan.objects.select_for_update().get(pk=order.pk)
+        order.midtrans_transaction_id = payload.get("transaction_id", "")
+        order.midtrans_payment_type = payload.get("payment_type", "")
+        order.midtrans_fraud_status = fraud_status
+        if transaction_status in {"capture", "settlement"} and fraud_status != "challenge":
+            if not order.stok_dikurangi:
+                for item in order.item.select_related("produk").select_for_update():
+                    if item.produk.stok < item.jumlah:
+                        order.status = "dibatalkan"
+                        break
+                    item.produk.stok -= item.jumlah
+                    item.produk.save(update_fields=["stok"])
+                else:
+                    order.stok_dikurangi = True
+                    order.status = "dibayar"
+            else:
+                order.status = "dibayar"
+        elif transaction_status == "pending" and order.status == "menunggu":
+            order.status = "menunggu"
+        elif transaction_status in {"deny", "cancel", "expire", "failure"}:
+            order.status = "dibatalkan"
+        order.save(
+            update_fields=[
+                "status",
+                "midtrans_transaction_id",
+                "midtrans_payment_type",
+                "midtrans_fraud_status",
+                "stok_dikurangi",
+                "diperbarui_pada",
+            ]
+        )
+    return JsonResponse({"message": "Notifikasi berhasil diproses."})
 
 
 def login_view(request):

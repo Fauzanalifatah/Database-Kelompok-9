@@ -23,7 +23,7 @@
             <div class="shop-product-title"><h3>{{ product.merek }} {{ product.nama }}</h3><a class="whatsapp-button" href="https://wa.me/?text=Saya%20tertarik%20dengan%20{{ product.nama|urlencode }}" aria-label="Tanya {{ product.nama }} melalui WhatsApp" data-tooltip="Tanya Penjual">&#9742;</a></div>
             <p class="product-description">{{ product.deskripsi|default:"Performa andal dan nyaman untuk mendukung aktivitas harian."|truncatewords:16 }}</p>
             {% if product.spesifikasi %}<div class="spec-chips">{% for key, value in product.spesifikasi.items %}{% if forloop.counter <= 4 %}<span>{{ key|title }} {{ value }}</span>{% endif %}{% endfor %}</div>{% endif %}
-            <div class="shop-product-footer"><div><small>{% if product.memiliki_diskon %}<del>{{ product.harga_rupiah }}</del>{% else %}Mulai dari{% endif %}</small><strong>{{ product.harga_aktif_rupiah }}</strong></div><div class="product-actions"><a class="detail-button" href="{% url 'app:product_detail' product.slug %}">Detail</a><a class="buy-button" href="https://wa.me/?text=Saya%20ingin%20membeli%20{{ product.nama|urlencode }}">Beli</a></div></div>
+            <div class="shop-product-footer"><div><small>{% if product.memiliki_diskon %}<del>{{ product.harga_rupiah }}</del>{% else %}Mulai dari{% endif %}</small><strong>{{ product.harga_aktif_rupiah }}</strong></div><div class="product-actions"><a class="detail-button" href="{% url 'app:product_detail' product.slug %}">Detail</a><a class="buy-button" href="{% url 'app:checkout' product.slug %}">Beli</a></div></div>
         </div>
     </article>{% empty %}<p class="muted">Produk tidak ditemukan.</p>{% endfor %}</section>
 </div>
