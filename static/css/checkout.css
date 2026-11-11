@@ -350,12 +350,14 @@
 .form-group,
 .input-wrapper,
 .input-wrapper input,
-.input-wrapper textarea {
+.input-wrapper textarea,
+.input-wrapper select {
     scroll-margin-top: 100px;
 }
 
 .input-wrapper input,
-.input-wrapper textarea {
+.input-wrapper textarea,
+.input-wrapper select {
     width: 100%;
     border: 1px solid var(--co-border);
     border-radius: var(--co-radius-sm);
@@ -368,14 +370,26 @@
     box-sizing: border-box;
 }
 
+.input-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+}
+
 .input-wrapper input:hover,
-.input-wrapper textarea:hover {
+.input-wrapper textarea:hover,
+.input-wrapper select:hover {
     border-color: #cbd5e1;
     background: #ffffff;
 }
 
 .input-wrapper input:focus,
-.input-wrapper textarea:focus {
+.input-wrapper textarea:focus,
+.input-wrapper select:focus {
     outline: none;
     background: #ffffff;
     border-color: var(--co-primary);

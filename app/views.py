@@ -1102,8 +1102,12 @@ def checkout(request, slug):
             if not locked_product.tersedia or locked_product.stok < quantity:
                 form.add_error("jumlah", "Stok produk tidak mencukupi.")
             else:
+                provinsi_obj = form.cleaned_data.get("provinsi")
                 order = Pesanan.objects.create(
                     pengguna=request.user,
+                    provinsi=str(provinsi_obj) if provinsi_obj else "",
+                    kota=form.cleaned_data.get("kota", ""),
+                    kecamatan=form.cleaned_data.get("kecamatan", ""),
                     alamat_pengiriman=form.cleaned_data["alamat"],
                 )
                 ItemPesanan.objects.create(

@@ -173,7 +173,7 @@
                 </div>
                 <div class="address-copy">
                     <strong>Alamat Pengiriman</strong>
-                    <p>{{ order.alamat_pengiriman }}</p>
+                    <p>{{ order.alamat_pengiriman }}{% if order.kecamatan %}, Kec. {{ order.kecamatan }}{% endif %}{% if order.kota %}, {{ order.kota }}{% endif %}{% if order.provinsi %}, {{ order.provinsi }}{% endif %}</p>
                 </div>
             </div>
 

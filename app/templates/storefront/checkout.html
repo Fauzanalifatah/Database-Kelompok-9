@@ -126,7 +126,50 @@
                             {% if form.telp.errors %}<p class="input-error">{{ form.telp.errors.0 }}</p>{% endif %}
                         </div>
 
-                        <!-- Alamat -->
+                        <!-- Provinsi, Kota, Kecamatan -->
+                        <div class="form-group form-group-full">
+                            <label for="{{ form.provinsi.id_for_label }}" class="input-label">
+                                <span>{{ form.provinsi.label }}</span>
+                                <span class="tag-required">Wajib</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <span class="input-addon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                </span>
+                                {{ form.provinsi }}
+                            </div>
+                            {% if form.provinsi.errors %}<p class="input-error">{{ form.provinsi.errors.0 }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.kota.id_for_label }}" class="input-label">
+                                <span>{{ form.kota.label }}</span>
+                                <span class="tag-required">Wajib</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <span class="input-addon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M13 21V3l8 4v14"></path></svg>
+                                </span>
+                                {{ form.kota }}
+                            </div>
+                            {% if form.kota.errors %}<p class="input-error">{{ form.kota.errors.0 }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.kecamatan.id_for_label }}" class="input-label">
+                                <span>{{ form.kecamatan.label }}</span>
+                                <span class="tag-required">Wajib</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <span class="input-addon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                </span>
+                                {{ form.kecamatan }}
+                            </div>
+                            {% if form.kecamatan.errors %}<p class="input-error">{{ form.kecamatan.errors.0 }}</p>{% endif %}
+                        </div>
+
+                        <!-- Alamat Lengkap -->
                         <div class="form-group form-group-full">
                             <label for="{{ form.alamat.id_for_label }}" class="input-label">
                                 <span>{{ form.alamat.label }}</span>

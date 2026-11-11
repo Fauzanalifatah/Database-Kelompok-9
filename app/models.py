@@ -829,4 +829,83 @@ class ItemPesanan(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.nama
+        return self.nama_produk
+
+
+class Keranjang(models.Model):
+    pengguna = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="keranjang", null=True, blank=True
+    )
+    session_key = models.CharField(max_length=40, blank=True, default="", db_index=True)
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Keranjang"
+        verbose_name_plural = "Keranjang"
+        ordering = ["-diperbarui_pada"]
+
+    def __str__(self):
+        if self.pengguna:
+            return f"Keranjang - {self.pengguna.get_full_name() or self.pengguna.username}"
+        return f"Keranjang Tamu - {self.session_key[:8]}"
+
+    @property
+    def total_item(self):
+        return sum(item.jumlah for item in self.item.all())
+
+    @property
+    def total_harga(self):
+        return sum(item.subtotal for item in self.item.all())
+
+    @property
+    def total_harga_rupiah(self):
+        return f"Rp{self.total_harga:,.0f}".replace(",", ".")
+
+    @property
+    def total_hemat(self):
+        return sum(item.hemat for item in self.item.all())
+
+    @property
+    def total_hemat_rupiah(self):
+        return f"Rp{self.total_hemat:,.0f}".replace(",", ".")
+
+
+class ItemKeranjang(models.Model):
+    keranjang = models.ForeignKey(
+        Keranjang, on_delete=models.CASCADE, related_name="item"
+    )
+    produk = models.ForeignKey(Produk, on_delete=models.CASCADE)
+    jumlah = models.PositiveIntegerField(default=1)
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Item keranjang"
+        verbose_name_plural = "Item keranjang"
+        unique_together = ("keranjang", "produk")
+
+    @property
+    def harga_satuan(self):
+        return self.produk.harga_aktif
+
+    @property
+    def subtotal(self):
+        return self.harga_satuan * self.jumlah
+
+    @property
+    def subtotal_rupiah(self):
+        return f"Rp{self.subtotal:,.0f}".replace(",", ".")
+
+    @property
+    def hemat(self):
+        if self.produk.memiliki_diskon:
+            return (self.produk.harga - self.produk.harga_aktif) * self.jumlah
+        return Decimal("0")
+
+    @property
+    def hemat_rupiah(self):
+        return f"Rp{self.hemat:,.0f}".replace(",", ".")
+
+    def __str__(self):
+        return f"{self.produk.nama} ({self.jumlah} unit)"
