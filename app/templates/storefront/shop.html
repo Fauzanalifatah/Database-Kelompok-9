@@ -1,7 +1,7 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}Shop - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=13">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=15">{% endblock %}
 {% block content %}
 <section class="shop-hero" aria-label="Shop hero banner">
     <img class="shop-hero-image" src="{% static 'images/losari-computer-hero.png' %}" alt="Losari Computer - Pusat Laptop dan Solusi Komputer Terpercaya">
@@ -24,8 +24,8 @@
             <span class="tag">{{ product.kategori.nama|default:"Laptop" }}</span>
             <div class="shop-product-title"><h3>{{ product.merek }} {{ product.nama }}</h3><a class="whatsapp-button" href="https://wa.me/?text=Saya%20tertarik%20dengan%20{{ product.nama|urlencode }}" aria-label="Tanya {{ product.nama }} melalui WhatsApp" data-tooltip="Tanya Penjual">&#9742;</a></div>
             <p class="product-description">{{ product.deskripsi|default:"Performa andal dan nyaman untuk mendukung aktivitas harian."|truncatewords:16 }}</p>
-            {% if product.spesifikasi %}<div class="spec-chips">{% for key, value in product.spesifikasi.items %}{% if forloop.counter <= 4 %}<span>{{ key|title }} {{ value }}</span>{% endif %}{% endfor %}</div>{% endif %}
-            <div class="shop-product-footer"><div><small>{% if product.memiliki_diskon %}<del>{{ product.harga_rupiah }}</del>{% else %}Mulai dari{% endif %}</small><strong>{{ product.harga_aktif_rupiah }}</strong></div><div class="product-actions"><a class="detail-button" href="{% url 'app:product_detail' product.slug %}">Detail</a><a class="buy-button" href="{% url 'app:checkout' product.slug %}">Beli</a></div></div>
+            {% if product.spesifikasi %}<div class="spec-chips">{% for key, value in product.spesifikasi.items %}{% if forloop.counter <= 4 %}<span>{% if key|lower == "ram" %}RAM{% elif key|lower == "os" %}OS{% elif key|lower == "grafis" %}VGA{% else %}{{ key|title }}{% endif %} {{ value }}</span>{% endif %}{% endfor %}</div>{% endif %}
+            <div class="shop-product-footer"><div><small>{% if product.memiliki_diskon %}<del>{{ product.harga_rupiah }}</del>{% else %}Mulai dari{% endif %}</small><strong>{{ product.harga_aktif_rupiah }}</strong></div><div class="product-actions"><form method="post" action="{% url 'app:cart_add' product.slug %}" class="cart-inline-form">{% csrf_token %}<input type="hidden" name="next" value="{% url 'shop' %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}"><button type="submit" class="cart-add-button" title="Tambah ke Keranjang" aria-label="Tambah ke Keranjang"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></button></form><a class="detail-button" href="{% url 'app:product_detail' product.slug %}">Detail</a><a class="buy-button" href="{% url 'app:checkout' product.slug %}">Beli</a></div></div>
         </div>
     </article>{% empty %}<p class="muted">Produk tidak ditemukan.</p>{% endfor %}</section>
 </div>

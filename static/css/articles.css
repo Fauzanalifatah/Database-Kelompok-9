@@ -110,12 +110,122 @@
     max-width: none;
     overflow-wrap: anywhere;
     word-break: normal;
-    margin: 28px auto 34px;
-    color: #344054;
-    font-size: 15px;
-    line-height: 1.85;
+    margin: 24px auto 34px;
+    color: #2d3748;
+    font-size: 16.5px;
+    line-height: 1.7;
 }
-.article-content p { margin: 0 0 1.25em; }
+.article-content * {
+    font-family: inherit !important;
+}
+
+/* Reset margin on container divs that wrap other block elements */
+.article-content div:has(> div),
+.article-content div:has(> p),
+.article-content div:has(> ul),
+.article-content div:has(> ol),
+.article-content div:has(> h1),
+.article-content div:has(> h2),
+.article-content div:has(> h3) {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Clean, comfortable paragraph spacing */
+.article-content p,
+.article-content div {
+    margin: 0 0 0.85em;
+    color: inherit;
+    line-height: 1.7;
+}
+
+/* Headings */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    margin: 1.4em 0 0.45em;
+    color: #0b1f3a !important;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+.article-content h1:first-child,
+.article-content h2:first-child,
+.article-content h3:first-child {
+    margin-top: 0 !important;
+}
+.article-content h1 { font-size: 26px; }
+.article-content h2 { font-size: 22px; }
+.article-content h3 { font-size: 19px; }
+.article-content h4 { font-size: 17px; }
+
+/* Sub-heading bold paragraphs: give proper separation above, tight to content below */
+.article-content div:has(> b:only-child),
+.article-content div:has(> font > b:only-child),
+.article-content p:has(> b:only-child),
+.article-content p:has(> strong:only-child) {
+    font-size: 18.5px;
+    font-weight: 700;
+    color: #0b1f3a !important;
+    margin-top: 1.35em !important;
+    margin-bottom: 0.4em !important;
+    line-height: 1.35;
+}
+.article-content > div:first-child:has(> b:only-child),
+.article-content > div:first-child:has(> font > b:only-child),
+.article-content > p:first-child:has(> b:only-child),
+.article-content > p:first-child:has(> strong:only-child) {
+    margin-top: 0 !important;
+}
+
+/* Collapse empty elements and ghost br divs */
+.article-content p:empty,
+.article-content div:empty {
+    display: none !important;
+}
+.article-content div:has(> br:only-child),
+.article-content div:has(> font > br:only-child),
+.article-content div:has(> b > font > br:only-child),
+.article-content p:has(> br:only-child) {
+    display: none !important;
+}
+.article-content br + br {
+    display: none !important;
+}
+
+/* Last paragraph has no trailing margin */
+.article-content > *:last-child,
+.article-content div:last-child {
+    margin-bottom: 0;
+}
+.article-content ul,
+.article-content ol {
+    margin: 0 0 1.3em;
+    padding-left: 24px;
+}
+.article-content li {
+    margin-bottom: 0.4em;
+    line-height: 1.75;
+}
+.article-content blockquote {
+    margin: 1.6em 0;
+    padding: 14px 20px;
+    border-left: 4px solid #1455d9;
+    background: #f8fafc;
+    border-radius: 0 8px 8px 0;
+    color: #475569;
+    font-style: italic;
+}
+.article-content a {
+    color: #1455d9;
+    text-decoration: underline;
+}
+.article-content a:hover {
+    color: #0b3fae;
+}
 .article-content img {
     display: block;
     width: auto;
@@ -124,8 +234,8 @@
     height: auto !important;
     margin: 22px auto;
     object-fit: contain;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 .article-content table { max-width: 100%; }
 .article-author {

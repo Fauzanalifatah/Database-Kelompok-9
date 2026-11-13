@@ -1,17 +1,109 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}Home - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}?v=10"><link rel="stylesheet" href="{% static 'css/shop.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}?v=11"><link rel="stylesheet" href="{% static 'css/shop.css' %}">{% endblock %}
 {% block content %}
 <section class="hero" aria-label="Losari Computer">
     <img src="{% static 'images/Toko UMKM Losari Computer.jpeg' %}" alt="Toko Losari Computer">
 </section>
 <div class="container">
-    <div class="section-head category-heading" id="categories"><div><p class="category-eyebrow">Panduan kebutuhan</p><h2>Pilih sesuai kebutuhan</h2><p class="muted">Temukan perangkat berdasarkan aktivitas utama kamu.</p></div></div>
+    <div class="section-head category-heading" id="categories">
+        <div class="category-heading-inner">
+            <div class="category-pill-badge">
+                <span class="category-pill-dot"></span>
+                <span>PANDUAN KEBUTUHAN</span>
+            </div>
+            <h2>Pilih Sesuai Kebutuhan</h2>
+            <p class="category-subhead">Temukan perangkat komputer, laptop, dan perlengkapan terbaik yang dikurasi khusus untuk aktivitas utama kamu.</p>
+        </div>
+    </div>
     <section class="categories">
         {% for category in categories %}
-        <a class="category" href="{% url 'shop' %}?kategori={{ category.slug }}"><span class="category-number">0{{ forloop.counter }}</span><div class="category-icon">{{ category.ikon }}</div><h3>{{ category.nama }}</h3><p>{{ category.deskripsi|default:"Laptop pilihan yang sesuai kebutuhanmu." }}</p></a>
-        {% empty %}<p class="muted">Kategori belum tersedia.</p>{% endfor %}
+        <a class="category category-{{ category.slug }}" href="{% url 'shop' %}?kategori={{ category.slug }}">
+            <div class="category-header">
+                <div class="category-icon-box">
+                    {% if category.slug == 'aksesoris-pos' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="4" width="20" height="16" rx="2.5"/>
+                        <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/>
+                    </svg>
+                    {% elif category.slug == 'bisnis' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/>
+                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20M12 11v4"/>
+                    </svg>
+                    {% elif category.slug == 'cctv-smart-security' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M23 7l-7 5 7 5V7z"/>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="12" r="2.5"/>
+                    </svg>
+                    {% elif category.slug == 'desain-kreatif' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.5 3 4.5h1.5a1.5 1.5 0 0 1 1.5 1.5c0 1.5 1 2.5 3 2.5 5.5 0 9-3.5 9-8.5C20 6.5 16.5 2 12 2z"/>
+                        <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="7.5" r="1.5" fill="currentColor"/>
+                        <circle cx="16.5" cy="10.5" r="1.5" fill="currentColor"/>
+                    </svg>
+                    {% elif category.slug == 'gaming' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 12h4m-2-2v4m7-2h.01m3 0h.01M17 10h.01m0 4h.01M2 14c0 3 2.5 6 6 6 2 0 3-1.5 4-1.5s2 1.5 4 1.5c3.5 0 6-3 6-6 0-5.5-4-8-10-8S2 8.5 2 14z"/>
+                    </svg>
+                    {% elif category.slug == 'office-kuliah' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c0 3 6 4 6 4s6-1 6-4v-5"/>
+                    </svg>
+                    {% elif category.slug == 'smartphone-gadget' %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
+                        <path d="M12 18h.01M10 5h4"/>
+                    </svg>
+                    {% else %}
+                    <span class="category-icon-fallback">{{ category.ikon|default:"💻" }}</span>
+                    {% endif %}
+                </div>
+                <span class="category-index">0{{ forloop.counter }}</span>
+            </div>
+            <div class="category-content">
+                <h3>{{ category.nama }}</h3>
+                <p>{{ category.deskripsi|default:"Pilihan perangkat terbaik yang siap mendukung aktivitas harianmu." }}</p>
+            </div>
+            <div class="category-footer">
+                <span class="category-action-text">Lihat Produk</span>
+                <span class="category-arrow-circle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+            </div>
+        </a>
+        {% empty %}
+        <p class="muted">Kategori belum tersedia.</p>
+        {% endfor %}
+
+        <!-- Card ke-8: Katalog Lengkap / Semua Produk -->
+        <a class="category category-all" href="{% url 'shop' %}">
+            <div class="category-header">
+                <div class="category-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                    </svg>
+                </div>
+                <span class="category-index badge-all">Semua</span>
+            </div>
+            <div class="category-content">
+                <h3>Katalog Lengkap</h3>
+                <p>Jelajahi seluruh koleksi laptop, PC, dan aksesoris dengan garansi toko terjamin.</p>
+            </div>
+            <div class="category-footer">
+                <span class="category-action-text">Buka Semua</span>
+                <span class="category-arrow-circle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+            </div>
+        </a>
     </section>
     {% if mitra_deepublish %}
     <section class="deepublish-partners" aria-labelledby="deepublish-partners-title">

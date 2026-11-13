@@ -6,7 +6,16 @@
     {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
     <div class="form-grid">
     {% for field in form %}
-        <div class="field {% if field.name == 'content' or field.name == 'deskripsi' or field.name == 'spesifikasi' %}full{% endif %} {% if field.field.widget.input_type == 'checkbox' %}check{% endif %}">
+        {% if field.name == 'spek_prosesor' %}
+        <div class="field full form-section-header" style="margin-top: 14px; padding-top: 18px; border-top: 1px solid var(--line);">
+            <h3 class="section-title" style="display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font-size: 16px; color: #172033;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                Spesifikasi Perangkat
+            </h3>
+            <p class="section-help" style="margin: 0; color: var(--muted); font-size: 13px;">Isi spesifikasi per bagian (Prosesor, RAM, Penyimpanan, Layar, dll) secara terpisah tanpa perlu mengetik kode JSON.</p>
+        </div>
+        {% endif %}
+        <div class="field {% if field.name == 'content' or field.name == 'deskripsi' or field.name == 'spesifikasi' or field.name == 'spek_lainnya' %}full{% endif %} {% if field.field.widget.input_type == 'checkbox' %}check{% endif %}">
             {{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}
         </div>
     {% endfor %}

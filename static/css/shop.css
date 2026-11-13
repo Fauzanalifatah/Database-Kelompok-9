@@ -481,6 +481,30 @@
     transform: scale(1.08);
 }
 
+/* Cart inline form on shop cards */
+.cart-inline-form { display: inline-flex; margin: 0; padding: 0; }
+.cart-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #1455d9;
+    background: #eaf2ff;
+    border: 1px solid #c8dcf8;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.cart-add-button:hover {
+    color: #fff;
+    background: #1455d9;
+    border-color: #1455d9;
+    transform: scale(1.08);
+}
+
 /* ===================================================
    RESPONSIVE
    =================================================== */

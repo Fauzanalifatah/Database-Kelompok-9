@@ -12,6 +12,7 @@ urlpatterns = [
     path("dashboard/produk/<int:pk>/hapus/", views.produk_manager_delete, name="produk_manager_delete"),
     path("dashboard/artikel/", views.artikel_manager, name="artikel_manager"),
     path("dashboard/artikel/tambah/", views.artikel_manager_form, name="artikel_manager_add"),
+    path("dashboard/artikel/upload-gambar/", views.artikel_upload_inline_image, name="artikel_upload_inline_image"),
     path("dashboard/artikel/<int:pk>/edit/", views.artikel_manager_form, name="artikel_manager_edit"),
     path("dashboard/artikel/<int:pk>/hapus/", views.artikel_manager_delete, name="artikel_manager_delete"),
     path("dashboard/footer/", views.footer_manager, name="footer_manager"),
@@ -75,4 +76,9 @@ urlpatterns = [
         views.blog_pengguna_detail,
         name="blog_pengguna_detail",
     ),
+    # Keranjang Belanja (Cart)
+    path("keranjang/", views.cart_view, name="cart_view"),
+    path("keranjang/tambah/<slug:slug>/", views.cart_add, name="cart_add"),
+    path("keranjang/ubah/<int:item_id>/", views.cart_update, name="cart_update"),
+    path("keranjang/hapus/<int:item_id>/", views.cart_remove, name="cart_remove"),
 ]

@@ -1,20 +1,49 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}{{ product.nama }} - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=4">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=12">{% endblock %}
 {% block content %}
-<div class="detail-breadcrumb container"><a href="{% url 'shop' %}">Shop</a><span>/</span><span>{{ product.kategori.nama|default:"Katalog laptop" }}</span><strong>/ {{ product.merek }} {{ product.nama }}</strong></div>
+<div class="detail-breadcrumb container">
+    <a href="{% url 'shop' %}">Shop</a>
+    <span>/</span>
+    <span>{{ product.kategori.nama|default:"Katalog Laptop" }}</span>
+    <span>/</span>
+    <strong>{{ product.merek }} {{ product.nama }}</strong>
+</div>
+
 <main class="container product-page">
     <section class="product-detail">
+        <!-- ══════════ LEFT COLUMN: GALLERY ══════════ -->
         <div class="product-gallery">
             <div class="gallery-main">
-                {% if primary_gallery_image %}<img src="{{ primary_gallery_image.gambar.url }}" alt="{{ primary_gallery_image.get_tipe_display }} {{ product.nama }}" id="primary-product-image"><span class="image-label">{{ primary_gallery_image.get_tipe_display }}</span>{% elif product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}" id="primary-product-image"><span class="image-label">Gambar produk</span>{% else %}<span aria-hidden="true">&#128187;</span><span class="image-label">Tampak depan</span>{% endif %}
-                {% if product.unggulan %}<span class="tested-label">✓ Unit asli teruji</span>{% endif %}
+                <div class="gallery-badges-top">
+                    <span class="gallery-condition-badge">Unit {{ product.get_kondisi_display }}</span>
+                    {% if product.memiliki_diskon %}
+                    <span class="gallery-discount-badge">-{{ product.diskon_persen|floatformat:"0" }}% OFF</span>
+                    {% endif %}
+                </div>
+
+                {% if primary_gallery_image %}
+                <img src="{{ primary_gallery_image.gambar.url }}" alt="{{ primary_gallery_image.get_tipe_display }} {{ product.nama }}" id="primary-product-image">
+                <span class="image-label">{{ primary_gallery_image.get_tipe_display }}</span>
+                {% elif product.gambar %}
+                <img src="{{ product.gambar.url }}" alt="{{ product.nama }}" id="primary-product-image">
+                <span class="image-label">Gambar produk</span>
+                {% else %}
+                <span aria-hidden="true">&#128187;</span>
+                <span class="image-label">Tampak depan</span>
+                {% endif %}
+
+                {% if product.unggulan %}
+                <span class="tested-label">✓ Unit Asli Teruji</span>
+                {% endif %}
             </div>
+
             <div class="image-lightbox" id="product-image-lightbox" hidden role="dialog" aria-modal="true" aria-label="Pratinjau gambar produk">
                 <button class="image-lightbox-close" type="button" aria-label="Tutup gambar">&times;</button>
                 <img id="lightbox-product-image" src="" alt="">
             </div>
+
             <div class="gallery-tabs" aria-label="Galeri gambar produk">
                 <button class="gallery-tab{% if primary_gallery_image.tipe == 'depan' %} selected{% endif %}" type="button"{% if not gallery_by_type.depan %} disabled{% endif %}{% if gallery_by_type.depan %} data-image="{{ gallery_by_type.depan.gambar.url }}"{% endif %} data-label="Tampak Depan">
                     <span class="gallery-icon icon-laptop" aria-hidden="true"></span>
@@ -33,42 +62,179 @@
                     <span>30-Titik Cek</span>
                 </button>
             </div>
+
             <div class="trust-grid">
                 {% for benefit in benefits %}
                 <div class="trust-card">
-                    <span class="trust-icon trust-icon-{{ benefit.warna }}" aria-hidden="true">
-                        {% if benefit.ikon == "shield" %}<svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-2.8 8.3-7 10-4.2-1.7-7-5.5-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-4.8"></path></svg>
-                        {% elif benefit.ikon == "star" %}<svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg>
-                        {% elif benefit.ikon == "gift" %}<svg viewBox="0 0 24 24"><path d="M4 10h16v10H4V10ZM3 7h18v3H3V7ZM12 7v13"></path><path d="M12 7H8.5a2.5 2.5 0 1 1 2.5-2.5V7ZM12 7h3.5A2.5 2.5 0 1 0 13 4.5V7Z"></path></svg>
-                        {% elif benefit.ikon == "box" %}<svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"></path><path d="M4 8v9l8 4 8-4V8M12 12v9"></path></svg>
-                        {% else %}<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>
+                    <span class="trust-icon" aria-hidden="true">
+                        {% if benefit.ikon == "shield" %}
+                        <svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-2.8 8.3-7 10-4.2-1.7-7-5.5-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-4.8"></path></svg>
+                        {% elif benefit.ikon == "star" %}
+                        <svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg>
+                        {% elif benefit.ikon == "gift" %}
+                        <svg viewBox="0 0 24 24"><path d="M4 10h16v10H4V10ZM3 7h18v3H3V7ZM12 7v13"></path><path d="M12 7H8.5a2.5 2.5 0 1 1 2.5-2.5V7ZM12 7h3.5A2.5 2.5 0 1 0 13 4.5V7Z"></path></svg>
+                        {% elif benefit.ikon == "box" %}
+                        <svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"></path><path d="M4 8v9l8 4 8-4V8M12 12v9"></path></svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>
                         {% endif %}
                     </span>
-                    <div><strong>{{ benefit.judul }}</strong><small>{{ benefit.deskripsi }}</small></div>
+                    <div>
+                        <strong>{{ benefit.judul }}</strong>
+                        <small>{{ benefit.deskripsi }}</small>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="trust-card">
+                    <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-2.8 8.3-7 10-4.2-1.7-7-5.5-7-10V6l7-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-4.8"></path></svg></span>
+                    <div><strong>Garansi Toko Resmi</strong><small>Jaminan tukar unit atau servis bebas khawatir.</small></div>
+                </div>
+                <div class="trust-card">
+                    <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"></path><path d="M4 8v9l8 4 8-4V8M12 12v9"></path></svg></span>
+                    <div><strong>Siap Pakai &amp; Teruji</strong><small>Sudah lolos 30 titik uji kelayakan teknis.</small></div>
                 </div>
                 {% endfor %}
             </div>
         </div>
+
+        <!-- ══════════ RIGHT COLUMN: DETAILS & ACTIONS ══════════ -->
         <div class="product-summary">
-            <div class="summary-top"><span class="tag">{{ product.kategori.nama|default:"Laptop" }}</span><span class="rating">★★★★★ <strong>4.9</strong> <small>(42 Ulasan)</small></span></div>
+            <div class="summary-top">
+                <span class="tag">{{ product.kategori.nama|default:"Laptop" }}</span>
+                <span class="rating-pill">
+                    <svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg>
+                    <strong>4.9</strong> (42 Ulasan)
+                </span>
+            </div>
+
             <h1>{{ product.merek }} {{ product.nama }}</h1>
-            <p class="muted product-lead">{{ product.deskripsi|default:"Performa andal dan nyaman untuk mendukung aktivitas harian." }}</p>
-            <div class="price-card">{% if product.memiliki_diskon %}<div class="original-price"><del>{{ product.harga_rupiah }}</del><span class="discount-badge">-{{ product.diskon_persen|floatformat:"0" }}%</span></div>{% endif %}<div class="price">{{ product.harga_aktif_rupiah }}</div><span class="installment">Cicilan 0% tersedia via <b>Indodana</b> · <b>Kredivo</b> · <b>SPayLater</b></span></div>
+            <p class="product-lead">{{ product.deskripsi|default:"Performa andal dan nyaman untuk mendukung aktivitas harian, kerja, maupun kuliah." }}</p>
+
+            <!-- Price Card -->
+            <div class="price-card">
+                {% if product.memiliki_diskon %}
+                <div class="price-header">
+                    <span class="original-price"><del>{{ product.harga_rupiah }}</del></span>
+                    <span class="discount-badge">-{{ product.diskon_persen|floatformat:"0" }}%</span>
+                    <span class="price-saving">Hemat {{ product.nilai_diskon_rupiah }}</span>
+                </div>
+                {% endif %}
+                <div class="price">{{ product.harga_aktif_rupiah }}</div>
+            </div>
+
+            <!-- Balanced Feature Grid With Vector SVGs -->
+            {% if product.spesifikasi %}
             <div class="feature-grid">
                 {% for key, value in product.spesifikasi.items %}
-                <div class="feature"><span class="feature-icon">{% if "ram" in key|lower %}▦{% elif "penyimpanan" in key|lower %}▤{% elif "layar" in key|lower %}▣{% else %}◈{% endif %}</span><div><small>{{ key|title }}</small><strong>{{ value }}</strong></div></div>
+                <div class="feature">
+                    <span class="feature-icon feature-icon-{% if 'prosesor' in key|lower or 'cpu' in key|lower %}prosesor{% elif 'ram' in key|lower %}ram{% elif 'penyimpanan' in key|lower or 'storage' in key|lower or 'ssd' in key|lower or 'hdd' in key|lower %}penyimpanan{% elif 'layar' in key|lower or 'display' in key|lower or 'screen' in key|lower %}layar{% elif 'baterai' in key|lower or 'battery' in key|lower %}baterai{% elif 'grafis' in key|lower or 'vga' in key|lower or 'gpu' in key|lower %}grafis{% elif 'os' in key|lower %}os{% else %}default{% endif %}" aria-hidden="true">
+                        {% if 'prosesor' in key|lower or 'cpu' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+                        {% elif 'ram' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 19v2M10 19v2M14 19v2M18 19v2M2 6h20v13H2zM6 6v4M10 6v4M14 6v4M18 6v4"/></svg>
+                        {% elif 'penyimpanan' in key|lower or 'storage' in key|lower or 'ssd' in key|lower or 'hdd' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h2"/></svg>
+                        {% elif 'layar' in key|lower or 'display' in key|lower or 'screen' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        {% elif 'baterai' in key|lower or 'battery' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="12" rx="2"/><path d="M22 11v4M10 10l-2 3h4l-2 3"/></svg>
+                        {% elif 'grafis' in key|lower or 'vga' in key|lower or 'gpu' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        {% elif 'os' in key|lower %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <small>{% if key|lower == "ram" %}RAM{% elif key|lower == "os" %}Sistem Operasi (OS){% elif key|lower == "grafis" %}Kartu Grafis (VGA){% elif key|lower == "lainnya" %}Fitur Tambahan{% else %}{{ key|title }}{% endif %}</small>
+                        <strong>{{ value }}</strong>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
-            <div class="stock-row"><strong>Kondisi:</strong> {{ product.get_kondisi_display }} <span>•</span> <strong>Stok:</strong> {{ product.stok }} unit</div>
-            <a class="button detail-buy" href="{% url 'app:checkout' product.slug %}">Beli sekarang</a>
+            {% endif %}
+
+            <!-- Stock & Quality Status -->
+            <div class="stock-row">
+                <span class="stock-pill"><span class="stock-pill-dot"></span>Stok Tersedia ({{ product.stok }} unit)</span>
+                <span class="stock-row-divider">•</span>
+                <span class="condition-pill">Kondisi: <strong>{{ product.get_kondisi_display }}</strong></span>
+                <span class="stock-row-divider">•</span>
+                <span class="condition-pill">Garansi: <strong>Toko 1 Bulan</strong></span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="detail-buy-group">
+                <form method="post" action="{% url 'app:cart_add' product.slug %}" class="cart-detail-form">
+                    {% csrf_token %}
+                    <button type="submit" class="detail-cart">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1.5"></circle><circle cx="20" cy="21" r="1.5"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        + Keranjang
+                    </button>
+                </form>
+                <a class="detail-buy" href="{% url 'app:checkout' product.slug %}">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                    Beli Sekarang
+                </a>
+            </div>
+
+            <!-- WhatsApp Direct Consultation -->
+            <a class="whatsapp-chat-button" href="https://wa.me/{{ footer_setting.whatsapp|default:'6281234567890' }}?text=Halo%20Losari%20Computer,%20saya%20tertarik%20dengan%20{{ product.merek|urlencode }}%20{{ product.nama|urlencode }}" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"></path></svg>
+                Tanya Penjual / Foto Real Unit via WhatsApp
+            </a>
+
+            <!-- Highlights Guarantees -->
+            <div class="guarantee-highlights">
+                <div class="guarantee-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>Garansi Toko Resmi</span>
+                </div>
+                <div class="guarantee-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <span>Packing Kayu &amp; Bubble</span>
+                </div>
+                <div class="guarantee-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span>Kirim Cepat Hari Ini</span>
+                </div>
+            </div>
         </div>
     </section>
-    <section class="spec-section"><div class="section-head"><div><p class="eyebrow">Informasi produk</p><h2>Spesifikasi lengkap</h2></div></div><div class="specifications">{% for key, value in product.spesifikasi.items %}<div><strong>{{ key|title }}</strong><span>{{ value }}</span></div>{% empty %}<p class="muted">Spesifikasi belum diisi. Lengkapi melalui admin Django.</p>{% endfor %}</div></section>
+
+    <!-- ══════════ FULL SPECIFICATIONS SECTION ══════════ -->
+    <section class="spec-section">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">Informasi Produk</p>
+                <h2>Spesifikasi Lengkap &amp; Kelengkapan</h2>
+            </div>
+        </div>
+        <div class="specifications">
+            {% for key, value in product.spesifikasi.items %}
+            <div class="spec-item">
+                <strong class="spec-label">
+                    {% if key|lower == "ram" %}RAM
+                    {% elif key|lower == "os" %}Sistem Operasi (OS)
+                    {% elif key|lower == "grafis" %}Kartu Grafis (VGA)
+                    {% elif key|lower == "lainnya" %}Fitur Tambahan
+                    {% else %}{{ key|title }}{% endif %}
+                </strong>
+                <span class="spec-value">{{ value }}</span>
+            </div>
+            {% empty %}
+            <p class="muted">Spesifikasi belum diisi. Lengkapi melalui admin dashboard.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- ══════════ RELATED PRODUCTS ══════════ -->
     {% if related_products %}
     <section class="related-products">
         <div class="related-heading">
-            <p class="eyebrow">Pilihan lainnya</p>
-            <h2>Laptop Rekomendasi Terkait</h2>
+            <p class="eyebrow">Pilihan Lainnya</p>
+            <h2>Laptop &amp; Gadget Rekomendasi Terkait</h2>
         </div>
         <div class="related-grid">
             {% for item in related_products %}
@@ -98,6 +264,7 @@
     </section>
     {% endif %}
 </main>
+
 <script>
     var galleryMainImage = document.getElementById("primary-product-image");
     var imageLightbox = document.getElementById("product-image-lightbox");

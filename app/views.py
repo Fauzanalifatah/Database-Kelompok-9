@@ -55,6 +55,7 @@ from .models import (
     AboutSetting,
     Testimoni,
     ItemPesanan,
+    ItemKeranjang,
 )
 from .checkout_forms import CheckoutForm
 from .midtrans import create_snap_transaction, is_valid_signature
@@ -107,6 +108,27 @@ def artikel_manager_form(request, pk=None):
             "cancel_url": reverse("app:artikel_manager"),
         },
     )
+
+
+@admin_required
+@login_required(login_url="app:login")
+@require_POST
+def artikel_upload_inline_image(request):
+    image_file = request.FILES.get("image")
+    if not image_file:
+        return JsonResponse({"error": "Tidak ada file gambar yang diunggah."}, status=400)
+
+    extension = image_file.name.rsplit(".", 1)[-1].lower() if "." in image_file.name else "jpg"
+    if extension not in ["jpg", "jpeg", "png", "webp", "gif", "svg"]:
+        return JsonResponse({"error": "Format file tidak didukung."}, status=400)
+
+    import uuid
+    from django.core.files.storage import default_storage
+
+    filename = f"artikel/inline/{uuid.uuid4().hex[:12]}.{extension}"
+    saved_path = default_storage.save(filename, image_file)
+    url = default_storage.url(saved_path)
+    return JsonResponse({"url": url})
 
 
 @admin_required
@@ -1328,3 +1350,52 @@ def logout_view(request):
     if request.method == "POST":
         logout(request)
     return redirect("app:login")
+
+
+
+# ═══════════════════════════════════════════════════
+#  KERANJANG BELANJA (CART)
+# ═══════════════════════════════════════════════════
+
+def cart_view(request):
+    """Display the shopping cart page."""
+    from .cart import get_cart
+    cart = get_cart(request)
+    items = cart.item.select_related("produk", "produk__kategori").all()
+    return render(request, "storefront/cart.html", {
+        "cart": cart,
+        "items": items,
+    })
+
+
+@require_POST
+def cart_add(request, slug):
+    """Add a product to the cart."""
+    from .cart import add_to_cart
+    produk = get_object_or_404(Produk, slug=slug)
+    jumlah = int(request.POST.get("jumlah", 1))
+    add_to_cart(request, produk, jumlah)
+    messages.success(request, f"{produk.merek} {produk.nama} ditambahkan ke keranjang!")
+    next_url = request.POST.get("next", request.META.get("HTTP_REFERER", reverse("app:cart_view")))
+    return redirect(next_url)
+
+
+@require_POST
+def cart_update(request, item_id):
+    """Update quantity of a cart item."""
+    from .cart import update_cart_item
+    jumlah = int(request.POST.get("jumlah", 1))
+    try:
+        update_cart_item(item_id, jumlah)
+    except ItemKeranjang.DoesNotExist:
+        pass
+    return redirect(reverse("app:cart_view"))
+
+
+@require_POST
+def cart_remove(request, item_id):
+    """Remove an item from the cart."""
+    from .cart import remove_from_cart
+    remove_from_cart(item_id)
+    messages.success(request, "Produk dihapus dari keranjang.")
+    return redirect(reverse("app:cart_view"))

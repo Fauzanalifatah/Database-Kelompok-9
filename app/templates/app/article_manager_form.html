@@ -41,8 +41,9 @@
                     <button type="button" data-command="justifyRight" aria-label="Rata kanan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 10h11M4 14h16M9 18h11"></path></svg></button>
                 </span>
                 <span class="article-toolbar-group">
-                    <button type="button" data-command="createLink" aria-label="Tambahkan tautan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"></path></svg></button>
-                    <button type="button" data-image-button aria-label="Pilih gambar sampul"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 5"></path></svg></button>
+                    <button type="button" data-command="createLink" title="Tambahkan tautan" aria-label="Tambahkan tautan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"></path></svg></button>
+                    <button type="button" data-image-button title="Sisipkan gambar ke dalam artikel" aria-label="Sisipkan gambar ke dalam artikel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 5"></path></svg></button>
+                    <input type="file" id="inline-article-image-input" accept="image/*" style="display:none;" aria-hidden="true">
                 </span>
             </div>
             <div class="article-content-editor" id="article-content-editor" contenteditable="true" data-placeholder="Mulai tulis isi artikel di sini...">{{ form.content.value|default:""|safe }}</div>
@@ -97,19 +98,123 @@
             });
         });
         var imageButton = document.querySelector("[data-image-button]");
-        var imageInput = document.getElementById("id_images");
-        if (imageButton && imageInput) imageButton.addEventListener("click", function () {
-            imageInput.focus();
-            imageInput.click();
-        });
+        var inlineImageInput = document.getElementById("inline-article-image-input");
+        var savedRange = null;
+
+        function saveEditorSelection() {
+            var sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) {
+                var range = sel.getRangeAt(0);
+                if (editor.contains(range.commonAncestorContainer)) {
+                    savedRange = range.cloneRange();
+                    return;
+                }
+            }
+            savedRange = null;
+        }
+
+        function restoreEditorSelection() {
+            if (savedRange) {
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedRange);
+            }
+        }
+
+        function insertImageIntoEditor(imageUrl) {
+            editor.focus();
+            restoreEditorSelection();
+
+            var img = document.createElement("img");
+            img.src = imageUrl;
+            img.alt = "Gambar artikel";
+            img.style.maxWidth = "100%";
+            img.style.height = "auto";
+            img.style.borderRadius = "8px";
+            img.style.margin = "16px auto";
+            img.style.display = "block";
+
+            var sel = window.getSelection();
+            if (sel && sel.rangeCount > 0 && editor.contains(sel.getRangeAt(0).commonAncestorContainer)) {
+                var range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(img);
+
+                var afterRange = document.createRange();
+                afterRange.setStartAfter(img);
+                afterRange.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(afterRange);
+            } else {
+                editor.appendChild(img);
+            }
+            contentInput.value = editor.innerHTML;
+        }
+
+        if (imageButton && inlineImageInput) {
+            imageButton.addEventListener("click", function () {
+                saveEditorSelection();
+                inlineImageInput.value = "";
+                inlineImageInput.click();
+            });
+
+            inlineImageInput.addEventListener("change", function () {
+                var file = inlineImageInput.files && inlineImageInput.files[0];
+                if (!file) return;
+
+                var uploadUrl = "{% url 'app:artikel_upload_inline_image' %}";
+                var csrfEl = document.querySelector("[name=csrfmiddlewaretoken]");
+                var csrfToken = csrfEl ? csrfEl.value : "";
+
+                var formData = new FormData();
+                formData.append("image", file);
+                formData.append("csrfmiddlewaretoken", csrfToken);
+
+                imageButton.disabled = true;
+                imageButton.style.opacity = "0.5";
+
+                fetch(uploadUrl, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(function (res) {
+                    if (!res.ok) throw new Error("Upload gagal");
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (data && data.url) {
+                        insertImageIntoEditor(data.url);
+                    } else {
+                        throw new Error(data.error || "Gagal mendapatkan URL gambar");
+                    }
+                })
+                .catch(function () {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        insertImageIntoEditor(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                })
+                .finally(function () {
+                    imageButton.disabled = false;
+                    imageButton.style.opacity = "";
+                });
+            });
+        }
+
         form.addEventListener("submit", function () {
             contentInput.value = editor.innerHTML;
         });
     }
-    if (imageInput) {
-        imageInput.addEventListener("change", function () {
+
+    var coverImageInput = document.getElementById("id_images");
+    if (coverImageInput) {
+        coverImageInput.addEventListener("change", function () {
             var preview = document.querySelector("[data-article-preview]");
-            var file = imageInput.files && imageInput.files[0];
+            var file = coverImageInput.files && coverImageInput.files[0];
             if (!preview || !file) return;
             if (preview.tagName.toLowerCase() !== "img") {
                 var image = document.createElement("img");

@@ -1,7 +1,7 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}{{ article.title_articles }} - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}?v=7">{% endblock %}
 {% block content %}
 <div class="container article-detail-layout">
     <article class="article-detail">
@@ -21,7 +21,7 @@
         {% if article.images %}
         <img class="article-detail-image" src="{{ article.images.url }}" alt="{{ article.title_articles }}">
         {% endif %}
-        <div class="article-content">{{ article.content|linebreaks }}</div>
+        <div class="article-content">{{ article.content|safe }}</div>
         <p class="article-author">Ditulis oleh {{ article.authors|default:"Losari Computer" }}</p>
     </article>
 </div>

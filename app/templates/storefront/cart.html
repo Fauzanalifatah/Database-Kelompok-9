@@ -1,0 +1,92 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Keranjang Belanja - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1">{% endblock %}
+{% block content %}
+<div class="container cart-page">
+    <div class="cart-breadcrumb"><a href="{% url 'shop' %}">Shop</a><span>/</span><strong>Keranjang Belanja</strong></div>
+    <h1 class="cart-title">🛒 Keranjang Belanja</h1>
+
+    {% if messages %}
+    <div class="cart-messages">
+        {% for message in messages %}
+        <div class="cart-alert cart-alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if items %}
+    <div class="cart-layout">
+        <div class="cart-items">
+            {% for item in items %}
+            <div class="cart-item">
+                <div class="cart-item-image">
+                    {% if item.produk.gambar %}
+                    <img src="{{ item.produk.gambar.url }}" alt="{{ item.produk.nama }}">
+                    {% else %}
+                    {% with img=item.produk.galeri.all|first %}
+                    {% if img %}<img src="{{ img.gambar.url }}" alt="{{ item.produk.nama }}">{% else %}<span class="cart-item-placeholder">&#128187;</span>{% endif %}
+                    {% endwith %}
+                    {% endif %}
+                </div>
+                <div class="cart-item-info">
+                    <div class="cart-item-top">
+                        <div>
+                            <span class="cart-item-category">{{ item.produk.kategori.nama|default:"Laptop" }}</span>
+                            <h3><a href="{% url 'app:product_detail' item.produk.slug %}">{{ item.produk.merek }} {{ item.produk.nama }}</a></h3>
+                            <span class="cart-item-condition">{{ item.produk.get_kondisi_display }}</span>
+                        </div>
+                        <form method="post" action="{% url 'app:cart_remove' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="cart-item-remove" title="Hapus dari keranjang">&times;</button>
+                        </form>
+                    </div>
+                    <div class="cart-item-bottom">
+                        <form method="post" action="{% url 'app:cart_update' item.id %}" class="cart-qty-form">
+                            {% csrf_token %}
+                            <button type="submit" name="jumlah" value="{{ item.jumlah|add:'-1' }}" class="cart-qty-btn" {% if item.jumlah <= 1 %}disabled{% endif %}>−</button>
+                            <span class="cart-qty-value">{{ item.jumlah }}</span>
+                            <button type="submit" name="jumlah" value="{{ item.jumlah|add:'1' }}" class="cart-qty-btn">+</button>
+                        </form>
+                        <div class="cart-item-price">
+                            {% if item.produk.memiliki_diskon %}
+                            <del class="cart-price-original">{{ item.produk.harga_rupiah }}</del>
+                            {% endif %}
+                            <strong>{{ item.subtotal_rupiah }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <aside class="cart-summary">
+            <h2>Ringkasan Belanja</h2>
+            <div class="cart-summary-row">
+                <span>Total Produk</span>
+                <span>{{ cart.total_item }} item</span>
+            </div>
+            {% if cart.total_hemat > 0 %}
+            <div class="cart-summary-row cart-summary-savings">
+                <span>Total Hemat</span>
+                <span>-{{ cart.total_hemat_rupiah }}</span>
+            </div>
+            {% endif %}
+            <div class="cart-summary-total">
+                <span>Total Harga</span>
+                <strong>{{ cart.total_harga_rupiah }}</strong>
+            </div>
+            <a class="cart-checkout-btn" href="{% url 'shop' %}">Lanjut Belanja</a>
+        </aside>
+    </div>
+    {% else %}
+    <div class="cart-empty">
+        <span class="cart-empty-icon">🛒</span>
+        <h2>Keranjang masih kosong</h2>
+        <p>Yuk, cari laptop impianmu dan tambahkan ke keranjang!</p>
+        <a class="button" href="{% url 'shop' %}">Mulai Belanja</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

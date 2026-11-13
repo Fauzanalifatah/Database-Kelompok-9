@@ -314,9 +314,92 @@ class AdminArtikelForm(forms.ModelForm):
             "images": forms.FileInput(attrs={"accept": "image/*"}),
         }
 
+    def clean_content(self):
+        content = self.cleaned_data.get("content", "")
+        if not content:
+            return content
+        import re
+        # Unwrap accidental outer heading wrapper if it wraps multiple divs/ps
+        m = re.match(r'^\s*<h([1-6])[^>]*>(.*)</h\1>\s*$', content, re.DOTALL | re.IGNORECASE)
+        if m and ('<div' in m.group(2) or '<p' in m.group(2)):
+            content = m.group(2)
+        # Strip empty divs/paragraphs created by repeated enters or pasting
+        for _ in range(4):
+            content = re.sub(
+                r'<div[^>]*>\s*(?:<font[^>]*>)?\s*(?:<b[^>]*>)?\s*(?:<br\s*/?>|&nbsp;|\s)*\s*(?:</b>)?\s*(?:</font>)?\s*</div>',
+                '',
+                content,
+                flags=re.IGNORECASE,
+            )
+            content = re.sub(
+                r'<p[^>]*>\s*(?:<br\s*/?>|&nbsp;|\s)*\s*</p>',
+                '',
+                content,
+                flags=re.IGNORECASE,
+            )
+        content = re.sub(r'(?:<br\s*/?>\s*){2,}', '<br>', content, flags=re.IGNORECASE)
+        return content.strip()
+
 
 class AdminProdukForm(forms.ModelForm):
     slug = forms.SlugField(required=False)
+
+    spek_prosesor = forms.CharField(
+        label="Prosesor (CPU)",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. AMD Ryzen 5 Pro / Intel Core i5 / Apple A13 Bionic"}
+        ),
+    )
+    spek_ram = forms.CharField(
+        label="RAM",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. 16GB DDR4 / 8GB / 4GB"}
+        ),
+    )
+    spek_penyimpanan = forms.CharField(
+        label="Penyimpanan (Storage)",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. SSD 512GB NVMe / 128GB / 1TB HDD"}
+        ),
+    )
+    spek_layar = forms.CharField(
+        label="Layar (Display)",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. 14\" FHD IPS / 6.1\" Liquid Retina"}
+        ),
+    )
+    spek_grafis = forms.CharField(
+        label="Kartu Grafis (VGA / GPU)",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. NVIDIA GeForce RTX 3050 / Intel Iris Xe / Apple GPU"}
+        ),
+    )
+    spek_baterai = forms.CharField(
+        label="Baterai",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. Tahan 4-6 Jam / Battery Health 87%"}
+        ),
+    )
+    spek_os = forms.CharField(
+        label="Sistem Operasi (OS)",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. Windows 11 Pro / macOS Sonoma / iOS 17"}
+        ),
+    )
+    spek_lainnya = forms.CharField(
+        label="Fitur / Spesifikasi Lainnya (Opsional)",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "mis. Backlight Keyboard, Fingerprint, Garansi Toko 1 Bulan"}
+        ),
+    )
 
     class Meta:
         model = Produk
@@ -326,37 +409,114 @@ class AdminProdukForm(forms.ModelForm):
             "merek",
             "kategori",
             "deskripsi",
-            "spesifikasi",
             "harga",
             "diskon_persen",
             "stok",
             "kondisi",
             "gambar",
+            "spek_prosesor",
+            "spek_ram",
+            "spek_penyimpanan",
+            "spek_layar",
+            "spek_grafis",
+            "spek_baterai",
+            "spek_os",
+            "spek_lainnya",
             "unggulan",
             "aktif",
         ]
         widgets = {
             "deskripsi": forms.Textarea(attrs={"rows": 6}),
-            "spesifikasi": forms.Textarea(
-                attrs={"rows": 5, "placeholder": '{"RAM": "16 GB", "Storage": "512 GB"}'}
-            ),
             "gambar": forms.FileInput(attrs={"accept": "image/*"}),
         }
 
-    def clean_spesifikasi(self):
-        value = self.cleaned_data["spesifikasi"]
-        if isinstance(value, str):
-            import json
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            spek = self.instance.spesifikasi or {}
+            if isinstance(spek, str):
+                import json
+                try:
+                    spek = json.loads(spek)
+                except Exception:
+                    spek = {}
 
-            try:
-                value = json.loads(value or "{}")
-            except json.JSONDecodeError as error:
-                raise forms.ValidationError(
-                    "Spesifikasi harus berupa JSON yang valid."
-                ) from error
-        if not isinstance(value, dict):
-            raise forms.ValidationError("Spesifikasi harus berupa objek JSON.")
-        return value
+            if isinstance(spek, dict):
+                def find_val(aliases):
+                    for k, v in spek.items():
+                        if str(k).lower().strip() in aliases:
+                            return str(v)
+                    return ""
+
+                self.fields["spek_prosesor"].initial = find_val(["prosesor", "processor", "cpu"])
+                self.fields["spek_ram"].initial = find_val(["ram", "memory"])
+                self.fields["spek_penyimpanan"].initial = find_val(["penyimpanan", "storage", "ssd", "hdd", "rom"])
+                self.fields["spek_layar"].initial = find_val(["layar", "display", "screen"])
+                self.fields["spek_grafis"].initial = find_val(["grafis", "vga", "gpu", "graphics", "kartu grafis"])
+                self.fields["spek_baterai"].initial = find_val(["baterai", "battery"])
+                self.fields["spek_os"].initial = find_val(["os", "sistem operasi", "operating system"])
+
+                standard_keys = {
+                    "prosesor", "processor", "cpu",
+                    "ram", "memory",
+                    "penyimpanan", "storage", "ssd", "hdd", "rom",
+                    "layar", "display", "screen",
+                    "grafis", "vga", "gpu", "graphics", "kartu grafis",
+                    "baterai", "battery",
+                    "os", "sistem operasi", "operating system",
+                }
+                extra_items = []
+                for k, v in spek.items():
+                    k_clean = str(k).lower().strip()
+                    if k_clean not in standard_keys:
+                        if k_clean == "lainnya":
+                            extra_items.append(str(v))
+                        else:
+                            extra_items.append(f"{k}: {v}")
+                if extra_items:
+                    self.fields["spek_lainnya"].initial = ", ".join(extra_items)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        spek = {}
+        if cleaned_data.get("spek_prosesor"):
+            spek["prosesor"] = cleaned_data["spek_prosesor"].strip()
+        if cleaned_data.get("spek_ram"):
+            spek["ram"] = cleaned_data["spek_ram"].strip()
+        if cleaned_data.get("spek_penyimpanan"):
+            spek["penyimpanan"] = cleaned_data["spek_penyimpanan"].strip()
+        if cleaned_data.get("spek_layar"):
+            spek["layar"] = cleaned_data["spek_layar"].strip()
+        if cleaned_data.get("spek_grafis"):
+            spek["grafis"] = cleaned_data["spek_grafis"].strip()
+        if cleaned_data.get("spek_baterai"):
+            spek["baterai"] = cleaned_data["spek_baterai"].strip()
+        if cleaned_data.get("spek_os"):
+            spek["os"] = cleaned_data["spek_os"].strip()
+        if cleaned_data.get("spek_lainnya"):
+            raw_lainnya = cleaned_data["spek_lainnya"].strip()
+            if ":" in raw_lainnya:
+                items = [item.strip() for item in raw_lainnya.split(",") if item.strip()]
+                for item in items:
+                    if ":" in item:
+                        k, v = item.split(":", 1)
+                        if k.strip():
+                            spek[k.strip().lower()] = v.strip()
+                    else:
+                        spek["lainnya"] = item.strip()
+            else:
+                spek["lainnya"] = raw_lainnya
+
+        cleaned_data["spesifikasi"] = spek
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.spesifikasi = self.cleaned_data.get("spesifikasi", {})
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
 
 class AdminProdukGambarForm(forms.ModelForm):
