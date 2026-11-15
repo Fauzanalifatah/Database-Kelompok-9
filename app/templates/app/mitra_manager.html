@@ -1,12 +1,607 @@
 {% extends "app/content_manager.html" %}
 {% block content %}
-<div class="toolbar"><div><h2>{{ heading }}</h2><p class="muted">{{ objects|length }} mitra tersimpan</p></div><a class="button" href="{{ add_url }}">＋ Tambah Mitra</a></div>
-<div class="table-card"><table><colgroup><col class="col-content"><col class="col-status"><col class="col-date"><col class="col-actions"></colgroup><thead><tr><th>Mitra</th><th>Status</th><th>Urutan</th><th>Aksi</th></tr></thead><tbody>
-{% for object in objects %}<tr>
-    <td><div class="content-item">{% if object.gambar %}<img class="thumb" src="{{ object.gambar.url }}" alt="">{% else %}<span class="thumb thumb-placeholder"></span>{% endif %}<div class="content-copy"><strong>{{ object.nama }}</strong><span class="muted">Logo mitra Losari Computer</span></div></div></td>
-    <td><span class="status-badge {% if not object.aktif %}is-draft{% endif %}">{% if object.aktif %}Tayang{% else %}Nonaktif{% endif %}</span></td>
-    <td>{{ object.urutan }}</td>
-    <td><div class="actions"><a class="action" href="{% url 'app:mitra_manager_edit' object.pk %}">Edit</a><form method="post" action="{% url 'app:mitra_manager_delete' object.pk %}">{% csrf_token %}<button class="action" type="submit">Hapus</button></form></div></td>
-</tr>{% empty %}<tr class="empty-row"><td colspan="4" class="muted">Belum ada mitra Losari Computer.</td></tr>{% endfor %}
-</tbody></table></div>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   MODERN MITRA MANAGER LIST (EXECUTIVE SAAS / CLEAN / RESPONSIVE)
+═══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+    .topbar {
+        display: none !important;
+    }
+}
+
+.mitra-list-container {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+/* ─── Top Command Toolbar ─── */
+.mitra-top-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.mitra-toolbar-copy h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 850;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+.mitra-toolbar-copy p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+.mitra-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.btn-primary-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 3px 12px rgba(220, 38, 38, 0.28);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary-add:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.38);
+}
+.btn-secondary-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 15px;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: all 0.15s ease;
+}
+.btn-secondary-link:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.07);
+}
+
+/* ─── KPI Metric Cards ─── */
+.mitra-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.mitra-metric-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s ease;
+}
+.mitra-metric-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+.metric-icon-bubble {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.bubble-total {
+    background: #eff6ff;
+    color: #2563eb;
+}
+.bubble-active {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+.bubble-inactive {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+.metric-data-wrap {
+    min-width: 0;
+}
+.metric-val {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.1;
+    margin: 0 0 2px;
+}
+.metric-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* ─── Main Modern Table / Card ─── */
+.mitra-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+}
+
+.mitra-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+}
+.mitra-data-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 14px 20px;
+    border-bottom: 1.5px solid #e2e8f0;
+}
+.mitra-data-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+.mitra-data-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+.mitra-data-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Cell Specifics */
+.partner-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+.partner-logo-box {
+    width: 54px;
+    height: 54px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+.partner-logo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.partner-logo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+.partner-text-meta {
+    min-width: 0;
+}
+.partner-name-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 3px;
+    line-height: 1.3;
+}
+.partner-sub-meta {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Status Pill */
+.table-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+.table-status-pill.is-live {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+.table-status-pill.is-draft {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+.table-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.table-status-pill.is-live .table-status-dot {
+    background: #16a34a;
+}
+.table-status-pill.is-draft .table-status-dot {
+    background: #dc2626;
+}
+
+/* Urutan Pill */
+.urutan-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 26px;
+    padding: 0 8px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Actions in Table */
+.table-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.btn-table-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: #f8fafc;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 750;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.btn-table-edit:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+.btn-table-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.btn-table-delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+/* Empty State */
+.mitra-empty-box {
+    text-align: center;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.empty-graphic-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+.empty-headline {
+    font-size: 17px;
+    font-weight: 850;
+    color: #0f172a;
+    margin: 0;
+}
+.empty-desc {
+    font-size: 13px;
+    color: #64748b;
+    max-width: 440px;
+    line-height: 1.5;
+    margin: 0 0 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABLET & MOBILE RESPONSIVE
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+    .mitra-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    .mitra-top-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .mitra-toolbar-actions {
+        width: 100%;
+    }
+    .btn-primary-add,
+    .btn-secondary-link {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 680px) {
+    .mitra-table-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .mitra-data-table {
+        display: block;
+    }
+    .mitra-data-table thead {
+        display: none;
+    }
+    .mitra-data-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .mitra-data-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        gap: 12px;
+    }
+    .mitra-data-table td {
+        padding: 0;
+        border: 0;
+    }
+    .table-actions-group {
+        width: 100%;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .btn-table-edit {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 12px;
+    }
+    .btn-table-delete {
+        padding: 8px 14px;
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="mitra-list-container">
+    <!-- ══════════ TOP COMMAND TOOLBAR ══════════ -->
+    <div class="mitra-top-toolbar">
+        <div class="mitra-toolbar-copy">
+            <h2>{{ heading }}</h2>
+            <p>Kelola daftar institusi, universitas, dan mitra kerja sama resmi yang ditampilkan di carousel beranda toko.</p>
+        </div>
+
+        <div class="mitra-toolbar-actions">
+            <a class="btn-primary-add" href="{{ add_url }}" title="Tambah logo mitra baru">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Tambah Mitra Baru</span>
+            </a>
+            <a class="btn-secondary-link" href="{% url 'home' %}" target="_blank" rel="noopener" title="Buka beranda di tab baru">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Lihat Beranda</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ══════════ KPI METRIC CARDS ══════════ -->
+    <div class="mitra-metrics-grid">
+        <div class="mitra-metric-card">
+            <div class="metric-icon-bubble bubble-total">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="metric-data-wrap">
+                <div class="metric-val" id="stat-total-count">{% if total_count is not None %}{{ total_count }}{% else %}{{ objects|length }}{% endif %}</div>
+                <div class="metric-label">Total Mitra Terdaftar</div>
+            </div>
+        </div>
+
+        <div class="mitra-metric-card">
+            <div class="metric-icon-bubble bubble-active">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            </div>
+            <div class="metric-data-wrap">
+                <div class="metric-val" style="color:#15803d;" id="stat-active-count">{% if active_count is not None %}{{ active_count }}{% else %}{{ objects|length }}{% endif %}</div>
+                <div class="metric-label">Aktif Tayang di Beranda</div>
+            </div>
+        </div>
+
+        <div class="mitra-metric-card">
+            <div class="metric-icon-bubble bubble-inactive">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+            </div>
+            <div class="metric-data-wrap">
+                <div class="metric-val" style="color:#64748b;" id="stat-inactive-count">{% if inactive_count is not None %}{{ inactive_count }}{% else %}0{% endif %}</div>
+                <div class="metric-label">Disembunyikan (Draft)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ MAIN TABLE CARD ══════════ -->
+    <div class="mitra-table-card">
+        {% if objects %}
+        <table class="mitra-data-table">
+            <thead>
+                <tr>
+                    <th style="width: 48%;">Mitra &amp; Logo Resmi</th>
+                    <th style="width: 20%;">Status Publikasi</th>
+                    <th style="width: 14%;">Urutan Posisi</th>
+                    <th style="width: 18%; text-align: right;">Aksi Kelola</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in objects %}
+                <tr>
+                    <!-- Mitra & Logo -->
+                    <td>
+                        <div class="partner-info-cell">
+                            <div class="partner-logo-box">
+                                {% if object.gambar %}
+                                <img src="{{ object.gambar.url }}" alt="{{ object.nama }}" loading="lazy">
+                                {% else %}
+                                <div class="partner-logo-placeholder">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="partner-text-meta">
+                                <h4 class="partner-name-title">{{ object.nama }}</h4>
+                                <p class="partner-sub-meta">ID #{{ object.pk }} &middot; Rekanan Resmi Losari Computer</p>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Status -->
+                    <td>
+                        {% if object.aktif %}
+                        <span class="table-status-pill is-live">
+                            <span class="table-status-dot"></span>
+                            <span>Tayang di Toko</span>
+                        </span>
+                        {% else %}
+                        <span class="table-status-pill is-draft">
+                            <span class="table-status-dot"></span>
+                            <span>Disembunyikan</span>
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Urutan -->
+                    <td>
+                        <span class="urutan-tag" title="Urutan posisi di slider">#{{ object.urutan }}</span>
+                    </td>
+
+                    <!-- Aksi -->
+                    <td style="text-align: right;">
+                        <div class="table-actions-group" style="justify-content: flex-end;">
+                            <a class="btn-table-edit" href="{% url 'app:mitra_manager_edit' object.pk %}">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                <span>Edit</span>
+                            </a>
+                            <form method="post" action="{% url 'app:mitra_manager_delete' object.pk %}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus mitra {{ object.nama|escapejs }}?');">
+                                {% csrf_token %}
+                                <button class="btn-table-delete" type="submit" title="Hapus mitra">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    <span>Hapus</span>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="mitra-empty-box">
+            <div class="empty-graphic-circle">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <h3 class="empty-headline">Belum Ada Mitra Terdaftar</h3>
+            <p class="empty-desc">Tambahkan logo universitas, instansi, atau perusahaan mitra yang bekerja sama dengan Losari Computer untuk meningkatkan kepercayaan pembeli di website.</p>
+            <a class="btn-primary-add" href="{{ add_url }}">＋ Tambah Mitra Pertama</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var tableRows = document.querySelectorAll(".mitra-data-table tbody tr");
+    if (tableRows.length > 0) {
+        var total = tableRows.length;
+        var active = 0;
+        tableRows.forEach(function (tr) {
+            if (tr.querySelector(".table-status-pill.is-live")) {
+                active++;
+            }
+        });
+        var inactive = total - active;
+
+        var totalEl = document.getElementById("stat-total-count");
+        var activeEl = document.getElementById("stat-active-count");
+        var inactiveEl = document.getElementById("stat-inactive-count");
+
+        if (totalEl) totalEl.textContent = total;
+        if (activeEl) activeEl.textContent = active;
+        if (inactiveEl) inactiveEl.textContent = inactive;
+    }
+});
+</script>
 {% endblock %}

@@ -26,6 +26,7 @@ urlpatterns = [
     path("dashboard/pesanan/", views.pesanan_manager, name="pesanan_manager"),
     path("dashboard/pesanan/<int:pk>/edit/", views.pesanan_manager_form, name="pesanan_manager_edit"),
     path("dashboard/pesanan/<int:pk>/detail/", views.pesanan_manager_detail, name="pesanan_manager_detail"),
+    path("dashboard/pesanan/api/tracking/", views.pesanan_tracking_api, name="pesanan_tracking_api"),
     path("shop/", views.shop, name="shop"),
     path("produk/<slug:slug>/", views.product_detail, name="product_detail"),
     path("checkout/<slug:slug>/", views.checkout, name="checkout"),

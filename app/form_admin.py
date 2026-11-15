@@ -262,7 +262,43 @@ class MitraDeepublishForm(forms.ModelForm):
         model = MitraDeepublish
         fields = ["nama", "gambar", "aktif", "urutan"]
         widgets = {
-            "gambar": forms.FileInput(attrs={"accept": "image/*"}),
+            "nama": forms.TextInput(
+                attrs={
+                    "class": "form-control-modern",
+                    "placeholder": "Contoh: Universitas Hasanuddin (UNHAS)",
+                    "autocomplete": "off",
+                }
+            ),
+            "gambar": forms.FileInput(
+                attrs={
+                    "accept": "image/png,image/jpeg,image/webp,image/svg+xml",
+                    "class": "hidden-file-input",
+                }
+            ),
+            "urutan": forms.NumberInput(
+                attrs={
+                    "class": "form-control-modern",
+                    "min": 0,
+                    "placeholder": "0",
+                }
+            ),
+            "aktif": forms.CheckboxInput(
+                attrs={
+                    "class": "modern-switch-checkbox",
+                }
+            ),
+        }
+        labels = {
+            "nama": "Nama Mitra / Institusi",
+            "gambar": "Logo Mitra",
+            "aktif": "Status Publikasi di Website",
+            "urutan": "Urutan Tampil",
+        }
+        help_texts = {
+            "nama": "Nama institusi atau perusahaan rekanan resmi Losari Computer.",
+            "gambar": "Disarankan menggunakan format PNG transparan atau SVG beresolusi tajam.",
+            "aktif": "Aktifkan agar logo mitra ini langsung tampil di carousel beranda website.",
+            "urutan": "Nomor urut penempatan di slider beranda (angka lebih kecil tampil lebih awal).",
         }
 
 
@@ -372,7 +408,14 @@ class AdminPesananStatusForm(forms.ModelForm):
     class Meta:
         model = Pesanan
         fields = ["status"]
-        labels = {"status": "Status pesanan"}
+        labels = {"status": "Status Pesanan"}
+        widgets = {
+            "status": forms.Select(
+                attrs={
+                    "class": "form-select-modern",
+                }
+            )
+        }
 
 
 class AdminArtikelForm(forms.ModelForm):

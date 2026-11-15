@@ -602,7 +602,7 @@
 <div class="admin-page-header">
     <div>
         <h2>{{ heading }}</h2>
-        <p class="muted">Simpan perubahan untuk memperbarui tampilan katalog produk di website.</p>
+        <p class="muted">{% if section == 'produk' %}Simpan perubahan untuk memperbarui tampilan katalog produk di website.{% elif subtitle %}{{ subtitle }}{% else %}Simpan perubahan untuk memperbarui data website.{% endif %}</p>
     </div>
     <a class="button secondary" href="{{ cancel_url }}">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><polyline points="15 18 9 12 15 6"></polyline></svg>

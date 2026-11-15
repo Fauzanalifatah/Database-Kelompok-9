@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError, transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, Sum, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.http import Http404
@@ -167,15 +167,23 @@ def about_manager(request):
 @admin_required
 @login_required(login_url="app:login")
 def mitra_manager(request):
+    objects = MitraDeepublish.objects.all().order_by("urutan", "id")
+    total_count = objects.count()
+    active_count = objects.filter(aktif=True).count()
+    inactive_count = total_count - active_count
     return render(
         request,
         "app/mitra_manager.html",
         {
             "title": "Mitra Losari Computer",
             "heading": "Mitra Losari Computer",
-            "objects": MitraDeepublish.objects.all(),
+            "objects": objects,
+            "total_count": total_count,
+            "active_count": active_count,
+            "inactive_count": inactive_count,
             "add_url": reverse("app:mitra_manager_add"),
             "public_url": reverse("home"),
+            "section": "mitra",
         },
     )
 
@@ -192,14 +200,15 @@ def mitra_manager_form(request, pk=None):
         if not mitra.pk:
             mitra.urutan = MitraDeepublish.objects.count()
         mitra.save()
-        messages.success(request, "Mitra Losari Computer berhasil disimpan.")
+        messages.success(request, f"Mitra '{mitra.nama}' berhasil disimpan.")
         return redirect("app:mitra_manager")
     return render(
         request,
-        "app/content_manager_form.html",
+        "app/mitra_manager_form.html",
         {
-            "title": "Edit Mitra Losari Computer",
-            "heading": "Edit Mitra Losari Computer" if instance else "Tambah Mitra Losari Computer",
+            "title": "Edit Mitra Losari Computer" if instance else "Tambah Mitra Baru",
+            "heading": "Edit Mitra Losari Computer" if instance else "Tambah Mitra Baru",
+            "instance": instance,
             "section": "mitra",
             "form": form,
             "item_label": "mitra",
@@ -425,19 +434,160 @@ def pelanggan_manager_form(request, username):
     )
 
 
+def get_pesanan_tracking_data(days="7"):
+    from datetime import timedelta
+    now = timezone.now()
+    all_orders = Pesanan.objects.all()
+    total_orders = all_orders.count()
+
+    paid_orders = all_orders.filter(status__in=["dibayar", "selesai"])
+    waiting_orders = all_orders.filter(status="menunggu")
+    processing_orders = all_orders.filter(status__in=["diproses", "dikirim"])
+    cancelled_orders = all_orders.filter(status="dibatalkan")
+
+    paid_count = paid_orders.count()
+    waiting_count = waiting_orders.count()
+    processing_count = processing_orders.count()
+    cancelled_count = cancelled_orders.count()
+
+    total_revenue = float(paid_orders.aggregate(s=Sum("total"))["s"] or 0)
+    pending_revenue = float(waiting_orders.aggregate(s=Sum("total"))["s"] or 0)
+
+    conversion_rate = round((paid_count / total_orders * 100), 1) if total_orders > 0 else 0
+
+    if conversion_rate >= 60:
+        health_status = "Sangat Sehat & Menguntungkan"
+        health_color = "#16a34a"
+        health_badge = "PROFITABEL (SEHAT)"
+        health_desc = "Tingkat konversi transaksi lunas sangat tinggi. Cashflow bisnis toko berjalan optimal."
+    elif conversion_rate >= 35:
+        health_status = "Cukup Layak (Stabil)"
+        health_color = "#2563eb"
+        health_badge = "STABIL"
+        health_desc = "Konversi normal, tingkatkan follow-up WhatsApp kepada pembeli yang belum transfer."
+    else:
+        health_status = "Perlu Perhatian (Follow-up)"
+        health_color = "#d97706"
+        health_badge = "PERLU TINDAKAN"
+        health_desc = "Banyak pesanan pending. Segera konfirmasi pesanan pembeli agar segera dibayar."
+
+    # Parse days
+    if days == "all":
+        earliest = all_orders.order_by("dibuat_pada").first()
+        if earliest:
+            delta = (now.date() - earliest.dibuat_pada.date()).days
+            num_days = max(delta + 1, 7)
+        else:
+            num_days = 7
+    else:
+        try:
+            num_days = int(days)
+            if num_days not in [7, 14, 30]:
+                num_days = 7
+        except (ValueError, TypeError):
+            num_days = 7
+
+    date_list = [(now - timedelta(days=i)).date() for i in range(num_days - 1, -1, -1)]
+
+    labels = []
+    sudah_bayar_data = []
+    menunggu_data = []
+    diproses_data = []
+    revenue_daily_data = []
+    revenue_waiting_data = []
+    revenue_processing_data = []
+
+    for d in date_list:
+        labels.append(d.strftime("%d %b"))
+        day_orders = all_orders.filter(dibuat_pada__date=d)
+
+        day_paid = day_orders.filter(status__in=["dibayar", "selesai"]).count()
+        day_waiting = day_orders.filter(status="menunggu").count()
+        day_processing = day_orders.filter(status__in=["diproses", "dikirim"]).count()
+
+        day_rev_paid = float(day_orders.filter(status__in=["dibayar", "selesai"]).aggregate(s=Sum("total"))["s"] or 0)
+        day_rev_waiting = float(day_orders.filter(status="menunggu").aggregate(s=Sum("total"))["s"] or 0)
+        day_rev_processing = float(day_orders.filter(status__in=["diproses", "dikirim"]).aggregate(s=Sum("total"))["s"] or 0)
+
+        sudah_bayar_data.append(day_paid)
+        menunggu_data.append(day_waiting)
+        diproses_data.append(day_processing)
+        revenue_daily_data.append(day_rev_paid)
+        revenue_waiting_data.append(day_rev_waiting)
+        revenue_processing_data.append(day_rev_processing)
+
+    return {
+        "days": str(num_days) if days != "all" else "all",
+        "labels": labels,
+        "datasets": {
+            "sudah_bayar": sudah_bayar_data,
+            "menunggu": menunggu_data,
+            "diproses": diproses_data,
+            "revenue": revenue_daily_data,
+            "revenue_sudah_bayar": revenue_daily_data,
+            "revenue_menunggu": revenue_waiting_data,
+            "revenue_diproses": revenue_processing_data,
+        },
+        "summary": {
+            "total_orders": total_orders,
+            "paid_count": paid_count,
+            "waiting_count": waiting_count,
+            "processing_count": processing_count,
+            "cancelled_count": cancelled_count,
+            "total_revenue": total_revenue,
+            "total_revenue_formatted": f"Rp{total_revenue:,.0f}".replace(",", "."),
+            "pending_revenue": pending_revenue,
+            "pending_revenue_formatted": f"Rp{pending_revenue:,.0f}".replace(",", "."),
+            "conversion_rate": conversion_rate,
+            "health_status": health_status,
+            "health_color": health_color,
+            "health_badge": health_badge,
+            "health_desc": health_desc,
+            "last_updated": now.strftime("%H:%M:%S WIB"),
+        },
+    }
+
+
+@admin_required
+@login_required(login_url="app:login")
+def pesanan_tracking_api(request):
+    days = request.GET.get("days", "7")
+    tracking_data = get_pesanan_tracking_data(days=days)
+    return JsonResponse(tracking_data)
+
+
 @admin_required
 @login_required(login_url="app:login")
 def pesanan_manager(request):
-    orders = Pesanan.objects.select_related("pengguna").prefetch_related("item").all()
+    days = request.GET.get("days", "7")
+    status_filter = request.GET.get("status", "").strip()
+
+    orders = Pesanan.objects.select_related("pengguna").prefetch_related("item")
+    if status_filter:
+        if status_filter == "sudah_bayar":
+            orders = orders.filter(status__in=["dibayar", "selesai"])
+        elif status_filter == "menunggu":
+            orders = orders.filter(status="menunggu")
+        elif status_filter == "diproses":
+            orders = orders.filter(status__in=["diproses", "dikirim"])
+        elif status_filter == "dibatalkan":
+            orders = orders.filter(status="dibatalkan")
+
+    orders = orders.all()
+    tracking_data = get_pesanan_tracking_data(days=days)
+
     return render(
         request,
-        "app/records_manager.html",
+        "app/pesanan_manager.html",
         {
-            "title": "Kelola Pesanan",
+            "title": "Kelola & Tracking Pesanan",
             "heading": "Kelola Pesanan",
             "section": "pesanan",
             "records": orders,
-            "record_type": "pesanan",
+            "orders": orders,
+            "status_filter": status_filter,
+            "tracking": tracking_data,
+            "tracking_json": json.dumps(tracking_data),
         },
     )
 
@@ -472,23 +622,48 @@ def pesanan_manager_form(request, pk):
 def pesanan_manager_detail(request, pk):
     order = get_object_or_404(
         Pesanan.objects.select_related("pengguna", "pengguna__pengguna")
-        .prefetch_related("item__produk"),
+        .prefetch_related("item__produk", "item__produk__galeri"),
         pk=pk,
     )
     form = AdminPesananStatusForm(request.POST or None, instance=order)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Status pesanan berhasil diperbarui.")
+        messages.success(request, f"Status pesanan #{str(order.nomor)[:8].upper()} berhasil diperbarui menjadi {order.get_status_display()}.")
         return redirect("app:pesanan_manager_detail", pk=pk)
+
+    # Ensure every ordered item has a valid photo preview
+    for it in order.item.all():
+        if it.produk and not it.produk.gambar:
+            first_gal = it.produk.galeri.first()
+            if first_gal and first_gal.gambar:
+                it.produk.gambar = first_gal.gambar
+                it.produk.save(update_fields=["gambar"])
+            else:
+                it.produk.gambar = "produk/ec702708-38f3-4f8b-87dc-a90c28405dd2_removalai_preview.png"
+                it.produk.save(update_fields=["gambar"])
+
+    customer_phone = ""
+    if hasattr(order.pengguna, "pengguna") and order.pengguna.pengguna and order.pengguna.pengguna.telp:
+        customer_phone = order.pengguna.pengguna.telp
+
+    clean_phone = "".join(filter(str.isdigit, customer_phone))
+    if clean_phone.startswith("0"):
+        clean_phone = "62" + clean_phone[1:]
+
+    total_qty = sum((item.jumlah for item in order.item.all()), 0)
+
     return render(
         request,
         "app/pesanan_detail.html",
         {
-            "title": f"Detail Pesanan {str(order.nomor)[:8].upper()}",
-            "heading": "Detail Pesanan",
+            "title": f"Detail Pesanan #{str(order.nomor)[:8].upper()}",
+            "heading": f"Pesanan #{str(order.nomor)[:8].upper()}",
             "section": "pesanan",
             "order": order,
             "form": form,
+            "clean_phone": clean_phone,
+            "customer_phone": customer_phone,
+            "total_qty": total_qty,
             "cancel_url": reverse("app:pesanan_manager"),
         },
     )
@@ -1290,6 +1465,16 @@ def order_receipt(request, nomor):
         )
     else:
         return redirect(f"{reverse('app:login')}?next={request.path}")
+
+    # Guard: Nota resmi hanya dapat diterbitkan setelah pembayaran lunas
+    if order.status in ["menunggu", "dibatalkan"]:
+        messages.warning(
+            request,
+            f"Nota untuk pesanan #{str(order.nomor)[:8].upper()} belum dapat dicetak karena status saat ini masih '{order.get_status_display()}'. Nota resmi hanya dapat diterbitkan setelah pembayaran dinyatakan lunas.",
+        )
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect("app:pesanan_manager_detail", pk=order.pk)
+        return redirect("app:payment_status", nomor=order.nomor)
 
     profile = UserPengguna.objects.filter(user=order.pengguna).first()
     footer_setting, _ = FooterSetting.objects.get_or_create(pk=1)

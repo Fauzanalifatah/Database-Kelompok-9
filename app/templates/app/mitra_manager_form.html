@@ -1,0 +1,1315 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<style>
+/* ═══════════════════════════════════════════════════════════
+   MODERN MITRA / PARTNER MANAGER (EXECUTIVE SAAS / CLEAN / RESPONSIVE)
+═══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+    .topbar {
+        display: none !important;
+    }
+}
+
+.mitra-form-wrapper {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+/* ─── Top Command / Breadcrumb Bar ─── */
+.mitra-command-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.mitra-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.mitra-breadcrumb a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.mitra-breadcrumb a:hover {
+    color: #0f172a;
+}
+.mitra-breadcrumb span.sep {
+    color: #cbd5e1;
+}
+
+.mitra-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.mitra-page-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 850;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.mitra-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 750;
+    transition: all 0.2s ease;
+}
+.mitra-status-badge.is-live {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+.mitra-status-badge.is-draft {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+.mitra-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.mitra-status-badge.is-live .mitra-status-dot {
+    background: #16a34a;
+    box-shadow: 0 0 0 2px #dcfce7;
+}
+.mitra-status-badge.is-draft .mitra-status-dot {
+    background: #dc2626;
+    box-shadow: 0 0 0 2px #fee2e2;
+}
+
+.mitra-page-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+/* Actions in Header */
+.mitra-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.btn-nav-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 15px;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: all 0.15s ease;
+}
+.btn-nav-secondary:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.07);
+}
+
+/* ─── Two-Column Responsive Workspace Grid ─── */
+.mitra-workspace-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* ─── Main Form Cards ─── */
+.mitra-card-shell {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    padding: 26px;
+    margin-bottom: 20px;
+}
+
+.mitra-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.mitra-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.mitra-card-header-copy h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.mitra-card-header-copy p {
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* ─── Form Elements ─── */
+.mitra-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.mitra-field-group:last-child {
+    margin-bottom: 0;
+}
+
+.mitra-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+    font-weight: 750;
+    color: #0f172a;
+}
+.mitra-label .required-mark {
+    color: #dc2626;
+    margin-left: 2px;
+}
+.mitra-label-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 7px;
+    border-radius: 5px;
+}
+
+.form-control-modern {
+    width: 100%;
+    padding: 11px 14px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 14px;
+    color: #0f172a;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+}
+.form-control-modern:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.mitra-field-help {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+/* ─── Executive Logo Upload Zone ─── */
+.logo-upload-zone {
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+.logo-upload-zone:hover {
+    border-color: #94a3b8;
+    background: #f1f5f9;
+}
+
+.logo-preview-shelf {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.logo-preview-box {
+    width: 90px;
+    height: 90px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.logo-preview-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.logo-preview-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    text-align: center;
+    gap: 4px;
+}
+.logo-preview-empty svg {
+    width: 26px;
+    height: 26px;
+}
+
+.logo-shelf-meta {
+    flex: 1;
+    min-width: 0;
+}
+.logo-shelf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 750;
+    margin-bottom: 4px;
+}
+.logo-shelf-name {
+    font-size: 13.5px;
+    font-weight: 750;
+    color: #0f172a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0 0 2px;
+}
+.logo-shelf-sub {
+    font-size: 11.5px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.35;
+}
+
+/* File Picker Button */
+.logo-picker-action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.btn-upload-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: #0f172a;
+    color: #ffffff;
+    border: 0;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+    transition: all 0.15s ease;
+}
+.btn-upload-file:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.22);
+}
+.hidden-file-input {
+    display: none !important;
+}
+.logo-chosen-filename {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
+}
+.logo-chosen-filename.is-active {
+    color: #16a34a;
+    font-weight: 750;
+}
+
+/* ─── Grid 2 Columns for Status & Urutan ─── */
+.mitra-settings-subgrid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 16px;
+}
+
+/* ─── Modern Switch Toggle Card ─── */
+.modern-toggle-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+.modern-toggle-box:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
+}
+.modern-toggle-box.is-active {
+    background: #f0fdf4;
+    border-color: #86efac;
+    box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08);
+}
+
+.toggle-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.toggle-title-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.toggle-card-label {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    cursor: pointer;
+    margin: 0;
+}
+.toggle-live-chip {
+    font-size: 11px;
+    font-weight: 750;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    transition: all 0.2s ease;
+}
+.modern-toggle-box.is-active .toggle-live-chip {
+    background: #dcfce7;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.switch-slider-wrap {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.switch-slider-wrap input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+.slider-pill {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #cbd5e1;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+}
+.slider-pill:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.switch-slider-wrap input:checked + .slider-pill {
+    background-color: #16a34a;
+}
+.switch-slider-wrap input:checked + .slider-pill:before {
+    transform: translateX(20px);
+}
+
+.toggle-card-desc {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.45;
+}
+.modern-toggle-box.is-active .toggle-card-desc {
+    color: #334155;
+}
+
+/* Urutan Card Box */
+.urutan-card-box {
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.urutan-card-box .form-control-modern {
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.05em;
+    color: #0f172a;
+}
+
+/* ─── Bottom Actions Bar ─── */
+.mitra-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 20px;
+    margin-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+.mitra-actions-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.btn-submit-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(220, 38, 38, 0.28);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-submit-save:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.38);
+}
+.btn-submit-cancel {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 750;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.btn-submit-cancel:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+.btn-danger-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 16px;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.btn-danger-delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RIGHT COLUMN: REAL-TIME STOREFRONT LIVE PREVIEW
+═══════════════════════════════════════════════════════════ */
+.mitra-preview-sticky {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mitra-preview-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    padding: 24px;
+}
+
+.preview-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.preview-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14.5px;
+    font-weight: 850;
+    color: #0f172a;
+    margin: 0;
+}
+.preview-pulse-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+.preview-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2563eb;
+    animation: live-pulse 1.8s infinite;
+}
+@keyframes live-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.7); opacity: 0.4; }
+}
+
+/* Simulated Storefront Carousel Frame */
+.storefront-sim-frame {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.sim-eyebrow {
+    font-size: 9.5px;
+    font-weight: 900;
+    color: #dc2626;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0 0 2px;
+}
+.sim-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 16px;
+}
+
+/* The Exact Carousel Item Tile (100% Authentic Match to Home.html) */
+.sim-carousel-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.sim-arrow-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sim-partner-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    max-width: 140px;
+    padding: 10px 8px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+.sim-partner-logo-box {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+}
+.sim-partner-logo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.sim-partner-name {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+    text-align: center;
+    word-break: break-word;
+}
+.sim-partner-tag {
+    font-size: 10.5px;
+    font-weight: 750;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-top: 2px;
+}
+.sim-partner-tag.is-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+.sim-partner-tag.is-draft {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* Background Theme Switcher for Transparency Verification */
+.preview-bg-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: #64748b;
+}
+.btn-sim-theme {
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.btn-sim-theme.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+/* ─── Admin Best Practices Guide Card ─── */
+.mitra-guide-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+}
+.guide-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 850;
+    color: #0f172a;
+    margin: 0 0 12px;
+}
+.guide-card-title svg {
+    color: #dc2626;
+    width: 17px;
+    height: 17px;
+}
+.guide-points-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.guide-point-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.45;
+}
+.guide-point-item svg {
+    color: #16a34a;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.guide-point-item strong {
+    color: #0f172a;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABLET & MOBILE RESPONSIVE OPTIMIZATIONS
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .mitra-workspace-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .mitra-preview-sticky {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .mitra-command-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+    .mitra-header-actions {
+        width: 100%;
+    }
+    .btn-nav-secondary {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+    .mitra-card-shell {
+        padding: 18px 16px;
+    }
+    .mitra-settings-subgrid {
+        grid-template-columns: 1fr;
+    }
+    .logo-preview-shelf {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .logo-shelf-meta {
+        text-align: center;
+    }
+    .logo-picker-action-row {
+        justify-content: center;
+    }
+    .btn-upload-file {
+        width: 100%;
+        justify-content: center;
+    }
+    .mitra-actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .mitra-actions-left {
+        flex-direction: column;
+        width: 100%;
+    }
+    .btn-submit-save,
+    .btn-submit-cancel,
+    .btn-danger-delete {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+</style>
+
+<div class="mitra-form-wrapper">
+    <!-- ══════════ TOP COMMAND BAR ══════════ -->
+    <div class="mitra-command-bar">
+        <div>
+            <div class="mitra-breadcrumb">
+                <a href="{% url 'app:dashboard' %}">Dashboard</a>
+                <span class="sep">/</span>
+                <a href="{% url 'app:mitra_manager' %}">Mitra Losari Computer</a>
+                <span class="sep">/</span>
+                <span>{% if instance %}Edit Mitra #{{ instance.pk }}{% else %}Tambah Mitra Baru{% endif %}</span>
+            </div>
+            <div class="mitra-title-row">
+                <h2 class="mitra-page-title">{{ heading }}</h2>
+                {% if instance %}
+                    {% if instance.aktif %}
+                    <span class="mitra-status-badge is-live" id="header-status-badge">
+                        <span class="mitra-status-dot"></span>
+                        <span id="header-status-text">Tayang di Website</span>
+                    </span>
+                    {% else %}
+                    <span class="mitra-status-badge is-draft" id="header-status-badge">
+                        <span class="mitra-status-dot"></span>
+                        <span id="header-status-text">Disembunyikan (Draft)</span>
+                    </span>
+                    {% endif %}
+                {% else %}
+                    <span class="mitra-status-badge is-live" id="header-status-badge">
+                        <span class="mitra-status-dot"></span>
+                        <span id="header-status-text">Mitra Baru</span>
+                    </span>
+                {% endif %}
+            </div>
+            <p class="mitra-page-subtitle">Kelola nama resmi, logo instansi, dan visibilitas mitra untuk ditampilkan di carousel beranda toko.</p>
+        </div>
+
+        <div class="mitra-header-actions">
+            <a class="btn-nav-secondary" href="{{ cancel_url }}" title="Kembali ke Daftar Mitra">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>Kembali ke Daftar</span>
+            </a>
+            <a class="btn-nav-secondary" href="{% url 'home' %}" target="_blank" rel="noopener" title="Buka website di tab baru">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Lihat Beranda Toko</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ══════════ MAIN WORKSPACE GRID ══════════ -->
+    <form class="mitra-workspace-grid" method="post" enctype="multipart/form-data" id="mitra-editor-form">
+        {% csrf_token %}
+
+        <!-- ─── LEFT COLUMN: FORM CARDS ─── -->
+        <div class="mitra-form-left-col">
+            <!-- Card 1: Identitas & Logo Mitra -->
+            <div class="mitra-card-shell">
+                <div class="mitra-card-header">
+                    <div class="mitra-card-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <div class="mitra-card-header-copy">
+                        <h3>Identitas Mitra &amp; Logo Resmi</h3>
+                        <p>Masukkan nama lengkap lembaga/perusahaan rekanan dan unggah file logo resmi.</p>
+                    </div>
+                </div>
+
+                <!-- Field Nama Mitra -->
+                <div class="mitra-field-group">
+                    <label class="mitra-label" for="{{ form.nama.id_for_label }}">
+                        <span>Nama Lengkap Mitra / Institusi<span class="required-mark">*</span></span>
+                        <span class="mitra-label-badge">Teks Alt &amp; Teks Tampil</span>
+                    </label>
+                    {{ form.nama }}
+                    <p class="mitra-field-help">Contoh: <strong>Universitas Negeri Makassar (UNM)</strong> atau <strong>Universitas Hasanuddin (UNHAS)</strong>. Nama ini akan tampil di bawah logo pada carousel.</p>
+                    {% if form.nama.errors %}<div class="errorlist">{{ form.nama.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Field Upload Logo Mitra (Executive Box) -->
+                <div class="mitra-field-group" style="margin-top: 24px;">
+                    <label class="mitra-label">
+                        <span>File Logo Resmi Mitra<span class="required-mark">*</span></span>
+                        <span class="mitra-label-badge">PNG / SVG Disarankan</span>
+                    </label>
+
+                    <div class="logo-upload-zone" id="logo-dropzone">
+                        <!-- Preview Shelf -->
+                        <div class="logo-preview-shelf">
+                            <div class="logo-preview-box" id="logo-preview-box">
+                                {% if instance and instance.gambar %}
+                                <img src="{{ instance.gambar.url }}" alt="{{ instance.nama }}" id="preview-active-img">
+                                {% else %}
+                                <div class="logo-preview-empty" id="preview-empty-state">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    <small style="font-size:10px; font-weight:700;">No Logo</small>
+                                </div>
+                                <img src="" alt="Preview Baru" id="preview-active-img" style="display:none;">
+                                {% endif %}
+                            </div>
+
+                            <div class="logo-shelf-meta">
+                                {% if instance and instance.gambar %}
+                                <span class="logo-shelf-badge" id="logo-status-chip">✓ Logo Saat Ini Terpasang</span>
+                                <p class="logo-shelf-name" id="logo-display-name">{{ instance.nama }}</p>
+                                <p class="logo-shelf-sub">Pilih file baru jika ingin mengganti logo yang saat ini tersimpan.</p>
+                                {% else %}
+                                <span class="logo-shelf-badge" id="logo-status-chip" style="background:#f1f5f9; color:#64748b; border-color:#e2e8f0;">Belum Ada File</span>
+                                <p class="logo-shelf-name" id="logo-display-name">Silakan Pilih File Gambar</p>
+                                <p class="logo-shelf-sub">Format yang didukung: PNG (latar transparan), JPG, WEBP, atau SVG.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Action Row -->
+                        <div class="logo-picker-action-row">
+                            <label class="btn-upload-file" for="{{ form.gambar.id_for_label }}">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <span>{% if instance and instance.gambar %}Ganti File Logo...{% else %}Pilih File Logo...{% endif %}</span>
+                            </label>
+                            <span class="logo-chosen-filename" id="logo-chosen-indicator">
+                                {% if instance and instance.gambar %}Menggunakan logo yang tersimpan{% else %}Belum ada file baru dipilih{% endif %}
+                            </span>
+                            {{ form.gambar }}
+                        </div>
+                    </div>
+                    {% if form.gambar.errors %}<div class="errorlist">{{ form.gambar.errors }}</div>{% endif %}
+                </div>
+            </div>
+
+            <!-- Card 2: Status & Penempatan di Beranda -->
+            <div class="mitra-card-shell">
+                <div class="mitra-card-header">
+                    <div class="mitra-card-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="mitra-card-header-copy">
+                        <h3>Status Publikasi &amp; Posisi Urutan</h3>
+                        <p>Atur visibilitas penayangan di website dan nomor urut kemunculan di carousel.</p>
+                    </div>
+                </div>
+
+                <div class="mitra-settings-subgrid">
+                    <!-- Toggle Box Status Publikasi -->
+                    <div class="modern-toggle-box{% if form.aktif.value %} is-active{% endif %}" id="toggle-mitra-box" onclick="toggleActiveCheckbox();">
+                        <div>
+                            <div class="toggle-top-row">
+                                <div class="toggle-title-badge-group">
+                                    <label class="toggle-card-label" for="{{ form.aktif.id_for_label }}" onclick="event.stopPropagation();">Publikasi Mitra</label>
+                                    <span class="toggle-live-chip" id="toggle-chip-text">
+                                        {% if form.aktif.value %}Tayang di Website{% else %}Disembunyikan (Draft){% endif %}
+                                    </span>
+                                </div>
+                                <div class="switch-slider-wrap" onclick="event.stopPropagation();">
+                                    <label for="{{ form.aktif.id_for_label }}">
+                                        {{ form.aktif }}
+                                        <span class="slider-pill"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <p class="toggle-card-desc">Aktifkan agar logo mitra ini langsung tampil di carousel 'Mitra Losari Computer' pada halaman beranda website.</p>
+                        </div>
+                        {% if form.aktif.errors %}<div class="errorlist">{{ form.aktif.errors }}</div>{% endif %}
+                    </div>
+
+                    <!-- Urutan Tampil Box -->
+                    <div class="urutan-card-box">
+                        <div>
+                            <label class="mitra-label" for="{{ form.urutan.id_for_label }}" style="margin-bottom:8px;">
+                                <span>Urutan Posisi</span>
+                                <span class="mitra-label-badge">Angka Terkecil = Awal</span>
+                            </label>
+                            {{ form.urutan }}
+                        </div>
+                        <p class="mitra-field-help" style="margin-top:8px;">Angka 0 akan tampil paling kiri/pertama pada slider beranda.</p>
+                        {% if form.urutan.errors %}<div class="errorlist">{{ form.urutan.errors }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Form Actions Bar ─── -->
+            <div class="mitra-actions-bar">
+                <div class="mitra-actions-left">
+                    <button class="btn-submit-save" type="submit">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        <span>Simpan Mitra</span>
+                    </button>
+                    <a class="btn-submit-cancel" href="{{ cancel_url }}">Batal</a>
+                </div>
+
+                {% if instance %}
+                <div>
+                    <button type="button" class="btn-danger-delete" onclick="confirmDeleteMitra();">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        <span>Hapus Mitra</span>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ─── RIGHT COLUMN: LIVE STOREFRONT PREVIEW & TIPS ─── -->
+        <div class="mitra-preview-sticky">
+            <!-- Live Preview Card -->
+            <div class="mitra-preview-card">
+                <div class="preview-card-header">
+                    <h4 class="preview-header-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <span>Pratinjau di Beranda</span>
+                    </h4>
+                    <span class="preview-pulse-badge">
+                        <span class="preview-pulse-dot"></span>
+                        <span>Live Sync</span>
+                    </span>
+                </div>
+
+                <div class="storefront-sim-frame" id="sim-frame-container">
+                    <p class="sim-eyebrow">KOLABORASI</p>
+                    <h3 class="sim-title">Mitra Losari Computer</h3>
+
+                    <div class="sim-carousel-stage">
+                        <span class="sim-arrow-btn">&#8592;</span>
+
+                        <!-- The Authentic Carousel Partner Item -->
+                        <div class="sim-partner-item">
+                            <div class="sim-partner-logo-box" id="sim-logo-frame">
+                                {% if instance and instance.gambar %}
+                                <img src="{{ instance.gambar.url }}" alt="{{ instance.nama }}" id="sim-logo-img">
+                                {% else %}
+                                <img src="" alt="Pratinjau Logo" id="sim-logo-img" style="display:none;">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#cbd5e1" stroke-width="1.8" id="sim-logo-svg"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                {% endif %}
+                            </div>
+                            <p class="sim-partner-name" id="sim-partner-name">
+                                {{ instance.nama|default:"Nama Mitra" }}
+                            </p>
+                            <span class="sim-partner-tag {% if form.aktif.value %}is-active{% else %}is-draft{% endif %}" id="sim-status-tag">
+                                {% if form.aktif.value %}Tayang{% else %}Draft{% endif %}
+                            </span>
+                        </div>
+
+                        <span class="sim-arrow-btn">&#8594;</span>
+                    </div>
+
+                    <!-- Contrast Testing Bar -->
+                    <div class="preview-bg-toggle-row">
+                        <span>Latar Pratinjau:</span>
+                        <button type="button" class="btn-sim-theme active" onclick="setSimTheme('light', this)">Terang (Website)</button>
+                        <button type="button" class="btn-sim-theme" onclick="setSimTheme('dark', this)">Gelap (Kontras)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guide Card -->
+            <div class="mitra-guide-card">
+                <h4 class="guide-card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span>Standar &amp; Panduan Logo Mitra</span>
+                </h4>
+                <ul class="guide-points-list">
+                    <li class="guide-point-item">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Format Transparan:</strong> Disarankan menggunakan file <strong>PNG transparan</strong> atau <strong>SVG</strong> agar logo tidak terpotong kotak putih kaku.</div>
+                    </li>
+                    <li class="guide-point-item">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Proporsi Seimbang:</strong> Rasio 1:1 (persegi) atau horizontal proporsional memberikan visual paling simetris di dalam lingkaran.</div>
+                    </li>
+                    <li class="guide-point-item">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Kualitas Jernih:</strong> Minimal resolusi 200&times;200 px agar tidak buram atau pecah saat dibuka di layar smartphone/tablet resolusi tinggi.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Hidden Delete Form if instance exists -->
+{% if instance %}
+<form id="delete-mitra-form" method="post" action="{% url 'app:mitra_manager_delete' instance.pk %}" style="display:none;">
+    {% csrf_token %}
+</form>
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var nameInput = document.getElementById("{{ form.nama.id_for_label }}");
+    var fileInput = document.getElementById("{{ form.gambar.id_for_label }}");
+    var activeCheckbox = document.getElementById("{{ form.aktif.id_for_label }}");
+    var toggleBox = document.getElementById("toggle-mitra-box");
+    var toggleChip = document.getElementById("toggle-chip-text");
+    var headerStatusBadge = document.getElementById("header-status-badge");
+    var headerStatusText = document.getElementById("header-status-text");
+
+    var simPartnerName = document.getElementById("sim-partner-name");
+    var simStatusTag = document.getElementById("sim-status-tag");
+    var simLogoImg = document.getElementById("sim-logo-img");
+    var simLogoSvg = document.getElementById("sim-logo-svg");
+
+    var previewActiveImg = document.getElementById("preview-active-img");
+    var previewEmptyState = document.getElementById("preview-empty-state");
+    var logoDisplayName = document.getElementById("logo-display-name");
+    var logoStatusChip = document.getElementById("logo-status-chip");
+    var logoChosenIndicator = document.getElementById("logo-chosen-indicator");
+
+    // 1. Real-time Name sync
+    if (nameInput && simPartnerName) {
+        nameInput.addEventListener("input", function () {
+            var val = nameInput.value.trim();
+            simPartnerName.textContent = val || "Nama Mitra";
+            if (logoDisplayName && (!fileInput || !fileInput.files.length)) {
+                logoDisplayName.textContent = val || "Nama Mitra";
+            }
+        });
+    }
+
+    // 2. Real-time File selection & Instant preview
+    if (fileInput) {
+        fileInput.addEventListener("change", function () {
+            var file = fileInput.files && fileInput.files[0];
+            if (file) {
+                var objUrl = URL.createObjectURL(file);
+
+                // Update form box preview
+                if (previewActiveImg) {
+                    previewActiveImg.src = objUrl;
+                    previewActiveImg.style.display = "block";
+                }
+                if (previewEmptyState) {
+                    previewEmptyState.style.display = "none";
+                }
+                if (logoChosenIndicator) {
+                    logoChosenIndicator.textContent = "✓ File baru: " + file.name;
+                    logoChosenIndicator.classList.add("is-active");
+                }
+                if (logoStatusChip) {
+                    logoStatusChip.textContent = "✓ Siap Diunggah";
+                    logoStatusChip.style.background = "#dcfce7";
+                    logoStatusChip.style.color = "#15803d";
+                    logoStatusChip.style.borderColor = "#bbf7d0";
+                }
+                if (logoDisplayName) {
+                    logoDisplayName.textContent = file.name;
+                }
+
+                // Update live storefront preview
+                if (simLogoImg) {
+                    simLogoImg.src = objUrl;
+                    simLogoImg.style.display = "block";
+                }
+                if (simLogoSvg) {
+                    simLogoSvg.style.display = "none";
+                }
+            }
+        });
+    }
+
+    // 3. Status Checkbox & Toggle Sync
+    function syncStatus(isActive) {
+        if (toggleBox) {
+            if (isActive) {
+                toggleBox.classList.add("is-active");
+                if (toggleChip) toggleChip.textContent = "Tayang di Website";
+            } else {
+                toggleBox.classList.remove("is-active");
+                if (toggleChip) toggleChip.textContent = "Disembunyikan (Draft)";
+            }
+        }
+        if (headerStatusBadge && headerStatusText) {
+            if (isActive) {
+                headerStatusBadge.className = "mitra-status-badge is-live";
+                headerStatusText.textContent = "Tayang di Website";
+            } else {
+                headerStatusBadge.className = "mitra-status-badge is-draft";
+                headerStatusText.textContent = "Disembunyikan (Draft)";
+            }
+        }
+        if (simStatusTag) {
+            if (isActive) {
+                simStatusTag.className = "sim-partner-tag is-active";
+                simStatusTag.textContent = "Tayang";
+            } else {
+                simStatusTag.className = "sim-partner-tag is-draft";
+                simStatusTag.textContent = "Draft";
+            }
+        }
+    }
+
+    if (activeCheckbox) {
+        activeCheckbox.addEventListener("change", function () {
+            syncStatus(activeCheckbox.checked);
+        });
+        syncStatus(activeCheckbox.checked);
+    }
+
+    window.toggleActiveCheckbox = function () {
+        if (activeCheckbox) {
+            activeCheckbox.checked = !activeCheckbox.checked;
+            syncStatus(activeCheckbox.checked);
+        }
+    };
+
+    // 4. Contrast Switcher for Live Preview
+    window.setSimTheme = function (theme, btn) {
+        var frame = document.getElementById("sim-frame-container");
+        document.querySelectorAll(".btn-sim-theme").forEach(function (b) { b.classList.remove("active"); });
+        if (btn) btn.classList.add("active");
+
+        if (frame) {
+            if (theme === 'dark') {
+                frame.style.background = "#0f172a";
+                frame.style.borderColor = "#334155";
+                frame.querySelector(".sim-title").style.color = "#ffffff";
+            } else {
+                frame.style.background = "#f8fafc";
+                frame.style.borderColor = "#e2e8f0";
+                frame.querySelector(".sim-title").style.color = "#0f172a";
+            }
+        }
+    };
+
+    // 5. Delete confirmation
+    window.confirmDeleteMitra = function () {
+        if (confirm("Apakah Anda yakin ingin menghapus mitra ini? Tindakan ini tidak dapat dibatalkan.")) {
+            var delForm = document.getElementById("delete-mitra-form");
+            if (delForm) delForm.submit();
+        }
+    };
+});
+</script>
+{% endblock %}
