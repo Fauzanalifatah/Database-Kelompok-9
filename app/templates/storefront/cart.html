@@ -1,92 +1,280 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}Keranjang Belanja - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cart.css' %}?v=1">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/cart.css' %}?v=4">{% endblock %}
 {% block content %}
-<div class="container cart-page">
-    <div class="cart-breadcrumb"><a href="{% url 'shop' %}">Shop</a><span>/</span><strong>Keranjang Belanja</strong></div>
-    <h1 class="cart-title">🛒 Keranjang Belanja</h1>
+<div class="cart-page-wrapper">
+    <div class="container cart-page">
+        <!-- Breadcrumb -->
+        <nav class="cart-breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Beranda</a>
+            <svg class="breadcrumb-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <a href="{% url 'shop' %}">Katalog Produk</a>
+            <svg class="breadcrumb-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <span class="breadcrumb-current">Keranjang Belanja</span>
+        </nav>
 
-    {% if messages %}
-    <div class="cart-messages">
-        {% for message in messages %}
-        <div class="cart-alert cart-alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if items %}
-    <div class="cart-layout">
-        <div class="cart-items">
-            {% for item in items %}
-            <div class="cart-item">
-                <div class="cart-item-image">
-                    {% if item.produk.gambar %}
-                    <img src="{{ item.produk.gambar.url }}" alt="{{ item.produk.nama }}">
-                    {% else %}
-                    {% with img=item.produk.galeri.all|first %}
-                    {% if img %}<img src="{{ img.gambar.url }}" alt="{{ item.produk.nama }}">{% else %}<span class="cart-item-placeholder">&#128187;</span>{% endif %}
-                    {% endwith %}
+        <!-- Page Header -->
+        <div class="cart-header-section">
+            <div class="cart-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="21" r="1"/>
+                    <circle cx="19" cy="21" r="1"/>
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                </svg>
+            </div>
+            <div class="cart-header-text">
+                <div class="cart-title-row">
+                    <h1 class="cart-title">Keranjang Belanja</h1>
+                    {% if items %}
+                    <span class="cart-title-badge">{{ cart.total_item }} Barang</span>
                     {% endif %}
                 </div>
-                <div class="cart-item-info">
-                    <div class="cart-item-top">
-                        <div>
-                            <span class="cart-item-category">{{ item.produk.kategori.nama|default:"Laptop" }}</span>
-                            <h3><a href="{% url 'app:product_detail' item.produk.slug %}">{{ item.produk.merek }} {{ item.produk.nama }}</a></h3>
-                            <span class="cart-item-condition">{{ item.produk.get_kondisi_display }}</span>
-                        </div>
-                        <form method="post" action="{% url 'app:cart_remove' item.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="cart-item-remove" title="Hapus dari keranjang">&times;</button>
-                        </form>
-                    </div>
-                    <div class="cart-item-bottom">
-                        <form method="post" action="{% url 'app:cart_update' item.id %}" class="cart-qty-form">
-                            {% csrf_token %}
-                            <button type="submit" name="jumlah" value="{{ item.jumlah|add:'-1' }}" class="cart-qty-btn" {% if item.jumlah <= 1 %}disabled{% endif %}>−</button>
-                            <span class="cart-qty-value">{{ item.jumlah }}</span>
-                            <button type="submit" name="jumlah" value="{{ item.jumlah|add:'1' }}" class="cart-qty-btn">+</button>
-                        </form>
-                        <div class="cart-item-price">
-                            {% if item.produk.memiliki_diskon %}
-                            <del class="cart-price-original">{{ item.produk.harga_rupiah }}</del>
-                            {% endif %}
-                            <strong>{{ item.subtotal_rupiah }}</strong>
-                        </div>
-                    </div>
-                </div>
+                <p class="cart-subtitle">Periksa kembali daftar produk pilihanmu sebelum melanjutkan proses checkout dan pembayaran.</p>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="cart-messages">
+            {% for message in messages %}
+            <div class="cart-alert cart-alert-{{ message.tags }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    {% if message.tags == 'success' %}
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                    {% else %}
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    {% endif %}
+                </svg>
+                <span>{{ message }}</span>
             </div>
             {% endfor %}
         </div>
+        {% endif %}
 
-        <aside class="cart-summary">
-            <h2>Ringkasan Belanja</h2>
-            <div class="cart-summary-row">
-                <span>Total Produk</span>
-                <span>{{ cart.total_item }} item</span>
+        {% if items %}
+        <div class="cart-layout">
+            <!-- Left: Cart Items List -->
+            <div class="cart-main">
+                <div class="cart-items-bar">
+                    <div class="cart-items-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                        </svg>
+                        <span>Daftar Item ({{ items|length }} Produk)</span>
+                    </div>
+                    <div class="cart-items-assurance">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        <span>Garansi Toko &amp; Packing Aman</span>
+                    </div>
+                </div>
+
+                <div class="cart-items-list">
+                    {% for item in items %}
+                    <article class="cart-item-card">
+                        <div class="cart-item-media">
+                            <a href="{% url 'app:product_detail' item.produk.slug %}">
+                                {% if item.produk.gambar %}
+                                <img src="{{ item.produk.gambar.url }}" alt="{{ item.produk.nama }}" loading="lazy">
+                                {% else %}
+                                {% with img=item.produk.galeri.all|first %}
+                                {% if img %}<img src="{{ img.gambar.url }}" alt="{{ item.produk.nama }}" loading="lazy">{% else %}<span class="cart-thumb-placeholder">💻</span>{% endif %}
+                                {% endwith %}
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="cart-item-body">
+                            <div class="cart-item-header">
+                                <div class="cart-item-meta">
+                                    <div class="cart-badge-group">
+                                        <span class="cart-badge-cat">{{ item.produk.kategori.nama|default:"Laptop" }}</span>
+                                        <span class="cart-badge-cond">{{ item.produk.get_kondisi_display }}</span>
+                                        {% if item.produk.stok <= 1 %}
+                                        <span class="cart-badge-stock badge-stock-last">Tersedia 1 Unit (Stok Terakhir)</span>
+                                        {% elif item.produk.tersedia %}
+                                        <span class="cart-badge-stock">Tersedia {{ item.produk.stok }} Unit</span>
+                                        {% else %}
+                                        <span class="cart-badge-stock badge-stock-out">Stok Habis</span>
+                                        {% endif %}
+                                    </div>
+                                    <h2 class="cart-item-name">
+                                        <a href="{% url 'app:product_detail' item.produk.slug %}">{{ item.produk.merek }} {{ item.produk.nama }}</a>
+                                    </h2>
+                                </div>
+                                <form method="post" action="{% url 'app:cart_remove' item.id %}" class="cart-remove-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="cart-btn-remove" title="Hapus produk dari keranjang" aria-label="Hapus produk">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="cart-unit-row">
+                                <span class="cart-unit-label">Harga Satuan:</span>
+                                <strong class="cart-unit-price">{{ item.produk.harga_aktif_rupiah }}</strong>
+                                {% if item.produk.memiliki_diskon %}
+                                <del class="cart-unit-original">{{ item.produk.harga_rupiah }}</del>
+                                <span class="cart-unit-discount">-{{ item.produk.diskon_persen|floatformat:"0" }}%</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="cart-item-footer">
+                                <div class="cart-item-qty-wrap">
+                                    <span class="cart-qty-label">Jumlah:</span>
+                                    <form method="post" action="{% url 'app:cart_update' item.id %}" class="cart-stepper">
+                                        {% csrf_token %}
+                                        <button type="submit" name="jumlah" value="{{ item.jumlah|add:'-1' }}" class="cart-step-btn" title="Kurangi 1" {% if item.jumlah <= 1 %}disabled{% endif %} aria-label="Kurangi">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                        </button>
+                                        <span class="cart-step-number">{{ item.jumlah }}</span>
+                                        <button type="submit" name="jumlah" value="{{ item.jumlah|add:'1' }}" class="cart-step-btn" title="Tambah 1" {% if item.jumlah >= item.produk.stok %}disabled{% endif %} aria-label="Tambah">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                        </button>
+                                    </form>
+                                    {% if item.produk.stok <= 1 %}
+                                    <span class="cart-stock-hint cart-stock-single">Maks. 1 unit (Stok terakhir)</span>
+                                    {% elif item.jumlah >= item.produk.stok %}
+                                    <span class="cart-stock-hint cart-stock-max">Maks. batas stok ({{ item.produk.stok }} unit)</span>
+                                    {% endif %}
+                                </div>
+                                <div class="cart-item-subtotal-block">
+                                    <span class="cart-subtotal-label">Subtotal Produk</span>
+                                    <strong class="cart-subtotal-value">{{ item.subtotal_rupiah }}</strong>
+                                    {% if item.hemat > 0 %}
+                                    <span class="cart-item-savings-pill">Hemat {{ item.hemat_rupiah }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+
+                <div class="cart-shop-more-banner">
+                    <div class="banner-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+                    </div>
+                    <div class="banner-text">
+                        <strong>Mau tambah aksesori atau laptop lainnya?</strong>
+                        <span>Pilihan perlengkapan laptop, charger, dan tas siap kirim se-Indonesia.</span>
+                    </div>
+                    <a href="{% url 'shop' %}" class="banner-link">Eksplor Produk &rarr;</a>
+                </div>
             </div>
-            {% if cart.total_hemat > 0 %}
-            <div class="cart-summary-row cart-summary-savings">
-                <span>Total Hemat</span>
-                <span>-{{ cart.total_hemat_rupiah }}</span>
+
+            <!-- Right: Sticky Order Summary -->
+            <aside class="cart-sidebar">
+                <div class="cart-summary-box">
+                    <div class="summary-header">
+                        <h3>Ringkasan Belanja</h3>
+                        <span class="summary-items-badge">{{ cart.total_item }} Item</span>
+                    </div>
+
+                    <div class="summary-details">
+                        {% if cart.total_hemat > 0 %}
+                        <div class="summary-row">
+                            <span class="text-muted">Total Harga Awal</span>
+                            <span class="text-muted"><del>{{ cart.total_harga_normal_rupiah }}</del></span>
+                        </div>
+                        <div class="summary-row text-savings">
+                            <span>Total Hemat Diskon</span>
+                            <strong class="savings-amount">-{{ cart.total_hemat_rupiah }}</strong>
+                        </div>
+                        {% endif %}
+                        <div class="summary-row">
+                            <span>Total Pembelian Barang</span>
+                            <span>{{ cart.total_item }} Unit</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Ongkos Kirim &amp; Packing</span>
+                            <span class="badge-free">Dihitung saat Checkout</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Jaminan Toko</span>
+                            <span class="badge-free text-green">1 Bulan Garansi</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-total-divider"></div>
+
+                    <div class="summary-grand-total">
+                        <div>
+                            <span class="grand-total-label">Total Tagihan</span>
+                            <small class="grand-total-note">Estimasi belum termasuk ongkir</small>
+                        </div>
+                        <strong class="grand-total-price">{{ cart.total_harga_rupiah }}</strong>
+                    </div>
+
+                    <div class="summary-actions">
+                        <a class="btn-checkout-primary" href="{% url 'app:checkout' items.0.produk.slug %}?jumlah={{ items.0.jumlah }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <span>Lanjut ke Checkout</span>
+                            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a class="btn-continue-shopping" href="{% url 'shop' %}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                            <span>Lanjut Belanja (Cari Lain)</span>
+                        </a>
+                    </div>
+
+                    <div class="summary-trust-perks">
+                        <div class="trust-perk-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <div>
+                                <strong>Transaksi Terproteksi</strong>
+                                <span>Verifikasi otomatis Midtrans Snap 3DS</span>
+                            </div>
+                        </div>
+                        <div class="trust-perk-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 10h22"/></svg>
+                            <div>
+                                <strong>Metode Pembayaran Lengkap</strong>
+                                <span>QRIS, Mandiri, BRI, BNI, BCA &amp; E-Wallet</span>
+                            </div>
+                        </div>
+                        <div class="trust-perk-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <div>
+                                <strong>Toko Fisik Resmi Makassar</strong>
+                                <span>{{ footer_setting.alamat|default:"Jl. Kareboosi Link Makassar Blok R-161" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        {% else %}
+        <!-- Empty Cart State -->
+        <div class="cart-empty-state">
+            <div class="cart-empty-illustration">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="21" r="1"/>
+                    <circle cx="19" cy="21" r="1"/>
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                </svg>
             </div>
-            {% endif %}
-            <div class="cart-summary-total">
-                <span>Total Harga</span>
-                <strong>{{ cart.total_harga_rupiah }}</strong>
+            <h2>Keranjang Belanja Anda Masih Kosong</h2>
+            <p>Sepertinya Anda belum memilih produk apapun. Jelajahi katalog laptop second berkualitas dan aksesoris bergaransi kami sekarang.</p>
+            <div class="cart-empty-actions">
+                <a href="{% url 'shop' %}" class="btn-empty-shop">
+                    <span>Mulai Belanja Sekarang</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
             </div>
-            <a class="cart-checkout-btn" href="{% url 'shop' %}">Lanjut Belanja</a>
-        </aside>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="cart-empty">
-        <span class="cart-empty-icon">🛒</span>
-        <h2>Keranjang masih kosong</h2>
-        <p>Yuk, cari laptop impianmu dan tambahkan ke keranjang!</p>
-        <a class="button" href="{% url 'shop' %}">Mulai Belanja</a>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
-

@@ -1,4 +1,6 @@
 import os
+import re
+import urllib.parse
 import uuid
 from decimal import Decimal, ROUND_HALF_UP
 from html import unescape
@@ -154,7 +156,7 @@ class FooterSetting(models.Model):
         default="Partner teknologi untuk kebutuhan kuliah, kerja, desain, dan gaming.",
     )
     alamat = models.TextField(
-        default="Jl. Raya Losari No. 9\nLosari, Brebes, Jawa Tengah"
+        default="Jl. Kareboosi Link Makassar Blok R-161"
     )
     jam_pelayanan = models.CharField(
         max_length=150, default="Senin - Jumat | 08.00 - 17.00 WIB"
@@ -169,6 +171,15 @@ class FooterSetting(models.Model):
 
     def __str__(self):
         return self.nama_toko
+
+    @property
+    def whatsapp_clean(self):
+        digits = re.sub(r"\D", "", self.whatsapp or "")
+        if digits.startswith("0"):
+            digits = "62" + digits[1:]
+        elif digits.startswith("8"):
+            digits = "62" + digits
+        return digits or "6281234567890"
 
 
 class FooterSocial(models.Model):
@@ -189,6 +200,35 @@ class FooterSocial(models.Model):
 
     def __str__(self):
         return self.nama
+
+    @property
+    def whatsapp_clean_number(self):
+        phone_raw = (self.nomor_telepon or "").strip()
+        digits = re.sub(r"\D", "", phone_raw)
+        if digits.startswith("0"):
+            digits = "62" + digits[1:]
+        elif digits.startswith("8"):
+            digits = "62" + digits
+        return digits
+
+    @property
+    def target_url(self):
+        """
+        Menghasilkan URL tujuan yang sesuai untuk sosial media.
+        Untuk WhatsApp, menggunakan API resmi WhatsApp (https://api.whatsapp.com/send?phone=...)
+        disertai pesan pembuka konsultasi dan bantuan.
+        """
+        nama_lower = (self.nama or "").strip().lower()
+        if nama_lower == "whatsapp" or self.nomor_telepon:
+            digits = self.whatsapp_clean_number
+            if digits:
+                store_name = self.footer.nama_toko if hasattr(self, "footer") and self.footer and self.footer.nama_toko else "Losari Computer"
+                text = f"Halo {store_name}, saya ingin minta bantuan dan konsultasi."
+                encoded_text = urllib.parse.quote(text)
+                return f"https://api.whatsapp.com/send?phone={digits}&text={encoded_text}"
+            if self.url:
+                return self.url
+        return self.url or "#"
 
 
 def rename_footer_payment_icon(instance, filename):
@@ -598,7 +638,7 @@ class Produk(models.Model):
     gambar = models.ImageField(
         upload_to="produk/", null=True, blank=True
     )
-    unggulan = models.BooleanField(default=False)
+    unggulan = models.BooleanField(default=False, verbose_name="Keunggulan")
     aktif = models.BooleanField(default=True)
     dibuat_pada = models.DateTimeField(default=timezone.now)
     diperbarui_pada = models.DateTimeField(auto_now=True)
@@ -803,6 +843,10 @@ class Pesanan(models.Model):
             (item.subtotal for item in self.item.all()), 0
         )
 
+    @property
+    def total_rupiah(self):
+        return f"Rp{self.total:,.0f}".replace(",", ".")
+
 
 class ItemPesanan(models.Model):
     pesanan = models.ForeignKey(
@@ -820,6 +864,14 @@ class ItemPesanan(models.Model):
     @property
     def subtotal(self):
         return self.harga_satuan * self.jumlah
+
+    @property
+    def subtotal_rupiah(self):
+        return f"Rp{self.subtotal:,.0f}".replace(",", ".")
+
+    @property
+    def harga_satuan_rupiah(self):
+        return f"Rp{self.harga_satuan:,.0f}".replace(",", ".")
 
     def save(self, *args, **kwargs):
         if not self.nama_produk:
@@ -870,6 +922,14 @@ class Keranjang(models.Model):
     def total_hemat_rupiah(self):
         return f"Rp{self.total_hemat:,.0f}".replace(",", ".")
 
+    @property
+    def total_harga_normal(self):
+        return self.total_harga + self.total_hemat
+
+    @property
+    def total_harga_normal_rupiah(self):
+        return f"Rp{self.total_harga_normal:,.0f}".replace(",", ".")
+
 
 class ItemKeranjang(models.Model):
     keranjang = models.ForeignKey(
@@ -896,6 +956,22 @@ class ItemKeranjang(models.Model):
     @property
     def subtotal_rupiah(self):
         return f"Rp{self.subtotal:,.0f}".replace(",", ".")
+
+    @property
+    def harga_satuan_rupiah(self):
+        return f"Rp{self.harga_satuan:,.0f}".replace(",", ".")
+
+    @property
+    def subtotal_rupiah(self):
+        return f"Rp{self.subtotal:,.0f}".replace(",", ".")
+
+    @property
+    def subtotal_normal(self):
+        return self.produk.harga * self.jumlah
+
+    @property
+    def subtotal_normal_rupiah(self):
+        return f"Rp{self.subtotal_normal:,.0f}".replace(",", ".")
 
     @property
     def hemat(self):

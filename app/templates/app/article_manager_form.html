@@ -1,102 +1,1186 @@
 {% extends "app/content_manager.html" %}
 {% block content %}
-<div class="article-editor-toolbar">
-    <div>
-        <p class="article-editor-kicker">EDITOR ARTIKEL</p>
-        <h2>{{ heading }}</h2>
-        <p class="muted">Tulis artikel yang informatif dan nyaman dibaca pelanggan.</p>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   MODERN EDITORIAL CMS ARTICLE WRITER (CLEAN, PRO, SAAS)
+═══════════════════════════════════════════════════════════ */
+.editor-container-wrapper {
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+/* ─── Top Command / Action Bar ─── */
+.editor-action-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.editor-header-meta {
+    min-width: 0;
+}
+.editor-header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+.editor-page-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+.editor-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.editor-status-badge.is-live {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+.editor-status-badge.is-draft {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+.editor-status-badge .status-indicator-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.editor-status-badge.is-live .status-indicator-dot {
+    background: #16a34a;
+    box-shadow: 0 0 0 2px #dcfce7;
+}
+.editor-status-badge.is-draft .status-indicator-dot {
+    background: #d97706;
+    box-shadow: 0 0 0 2px #fef3c7;
+}
+.editor-header-desc {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* Action Buttons */
+.editor-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.btn-editor-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 15px;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.btn-editor-preview:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+.btn-editor-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.btn-editor-cancel:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+.btn-editor-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 20px;
+    background: #dc2626;
+    color: #ffffff;
+    border: 1px solid #dc2626;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+    transition: all 0.15s ease;
+}
+.btn-editor-save:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+}
+
+/* ─── Two-Column Layout ─── */
+.editor-layout-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ─── Main Writing Studio Card ─── */
+.editor-studio-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.studio-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+}
+.studio-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.studio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.studio-stats {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+.studio-helper-tip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* Title Input */
+.studio-title-box {
+    margin-bottom: 20px;
+}
+.studio-field-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.studio-title-box input {
+    width: 100%;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    outline: none;
+    letter-spacing: -0.015em;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+.studio-title-box input:focus {
+    background: #ffffff;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+.studio-title-box input::placeholder {
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+/* ─── Modern Format Toolbar ─── */
+.modern-format-toolbar {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 6px 8px;
+    margin-bottom: 18px;
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.toolbar-scroll-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 0;
+}
+.toolbar-scroll-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+.toolbar-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.toolbar-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding-right: 6px;
+    border-right: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+.toolbar-btn-group:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+.toolbar-tool-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 4px 8px;
+    background: transparent;
+    color: #475569;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.toolbar-tool-btn:hover {
+    background: #ffffff;
+    color: #0f172a;
+    border-color: #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.toolbar-tool-btn:active {
+    background: #e2e8f0;
+}
+.toolbar-tool-btn svg {
+    flex-shrink: 0;
+}
+.btn-highlight-action {
+    background: #ffffff;
+    color: #dc2626;
+    border-color: #fecaca;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+.btn-highlight-action:hover {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fca5a5;
+}
+
+/* ─── Content Editor ─── */
+.article-content-editor {
+    min-height: 440px;
+    padding: 20px 16px;
+    background: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #1e293b;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    transition: border-color 0.2s ease;
+}
+.article-content-editor:focus {
+    border-color: #e2e8f0;
+}
+.article-content-editor:empty:before {
+    content: attr(data-placeholder);
+    color: #94a3b8;
+    font-style: italic;
+    cursor: text;
+}
+.article-content-editor h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 28px 0 14px;
+    line-height: 1.3;
+}
+.article-content-editor h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 22px 0 12px;
+    line-height: 1.35;
+}
+.article-content-editor p {
+    margin: 0 0 16px;
+}
+.article-content-editor ul, .article-content-editor ol {
+    margin: 0 0 18px;
+    padding-left: 24px;
+}
+.article-content-editor li {
+    margin-bottom: 6px;
+}
+.article-content-editor blockquote {
+    margin: 20px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #dc2626;
+    background: #f8fafc;
+    color: #475569;
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+.article-content-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    margin: 18px auto;
+    display: block;
+}
+.article-content-editor a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+/* Bottom Bar */
+.editor-bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+.editor-tip-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}
+.editor-tip-text svg {
+    color: #dc2626;
+    flex-shrink: 0;
+}
+
+/* ─── Sidebar Settings Panel ─── */
+.editor-sidebar-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 20px;
+}
+.sidebar-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.sidebar-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sidebar-header-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    flex-shrink: 0;
+}
+.sidebar-header-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+.sidebar-header-desc {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Publication Toggle Card */
+.sidebar-status-card {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.sidebar-status-card.is-published {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+.status-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.status-card-label-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.status-card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dc2626;
+    flex-shrink: 0;
+}
+.sidebar-status-card.is-published .status-card-dot {
+    background: #16a34a;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+.status-card-title {
+    font-size: 13.5px;
+    color: #0f172a;
+    font-weight: 800;
+}
+.status-card-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+.sidebar-status-card.is-published .status-card-pill {
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+.status-card-desc {
+    margin: 8px 0 0;
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* Switch Control */
+.switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.switch-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+.switch-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+}
+.switch-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch-toggle input:checked + .switch-slider-green {
+    background-color: #16a34a;
+}
+.switch-toggle input:checked + .switch-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+/* Form Fields in Sidebar */
+.sidebar-field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.sidebar-field-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+}
+.sidebar-field-label svg {
+    color: #64748b;
+    flex-shrink: 0;
+}
+.sidebar-label-with-counter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.char-counter {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+.sidebar-field-row input, .sidebar-field-row select, .sidebar-field-row textarea {
+    width: 100%;
+    padding: 9px 12px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #0f172a;
+    box-sizing: border-box;
+    transition: all 0.15s ease;
+}
+.sidebar-field-row input:focus, .sidebar-field-row select:focus, .sidebar-field-row textarea:focus {
+    background: #ffffff;
+    border-color: #dc2626;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+.sidebar-help-text {
+    margin: 2px 0 0;
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.35;
+}
+
+/* Custom Cover Image Uploader */
+.cover-upload-container {
+    margin-top: 4px;
+}
+.cover-preview-wrapper {
+    position: relative;
+    width: 100%;
+    height: 170px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f1f5f9;
+    border: 1px dashed #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cover-image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.cover-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.cover-preview-wrapper:hover .cover-image-overlay {
+    opacity: 1;
+}
+.btn-change-cover {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+.btn-change-cover:hover {
+    transform: scale(1.04);
+}
+.cover-upload-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 16px;
+    text-align: center;
+    color: #64748b;
+    transition: background 0.15s ease;
+}
+.cover-upload-empty:hover {
+    background: #e2e8f0;
+}
+.empty-upload-icon {
+    color: #94a3b8;
+}
+.empty-upload-title {
+    font-size: 13px;
+    color: #334155;
+    font-weight: 700;
+}
+.empty-upload-sub {
+    font-size: 11px;
+    color: #94a3b8;
+}
+.cover-file-hidden input[type="file"] {
+    display: none;
+}
+.cover-selected-filename {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* Slug URL Row */
+.slug-input-prefix-wrap {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.slug-prefix {
+    padding: 0 10px;
+    font-size: 12px;
+    color: #64748b;
+    background: #e2e8f0;
+    line-height: 38px;
+    font-family: monospace;
+    flex-shrink: 0;
+}
+.slug-input-prefix-wrap input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 9px 10px;
+    font-size: 12.5px;
+    font-family: monospace;
+}
+
+/* Sidebar Footer Buttons */
+.sidebar-actions-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+.btn-sidebar-save {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+    transition: all 0.15s ease;
+    width: 100%;
+}
+.btn-sidebar-save:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+}
+.btn-sidebar-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.15s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+.btn-sidebar-cancel:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABLET & MOBILE RESPONSIVENESS (<1024px & <768px)
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .editor-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .editor-sidebar-panel {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+    .sidebar-panel-header, .sidebar-status-card, .sidebar-actions-footer {
+        grid-column: 1 / -1;
+    }
+    .sidebar-actions-footer {
+        flex-direction: row;
+    }
+    .btn-sidebar-save, .btn-sidebar-cancel {
+        flex: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .editor-action-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+    .editor-header-actions {
+        width: 100%;
+    }
+    .editor-header-actions .btn-editor-save,
+    .editor-header-actions .btn-editor-cancel,
+    .editor-header-actions .btn-editor-preview {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .editor-studio-card {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+    .studio-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .studio-title-box input {
+        font-size: 18px;
+        padding: 10px 14px;
+    }
+    .modern-format-toolbar {
+        top: 0;
+        border-radius: 8px;
+        padding: 4px 6px;
+    }
+    .article-content-editor {
+        min-height: 320px;
+        padding: 14px 6px;
+        font-size: 15px;
+    }
+    .editor-sidebar-panel {
+        grid-template-columns: 1fr;
+        padding: 18px 14px;
+        border-radius: 12px;
+    }
+    .sidebar-actions-footer {
+        flex-direction: column;
+    }
+    .btn-sidebar-save, .btn-sidebar-cancel {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="editor-container-wrapper">
+    <!-- Top Command / Action Bar -->
+    <div class="editor-action-header">
+        <div class="editor-header-meta">
+            <div class="editor-header-title-row">
+                <h2 class="editor-page-title">{{ heading }}</h2>
+                <span class="editor-status-badge{% if form.instance.published %} is-live{% else %} is-draft{% endif %}" id="header-status-badge">
+                    <span class="status-indicator-dot"></span>
+                    <span id="header-status-text">{% if form.instance.published %}Tayang di Website{% else %}Draf (Belum Terbit){% endif %}</span>
+                </span>
+            </div>
+            <p class="editor-header-desc">Tulis artikel informatif dengan editor yang intuitif dan terstruktur.</p>
+        </div>
+        <div class="editor-header-actions">
+            {% if form.instance.slug %}
+            <a class="btn-editor-preview" href="{% url 'article_detail' form.instance.slug %}" target="_blank" title="Lihat tampilan artikel di website">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Lihat di Web</span>
+            </a>
+            {% endif %}
+            <a class="btn-editor-cancel" href="{{ cancel_url }}">Batal</a>
+            <button class="btn-editor-save" type="button" onclick="document.getElementById('article-editor-form').requestSubmit();">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                <span>Simpan Artikel</span>
+            </button>
+        </div>
     </div>
-    <a class="button secondary" href="{{ cancel_url }}">Kembali</a>
+
+    <form class="article-editor-form" method="post" enctype="multipart/form-data" id="article-editor-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="editor-error-box">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="editor-layout-grid">
+            <!-- ═══ RUANG MENULIS (STUDIO CARD) ═══ -->
+            <section class="editor-studio-card">
+                <div class="studio-card-header">
+                    <div class="studio-badge-group">
+                        <span class="studio-badge">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                            Ruang Menulis
+                        </span>
+                        <span class="studio-stats" id="editor-live-stats">
+                            <span id="stat-words">0 kata</span> · <span id="stat-readtime">~1 mnt baca</span>
+                        </span>
+                    </div>
+                    <div class="studio-helper-tip">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span>Gunakan toolbar untuk format teks &amp; sisipkan foto</span>
+                    </div>
+                </div>
+
+                <!-- Judul Artikel -->
+                <div class="studio-title-box">
+                    <label class="studio-field-label" for="{{ form.title_articles.id_for_label }}">Judul Artikel:</label>
+                    {{ form.title_articles }}
+                    {% if form.title_articles.errors %}{{ form.title_articles.errors }}{% endif %}
+                </div>
+
+                <!-- Toolbar Modern & Rapi -->
+                <div class="modern-format-toolbar" aria-label="Format artikel">
+                    <div class="toolbar-scroll-wrapper">
+                        <!-- Teks Style -->
+                        <div class="toolbar-btn-group">
+                            <button type="button" class="toolbar-tool-btn" data-command="bold" title="Tebal (Ctrl+B)"><strong>B</strong></button>
+                            <button type="button" class="toolbar-tool-btn" data-command="italic" title="Miring (Ctrl+I)"><em>I</em></button>
+                            <button type="button" class="toolbar-tool-btn" data-command="underline" title="Garis Bawah (Ctrl+U)"><u>U</u></button>
+                            <button type="button" class="toolbar-tool-btn" data-command="strikeThrough" title="Coret Teks"><s>S</s></button>
+                        </div>
+
+                        <!-- Struktur Heading -->
+                        <div class="toolbar-btn-group">
+                            <button type="button" class="toolbar-tool-btn" data-command="formatBlock" data-value="h2" title="Subjudul Besar (H2)">H2</button>
+                            <button type="button" class="toolbar-tool-btn" data-command="formatBlock" data-value="h3" title="Subjudul Kecil (H3)">H3</button>
+                            <button type="button" class="toolbar-tool-btn" data-command="formatBlock" data-value="p" title="Paragraf Normal">¶</button>
+                            <button type="button" class="toolbar-tool-btn" data-command="formatBlock" data-value="blockquote" title="Kutipan (Quote)">“ ”</button>
+                        </div>
+
+                        <!-- Daftar Berpoin & Nomor -->
+                        <div class="toolbar-btn-group">
+                            <button type="button" class="toolbar-tool-btn" data-command="insertUnorderedList" title="Daftar Berpoin">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"></line><line x1="9" y1="12" x2="20" y2="12"></line><line x1="9" y1="18" x2="20" y2="18"></line><circle cx="4" cy="6" r="2" fill="currentColor"></circle><circle cx="4" cy="12" r="2" fill="currentColor"></circle><circle cx="4" cy="18" r="2" fill="currentColor"></circle></svg>
+                            </button>
+                            <button type="button" class="toolbar-tool-btn" data-command="insertOrderedList" title="Daftar Bernomor">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h2v4"></path><path d="M4 14h2l-2 3h2"></path></svg>
+                            </button>
+                        </div>
+
+                        <!-- Perataan Teks -->
+                        <div class="toolbar-btn-group">
+                            <button type="button" class="toolbar-tool-btn" data-command="justifyLeft" title="Rata Kiri">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="18" x2="18" y2="18"></line></svg>
+                            </button>
+                            <button type="button" class="toolbar-tool-btn" data-command="justifyCenter" title="Rata Tengah">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="6" y1="12" x2="18" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+                            </button>
+                            <button type="button" class="toolbar-tool-btn" data-command="justifyRight" title="Rata Kanan">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="9" y1="12" x2="21" y2="12"></line><line x1="6" y1="18" x2="21" y2="18"></line></svg>
+                            </button>
+                        </div>
+
+                        <!-- Tautan & Sisip Foto -->
+                        <div class="toolbar-btn-group">
+                            <button type="button" class="toolbar-tool-btn" data-command="createLink" title="Tambahkan Tautan Link">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            </button>
+                            <button type="button" class="toolbar-tool-btn btn-highlight-action" data-image-button title="Sisipkan Gambar ke Dalam Paragraf">
+                                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                <span>Sisipkan Foto</span>
+                            </button>
+                            <input type="file" id="inline-article-image-input" accept="image/*" style="display:none;" aria-hidden="true">
+                        </div>
+
+                        <!-- Hapus Format -->
+                        <div class="toolbar-btn-group">
+                            <button type="button" class="toolbar-tool-btn" data-command="removeFormat" title="Hapus Format Teks">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor Teks Konten -->
+                <div class="article-content-editor" id="article-content-editor" contenteditable="true" data-placeholder="Mulai ketik cerita, ulasan, atau artikel Anda di sini...">{{ form.content.value|default:""|safe }}</div>
+                {{ form.content.as_hidden }}
+                {% if form.content.errors %}{{ form.content.errors }}{% endif %}
+
+                <!-- Footer Tip -->
+                <div class="editor-bottom-bar">
+                    <span class="editor-tip-text">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+                        Tips: Gunakan subjudul (H2/H3) dan paragraf pendek agar nyaman dibaca pelanggan di smartphone.
+                    </span>
+                </div>
+            </section>
+
+            <!-- ═══ SIDEBAR PENGATURAN & METADATA ═══ -->
+            <aside class="editor-sidebar-panel">
+                <div class="sidebar-panel-header">
+                    <div class="sidebar-header-left">
+                        <span class="sidebar-header-dot"></span>
+                        <div>
+                            <h3 class="sidebar-header-title">Pengaturan Artikel</h3>
+                            <p class="sidebar-header-desc">Atur status tayang, kategori, dan SEO.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Publikasi Card dengan Switch Toggle -->
+                <div class="sidebar-status-card{% if form.instance.published %} is-published{% endif %}" id="publish-toggle-box" onclick="document.getElementById('{{ form.published.id_for_label }}').click();">
+                    <div class="status-card-top">
+                        <div class="status-card-label-group">
+                            <span class="status-card-dot" id="publish-dot"></span>
+                            <strong class="status-card-title">Status Tayang</strong>
+                            <span class="status-card-pill" id="publish-pill">{% if form.instance.published %}Tayang di Web{% else %}Draf (Tersimpan){% endif %}</span>
+                        </div>
+                        <div class="status-card-switch-wrap" onclick="event.stopPropagation();">
+                            <label class="switch-toggle" for="{{ form.published.id_for_label }}">
+                                {{ form.published }}
+                                <span class="switch-toggle-slider switch-slider-green"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="status-card-desc" id="publish-desc">
+                        {% if form.instance.published %}Artikel aktif dan langsung dapat dibaca oleh publik di website.{% else %}Artikel disimpan sebagai draf dan belum ditampilkan ke pembeli.{% endif %}
+                    </p>
+                </div>
+                {% if form.published.errors %}{{ form.published.errors }}{% endif %}
+
+                <!-- Kategori Berita -->
+                <div class="sidebar-field-row">
+                    <label class="sidebar-field-label" for="{{ form.category.id_for_label }}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        <span>Kategori Artikel:</span>
+                    </label>
+                    <div class="sidebar-select-wrap">
+                        {{ form.category }}
+                    </div>
+                    {% if form.category.help_text %}<small class="sidebar-help-text">{{ form.category.help_text }}</small>{% endif %}
+                    {{ form.category.errors }}
+                </div>
+
+                <!-- Penulis -->
+                <div class="sidebar-field-row">
+                    <label class="sidebar-field-label" for="{{ form.authors.id_for_label }}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>Nama Penulis:</span>
+                    </label>
+                    {{ form.authors }}
+                    {% if form.authors.help_text %}<small class="sidebar-help-text">{{ form.authors.help_text }}</small>{% endif %}
+                    {{ form.authors.errors }}
+                </div>
+
+                <!-- Deskripsi SEO -->
+                <div class="sidebar-field-row">
+                    <div class="sidebar-label-with-counter">
+                        <label class="sidebar-field-label" for="{{ form.desc_seo.id_for_label }}">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <span>Ringkasan SEO:</span>
+                        </label>
+                        <span class="char-counter" id="seo-char-counter">0/160</span>
+                    </div>
+                    {{ form.desc_seo }}
+                    <small class="sidebar-help-text">Ringkasan singkat yang tampil di kartu artikel etalase dan mesin pencari.</small>
+                    {{ form.desc_seo.errors }}
+                </div>
+
+                <!-- Gambar Sampul Artikel -->
+                <div class="sidebar-field-row">
+                    <label class="sidebar-field-label">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span>Foto Sampul (Cover):</span>
+                    </label>
+
+                    <div class="cover-upload-container">
+                        <div class="cover-preview-wrapper" id="cover-preview-box">
+                            {% if form.instance.images %}
+                            <img class="cover-image-preview" src="{{ form.instance.images.url }}" alt="Sampul artikel" id="cover-display-img">
+                            <div class="cover-image-overlay">
+                                <label class="btn-change-cover" for="{{ form.images.id_for_label }}">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    <span>Ganti Foto Sampul</span>
+                                </label>
+                            </div>
+                            {% else %}
+                            <label class="cover-upload-empty" for="{{ form.images.id_for_label }}" id="cover-empty-dropzone">
+                                <div class="empty-upload-icon">
+                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                                <strong class="empty-upload-title">Pilih Foto Sampul</strong>
+                                <span class="empty-upload-sub">Klik di sini untuk upload (JPG, PNG, WEBP)</span>
+                            </label>
+                            {% endif %}
+                        </div>
+                        <div class="cover-file-hidden">
+                            {{ form.images }}
+                        </div>
+                        <div class="cover-selected-filename" id="cover-filename-text"></div>
+                    </div>
+                    {{ form.images.errors }}
+                </div>
+
+                <!-- Tautan URL (Slug) -->
+                <div class="sidebar-field-row">
+                    <label class="sidebar-field-label" for="{{ form.slug.id_for_label }}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        <span>Tautan URL (Slug):</span>
+                    </label>
+                    <div class="slug-input-prefix-wrap">
+                        <span class="slug-prefix">/artikel/</span>
+                        {{ form.slug }}
+                    </div>
+                    <small class="sidebar-help-text">Dibuat otomatis dari judul, atau sesuaikan jika perlu.</small>
+                    {{ form.slug.errors }}
+                </div>
+
+                <!-- Tombol Aksi di Bawah Sidebar -->
+                <div class="sidebar-actions-footer">
+                    <button class="btn-sidebar-save" type="submit">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        <span>Simpan Artikel</span>
+                    </button>
+                    <a class="btn-sidebar-cancel" href="{{ cancel_url }}">Batal</a>
+                </div>
+            </aside>
+        </div>
+    </form>
 </div>
-<form class="article-editor-form" method="post" enctype="multipart/form-data" id="article-editor-form">
-    {% csrf_token %}
-    {% if form.non_field_errors %}<div class="editor-error-box">{{ form.non_field_errors }}</div>{% endif %}
-    <div class="article-editor-layout">
-        <section class="article-writing-card">
-            <div class="article-writing-intro">
-                <span>RUANG MENULIS</span>
-                <small>Bagikan informasi terbaru dari Losari Computer.</small>
-            </div>
-            <div class="article-editor-field title-field">
-                {{ form.title_articles.label_tag }}{{ form.title_articles }}
-                {% if form.title_articles.errors %}{{ form.title_articles.errors }}{% endif %}
-            </div>
-            <div class="article-format-toolbar" aria-label="Format artikel">
-                <span class="article-toolbar-group">
-                    <button type="button" data-command="bold" aria-label="Tebal"><strong>B</strong></button>
-                    <button type="button" data-command="italic" aria-label="Miring"><em>I</em></button>
-                    <button type="button" data-command="underline" aria-label="Garis bawah"><u>U</u></button>
-                </span>
-                <span class="article-toolbar-group">
-                    <button type="button" data-command="formatBlock" data-value="h2" aria-label="Heading 2">H<small>2</small></button>
-                    <button type="button" data-command="formatBlock" data-value="p" aria-label="Paragraf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h8a4 4 0 0 1 0 8H8v6M8 5v14"></path></svg></button>
-                </span>
-                <span class="article-toolbar-group">
-                    <button type="button" data-command="insertUnorderedList" aria-label="Daftar berpoin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"></path><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg></button>
-                    <button type="button" data-command="insertOrderedList" aria-label="Daftar bernomor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"></path><path d="M4 5h1v3M4 8h2M4 11h2l-2 4h2M4 18h2l-2 3h2"></path></svg></button>
-                </span>
-                <span class="article-toolbar-group">
-                    <button type="button" data-command="justifyLeft" aria-label="Rata kiri"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h11M4 14h16M4 18h11"></path></svg></button>
-                    <button type="button" data-command="justifyCenter" aria-label="Rata tengah"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"></path></svg></button>
-                    <button type="button" data-command="justifyRight" aria-label="Rata kanan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 10h11M4 14h16M9 18h11"></path></svg></button>
-                </span>
-                <span class="article-toolbar-group">
-                    <button type="button" data-command="createLink" title="Tambahkan tautan" aria-label="Tambahkan tautan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"></path></svg></button>
-                    <button type="button" data-image-button title="Sisipkan gambar ke dalam artikel" aria-label="Sisipkan gambar ke dalam artikel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m5 17 4-4 3 3 2-2 5 5"></path></svg></button>
-                    <input type="file" id="inline-article-image-input" accept="image/*" style="display:none;" aria-hidden="true">
-                </span>
-            </div>
-            <div class="article-content-editor" id="article-content-editor" contenteditable="true" data-placeholder="Mulai tulis isi artikel di sini...">{{ form.content.value|default:""|safe }}</div>
-            {{ form.content.as_hidden }}
-            {% if form.content.errors %}{{ form.content.errors }}{% endif %}
-            <p class="article-editor-tip">Tips: gunakan paragraf pendek, subjudul, dan daftar agar artikel mudah dipahami.</p>
-        </section>
-        <aside class="article-settings-card">
-            <div class="article-settings-heading"><span class="settings-dot"></span><div><h3>Pengaturan artikel</h3><p>Atur informasi pendukung artikel.</p></div></div>
-            <div class="article-setting-field">
-                {{ form.desc_seo.label_tag }}{{ form.desc_seo }}
-                {% if form.desc_seo.help_text %}<small>{{ form.desc_seo.help_text }}</small>{% endif %}{{ form.desc_seo.errors }}
-            </div>
-            <div class="article-setting-field">
-                {{ form.category.label_tag }}{{ form.category }}
-                {% if form.category.help_text %}<small>{{ form.category.help_text }}</small>{% endif %}{{ form.category.errors }}
-            </div>
-            <div class="article-setting-field">
-                {{ form.authors.label_tag }}{{ form.authors }}
-                {% if form.authors.help_text %}<small>{{ form.authors.help_text }}</small>{% endif %}{{ form.authors.errors }}
-            </div>
-            <div class="article-setting-field">
-                {{ form.images.label_tag }}{{ form.images }}
-                {% if form.images.help_text %}<small>{{ form.images.help_text }}</small>{% endif %}{{ form.images.errors }}
-                {% if form.instance.images %}<img class="article-cover-preview" src="{{ form.instance.images.url }}" alt="Gambar artikel saat ini" data-article-preview>{% else %}<div class="article-cover-empty" data-article-preview>Preview gambar artikel</div>{% endif %}
-            </div>
-            <div class="article-setting-field article-slug-field">
-                {{ form.slug.label_tag }}{{ form.slug }}
-                {% if form.slug.help_text %}<small>{{ form.slug.help_text }}</small>{% endif %}{{ form.slug.errors }}
-            </div>
-            <label class="article-publish-toggle">{{ form.published }}<span><strong>Publikasikan artikel</strong><small>Artikel akan tampil di halaman berita.</small></span></label>
-            {{ form.published.errors }}
-            <div class="article-editor-actions"><button class="button" type="submit">Simpan artikel</button><a class="button secondary" href="{{ cancel_url }}">Batal</a></div>
-        </aside>
-    </div>
-</form>
+
 <script>
 (function () {
     var editor = document.getElementById("article-content-editor");
     var contentInput = document.getElementById("id_content");
     var form = document.getElementById("article-editor-form");
+    var statWords = document.getElementById("stat-words");
+    var statReadtime = document.getElementById("stat-readtime");
+
+    // 1. Live word count and reading time update
+    function updateLiveStats() {
+        if (!editor || !statWords || !statReadtime) return;
+        var text = editor.innerText || editor.textContent || "";
+        var words = text.trim().split(/\s+/).filter(function (w) { return w.length > 0; }).length;
+        statWords.textContent = words + " kata";
+        var minutes = Math.max(1, Math.ceil(words / 180));
+        statReadtime.textContent = "~" + minutes + " mnt baca";
+    }
+
     if (editor && contentInput && form) {
+        editor.addEventListener("input", function () {
+            contentInput.value = editor.innerHTML;
+            updateLiveStats();
+        });
+        updateLiveStats();
+
+        // 2. Toolbar formatting commands
         document.querySelectorAll("[data-command]").forEach(function (button) {
             button.addEventListener("click", function () {
                 editor.focus();
-                if (button.dataset.command === "createLink") {
-                    var url = window.prompt("Masukkan URL tautan:");
+                var cmd = button.dataset.command;
+                var val = button.dataset.value || null;
+
+                if (cmd === "createLink") {
+                    var url = window.prompt("Masukkan URL tautan (mis. https://...):");
                     if (url) document.execCommand("createLink", false, url);
                     return;
                 }
-                document.execCommand(button.dataset.command, false, button.dataset.value || null);
+                document.execCommand(cmd, false, val);
+                contentInput.value = editor.innerHTML;
+                updateLiveStats();
             });
         });
+
+        // 3. Inline Image Insertion via Upload
         var imageButton = document.querySelector("[data-image-button]");
         var inlineImageInput = document.getElementById("inline-article-image-input");
         var savedRange = null;
@@ -130,9 +1214,10 @@
             img.alt = "Gambar artikel";
             img.style.maxWidth = "100%";
             img.style.height = "auto";
-            img.style.borderRadius = "8px";
-            img.style.margin = "16px auto";
+            img.style.borderRadius = "10px";
+            img.style.margin = "18px auto";
             img.style.display = "block";
+            img.style.boxShadow = "0 4px 14px rgba(15, 23, 42, 0.08)";
 
             var sel = window.getSelection();
             if (sel && sel.rangeCount > 0 && editor.contains(sel.getRangeAt(0).commonAncestorContainer)) {
@@ -149,6 +1234,7 @@
                 editor.appendChild(img);
             }
             contentInput.value = editor.innerHTML;
+            updateLiveStats();
         }
 
         if (imageButton && inlineImageInput) {
@@ -210,22 +1296,86 @@
         });
     }
 
+    // 4. Live Cover Image Preview & Replacement
     var coverImageInput = document.getElementById("id_images");
-    if (coverImageInput) {
+    var coverPreviewBox = document.getElementById("cover-preview-box");
+    var coverFilenameText = document.getElementById("cover-filename-text");
+
+    if (coverImageInput && coverPreviewBox) {
         coverImageInput.addEventListener("change", function () {
-            var preview = document.querySelector("[data-article-preview]");
             var file = coverImageInput.files && coverImageInput.files[0];
-            if (!preview || !file) return;
-            if (preview.tagName.toLowerCase() !== "img") {
-                var image = document.createElement("img");
-                image.className = "article-cover-preview";
-                image.dataset.articlePreview = "";
-                preview.replaceWith(image);
-                preview = image;
+            if (!file) return;
+
+            var objUrl = URL.createObjectURL(file);
+            coverPreviewBox.innerHTML = `
+                <img class="cover-image-preview" src="${objUrl}" alt="Sampul baru">
+                <div class="cover-image-overlay">
+                    <label class="btn-change-cover" for="id_images">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Ganti Foto Sampul</span>
+                    </label>
+                </div>
+            `;
+            if (coverFilenameText) {
+                coverFilenameText.textContent = "✓ File baru: " + file.name;
+                coverFilenameText.style.display = "block";
             }
-            preview.src = URL.createObjectURL(file);
-            preview.alt = "Preview gambar artikel";
         });
+    }
+
+    // 5. Dynamic Publication Status Switch Sync
+    var publishInput = document.getElementById("id_published");
+    var publishCard = document.getElementById("publish-toggle-box");
+    var publishPill = document.getElementById("publish-pill");
+    var publishDesc = document.getElementById("publish-desc");
+    var headerBadge = document.getElementById("header-status-badge");
+    var headerStatusText = document.getElementById("header-status-text");
+
+    if (publishInput && publishCard && publishPill && publishDesc) {
+        function updatePublishUI() {
+            if (publishInput.checked) {
+                publishCard.classList.add("is-published");
+                publishPill.textContent = "Tayang di Web";
+                publishDesc.textContent = "Artikel aktif dan langsung dapat dibaca oleh publik di website.";
+                if (headerBadge) {
+                    headerBadge.classList.add("is-live");
+                    headerBadge.classList.remove("is-draft");
+                }
+                if (headerStatusText) {
+                    headerStatusText.textContent = "Tayang di Website";
+                }
+            } else {
+                publishCard.classList.remove("is-published");
+                publishPill.textContent = "Draf (Tersimpan)";
+                publishDesc.textContent = "Artikel disimpan sebagai draf dan belum ditampilkan ke pembeli.";
+                if (headerBadge) {
+                    headerBadge.classList.remove("is-live");
+                    headerBadge.classList.add("is-draft");
+                }
+                if (headerStatusText) {
+                    headerStatusText.textContent = "Draf (Belum Terbit)";
+                }
+            }
+        }
+        publishInput.addEventListener("change", updatePublishUI);
+        updatePublishUI();
+    }
+
+    // 6. Live SEO Character Counter
+    var seoInput = document.getElementById("id_desc_seo");
+    var seoCounter = document.getElementById("seo-char-counter");
+    if (seoInput && seoCounter) {
+        function updateSeoCounter() {
+            var len = seoInput.value ? seoInput.value.length : 0;
+            seoCounter.textContent = len + "/160";
+            if (len > 160) {
+                seoCounter.style.color = "#dc2626";
+            } else {
+                seoCounter.style.color = "#94a3b8";
+            }
+        }
+        seoInput.addEventListener("input", updateSeoCounter);
+        updateSeoCounter();
     }
 }());
 </script>

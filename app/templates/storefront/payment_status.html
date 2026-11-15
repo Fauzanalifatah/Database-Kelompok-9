@@ -1,87 +1,1522 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}{% if order.status == 'dibayar' or order.status == 'diproses' or order.status == 'dikirim' or order.status == 'selesai' %}Pesanan Siap - #{{ order.nomor|stringformat:".8s"|upper }}{% else %}Status Pesanan #{{ order.nomor|stringformat:".8s"|upper }}{% endif %} - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/checkout.css' %}?v=15">{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}?v=30">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM EXECUTIVE ORDER STATUS & PESANAN SIAP STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+    --ps-primary: #1455d9;
+    --ps-primary-hover: #0d3eb0;
+    --ps-primary-soft: #eff6ff;
+    --ps-emerald: #10b981;
+    --ps-emerald-soft: #ecfdf5;
+    --ps-emerald-border: #a7f3d0;
+    --ps-amber: #d97706;
+    --ps-amber-soft: #fffbeb;
+    --ps-amber-border: #fde68a;
+    --ps-rose: #e11d48;
+    --ps-rose-soft: #fff1f2;
+    --ps-slate-900: #0f172a;
+    --ps-slate-800: #1e293b;
+    --ps-slate-600: #475569;
+    --ps-slate-500: #64748b;
+    --ps-slate-300: #cbd5e1;
+    --ps-slate-200: #e2e8f0;
+    --ps-slate-100: #f1f5f9;
+    --ps-slate-50: #f8fafc;
+}
+
+.checkout-page.status-page {
+    padding: 36px 0 64px;
+    background: #f8fafc;
+    min-height: calc(100vh - 120px);
+}
+
+.status-container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ─── Top Checkout Stepper ─── */
+.ps-stepper-wrap {
+    background: #ffffff;
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 14px;
+    padding: 16px 28px;
+    margin-bottom: 26px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.ps-stepper-track {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ps-step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.ps-step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--ps-slate-100);
+    color: var(--ps-slate-500);
+    border: 2px solid var(--ps-slate-300);
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.ps-step-item.is-completed .ps-step-circle {
+    background: var(--ps-emerald-soft);
+    color: var(--ps-emerald);
+    border-color: var(--ps-emerald);
+}
+
+.ps-step-item.is-active .ps-step-circle {
+    background: var(--ps-primary-soft);
+    color: var(--ps-primary);
+    border-color: var(--ps-primary);
+    box-shadow: 0 0 0 4px rgba(20, 85, 217, 0.12);
+}
+
+.ps-step-item.is-failed .ps-step-circle {
+    background: var(--ps-rose-soft);
+    color: var(--ps-rose);
+    border-color: var(--ps-rose);
+}
+
+.ps-step-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.ps-step-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ps-slate-900);
+    line-height: 1.25;
+}
+
+.ps-step-desc {
+    font-size: 11.5px;
+    color: var(--ps-slate-500);
+    margin-top: 2px;
+}
+
+.ps-step-item.is-completed .ps-step-desc {
+    color: var(--ps-emerald);
+    font-weight: 600;
+}
+
+.ps-step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--ps-slate-200);
+    border-radius: 2px;
+    transition: background 0.25s ease;
+    min-width: 20px;
+}
+
+.ps-step-line.is-completed {
+    background: var(--ps-emerald);
+}
+
+/* ─── Main Shell Card ─── */
+.ps-card-shell {
+    background: #ffffff;
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 20px;
+    padding: 36px 36px 40px;
+    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+}
+
+/* ─── Hero Status Section ─── */
+.ps-hero {
+    text-align: center;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--ps-slate-200);
+}
+
+.ps-hero-icon-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.ps-hero-icon-ring.status-paid {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3), 0 0 0 8px rgba(16, 185, 129, 0.12);
+}
+
+.ps-hero-icon-ring.status-waiting {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3), 0 0 0 8px rgba(37, 99, 235, 0.12);
+}
+
+.ps-hero-icon-ring.status-cancelled {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(225, 29, 72, 0.3), 0 0 0 8px rgba(225, 29, 72, 0.12);
+}
+
+.ps-badge-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.ps-order-id-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ps-slate-50);
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 8px;
+    padding: 5px 12px;
+    margin-bottom: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ps-slate-800);
+}
+
+.ps-btn-copy-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: 0;
+    color: var(--ps-primary);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+}
+
+.ps-btn-copy-id:hover {
+    background: var(--ps-primary-soft);
+}
+
+.ps-title {
+    font-size: 27px;
+    font-weight: 850;
+    color: var(--ps-slate-900);
+    margin: 0 0 10px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.ps-subtitle {
+    font-size: 14px;
+    color: var(--ps-slate-600);
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+/* ─── Action Button for Waiting State ─── */
+.ps-action-area {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.ps-btn-pay-now {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 36px;
+    background: linear-gradient(135deg, #1455d9 0%, #0d3eb0 100%);
+    color: #ffffff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(20, 85, 217, 0.35);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.ps-btn-pay-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(20, 85, 217, 0.42);
+}
+
+.ps-security-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--ps-slate-500);
+    font-weight: 500;
+}
+
+.ps-security-hint svg {
+    color: #10b981;
+    flex-shrink: 0;
+}
+
+/* ─── Demo / Simulation Bar ─── */
+.ps-demo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 22px 0 26px;
+    padding: 13px 18px;
+    background: #eff6ff;
+    border: 1px dashed #bfdbfe;
+    border-radius: 12px;
+}
+
+.ps-demo-bar.is-success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.ps-demo-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.ps-demo-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: #1d4ed8;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ps-demo-bar.is-success .ps-demo-tag {
+    background: #16a34a;
+}
+
+.ps-demo-info p {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ps-slate-700);
+    line-height: 1.4;
+}
+
+.ps-btn-demo-sim {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    background: #1d4ed8;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 750;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.ps-btn-demo-sim:hover {
+    background: #1e40af;
+}
+
+.ps-btn-demo-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    background: #ffffff;
+    color: var(--ps-slate-600);
+    border: 1px solid var(--ps-slate-300);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.ps-btn-demo-reset:hover {
+    background: var(--ps-slate-100);
+    color: var(--ps-slate-800);
+}
+
+/* ─── 4-Step Order Tracker Box ─── */
+.ps-tracker-box {
+    margin: 24px 0 28px;
+    padding: 24px 22px;
+    background: var(--ps-slate-50);
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 16px;
+}
+
+.ps-tracker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+}
+
+.ps-tracker-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ps-slate-900);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ps-tracker-pill {
+    font-size: 11.5px;
+    font-weight: 750;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ps-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2563eb;
+    animation: ps-pulse 1.8s infinite;
+}
+
+@keyframes ps-pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+.ps-tracker-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    position: relative;
+}
+
+.ps-tracker-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.ps-tracker-icon-tile {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: var(--ps-slate-400);
+    border: 1.8px solid var(--ps-slate-300);
+    margin-bottom: 10px;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.ps-tracker-step.is-done .ps-tracker-icon-tile {
+    background: #dcfce7;
+    color: #16a34a;
+    border-color: #86efac;
+    box-shadow: 0 3px 10px rgba(22, 163, 74, 0.15);
+}
+
+.ps-tracker-step.is-current .ps-tracker-icon-tile {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.16);
+    animation: ps-ring-pulse 2.2s infinite;
+}
+
+@keyframes ps-ring-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.ps-tracker-step-title {
+    font-size: 13px;
+    font-weight: 750;
+    color: var(--ps-slate-800);
+    margin-bottom: 3px;
+    line-height: 1.25;
+}
+
+.ps-tracker-step-meta {
+    font-size: 11px;
+    color: var(--ps-slate-500);
+    line-height: 1.35;
+}
+
+.ps-tracker-step.is-done .ps-tracker-step-meta {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.ps-tracker-step.is-current .ps-tracker-step-meta {
+    color: #1d4ed8;
+    font-weight: 750;
+}
+
+/* ─── 3 Service & Guarantee Cards ─── */
+.ps-highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 22px 0 28px;
+}
+
+.ps-highlight-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    transition: all 0.2s ease;
+}
+
+.ps-highlight-card:hover {
+    border-color: var(--ps-slate-300);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+}
+
+.ps-highlight-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.ps-highlight-card:hover .ps-highlight-icon-box {
+    transform: scale(1.05);
+}
+
+.ps-highlight-copy strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 750;
+    color: var(--ps-slate-900);
+    margin-bottom: 3px;
+}
+
+.ps-highlight-copy p {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--ps-slate-600);
+    line-height: 1.45;
+}
+
+/* ─── 4 Metric Summary Grid ─── */
+.ps-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 18px 20px;
+    background: var(--ps-slate-50);
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 14px;
+    margin-bottom: 28px;
+}
+
+.ps-summary-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.ps-summary-label {
+    font-size: 11px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ps-slate-500);
+    margin-bottom: 4px;
+}
+
+.ps-summary-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ps-slate-900);
+}
+
+.ps-summary-value.ps-price-bold {
+    font-size: 17px;
+    font-weight: 850;
+    color: #1455d9;
+}
+
+.ps-status-pill-subtle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 750;
+    padding: 3px 10px;
+    border-radius: 999px;
+    width: fit-content;
+}
+
+.ps-status-pill-subtle.status-dibayar,
+.ps-status-pill-subtle.status-selesai {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.ps-status-pill-subtle.status-diproses,
+.ps-status-pill-subtle.status-dikirim {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.ps-status-pill-subtle.status-menunggu {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.ps-status-pill-subtle.status-dibatalkan {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* ─── Ordered Items Section ─── */
+.ps-items-section {
+    margin-bottom: 28px;
+}
+
+.ps-section-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ps-slate-900);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ps-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ps-item-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 12px;
+    transition: all 0.15s ease;
+}
+
+.ps-item-card:hover {
+    border-color: var(--ps-slate-300);
+    background: #fafbfc;
+}
+
+.ps-item-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background: var(--ps-slate-100);
+    border: 1px solid var(--ps-slate-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.ps-item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ps-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ps-item-name {
+    font-size: 14px;
+    font-weight: 750;
+    color: var(--ps-slate-900);
+    margin: 0 0 4px;
+    line-height: 1.3;
+}
+
+.ps-item-meta {
+    font-size: 12px;
+    color: var(--ps-slate-500);
+}
+
+.ps-item-subtotal {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--ps-slate-900);
+    white-space: nowrap;
+    text-align: right;
+}
+
+/* ─── Shipping Destination Card ─── */
+.ps-address-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--ps-slate-50);
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 12px;
+    margin-bottom: 28px;
+}
+
+.ps-address-icon-tile {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ps-address-copy strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 750;
+    color: var(--ps-slate-900);
+    margin-bottom: 2px;
+}
+
+.ps-address-copy p {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ps-slate-600);
+    line-height: 1.5;
+}
+
+/* ─── Payment Guide (Waiting State) ─── */
+.ps-guide-box {
+    background: #f8fafc;
+    border: 1px solid var(--ps-slate-200);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+}
+
+.ps-guide-title {
+    font-size: 13.5px;
+    font-weight: 750;
+    color: var(--ps-slate-900);
+    margin: 0 0 14px;
+}
+
+.ps-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.ps-guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.ps-guide-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1455d9;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ps-guide-step p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ps-slate-600);
+    line-height: 1.45;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BALANCED ACTION BUTTONS (NO AWKWARD WRAPPING)
+   ═══════════════════════════════════════════════════════════════ */
+.ps-actions-suite {
+    padding-top: 26px;
+    border-top: 1px solid var(--ps-slate-200);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ps-actions-primary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.ps-actions-secondary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.ps-btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 18px;
+    border-radius: 11px;
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.ps-btn-print {
+    background: linear-gradient(135deg, #1455d9 0%, #0d3eb0 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(20, 85, 217, 0.25);
+}
+
+.ps-btn-print:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 18px rgba(20, 85, 217, 0.35);
+    color: #ffffff;
+}
+
+.ps-btn-wa {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);
+}
+
+.ps-btn-wa:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35);
+    color: #ffffff;
+}
+
+.ps-btn-secondary {
+    background: #ffffff;
+    color: var(--ps-slate-700);
+    border: 1px solid var(--ps-slate-300);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.ps-btn-secondary:hover {
+    background: var(--ps-slate-100);
+    border-color: var(--ps-slate-400);
+    color: var(--ps-slate-900);
+    transform: translateY(-1px);
+}
+
+/* ─── Support Footer ─── */
+.ps-support-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--ps-slate-100);
+    font-size: 12.5px;
+    color: var(--ps-slate-500);
+}
+
+.ps-support-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #15803d;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.ps-support-link:hover {
+    text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   OFFICIAL 1-PAGE PRINT INVOICE DOCUMENT
+   Strictly Budgeted for 1 Sheet of Paper (No Blank 2nd Page)
+   ═══════════════════════════════════════════════════════════════ */
+.ps-print-document {
+    display: none;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 8mm 12mm 8mm 12mm;
+    }
+
+    /* Completely hide entire web storefront UI */
+    .topbar, header, footer, .announcement,
+    .checkout-page, .ps-stepper-wrap, .ps-card-shell,
+    .ps-actions-suite, .ps-demo-bar, .ps-support-bar,
+    .ps-dispenser-modal, .ps-dispenser-stage,
+    #copy-order-btn {
+        display: none !important;
+    }
+
+    body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+        font-size: 10pt !important;
+        line-height: 1.35 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Display ONLY the compact 1-sheet corporate invoice */
+    .ps-print-document {
+        display: block !important;
+        border: 2px solid #0f172a !important;
+        border-radius: 8px !important;
+        padding: 18px 22px !important;
+        background: #ffffff !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        page-break-before: avoid !important;
+        height: auto !important;
+        max-height: 255mm !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .prn-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+    }
+
+    .prn-brand-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 2px;
+    }
+
+    .prn-brand-icon {
+        width: 32px;
+        height: 32px;
+        background: #0f172a !important;
+        color: #ffffff !important;
+        font-weight: 900;
+        font-size: 15px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .prn-brand-name {
+        font-size: 19px;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .prn-tagline {
+        font-size: 10px;
+        font-weight: 750;
+        color: #b91c1c;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .prn-store-address {
+        font-size: 10px;
+        color: #475569;
+        line-height: 1.35;
+        margin: 0;
+    }
+
+    .prn-meta-side {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .prn-doc-title {
+        font-size: 18px;
+        font-weight: 900;
+        color: #0f172a;
+        text-transform: uppercase;
+        margin: 0 0 2px;
+    }
+
+    .prn-doc-subtitle {
+        font-size: 9.5px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 6px;
+    }
+
+    /* Fixed Dark Stamp Box (Never Empty) */
+    .prn-stamp-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border: 2px dashed #047857 !important;
+        background: #ecfdf5 !important;
+        color: #047857 !important;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .prn-stamp-box svg {
+        stroke: #047857 !important;
+    }
+
+    /* Two Columns: Customer & Transaction Info */
+    .prn-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+    }
+
+    .prn-detail-col h4 {
+        margin: 0 0 6px;
+        font-size: 9.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #475569;
+        border-bottom: 1px solid #cbd5e1;
+        padding-bottom: 2px;
+    }
+
+    .prn-kv {
+        width: 100%;
+        font-size: 10.5px;
+        border-collapse: collapse;
+    }
+
+    .prn-kv td {
+        padding: 2px 0;
+        vertical-align: top;
+    }
+
+    .prn-kv td.k {
+        color: #64748b;
+        width: 36%;
+        font-weight: 500;
+    }
+
+    .prn-kv td.v {
+        color: #0f172a;
+        font-weight: 750;
+    }
+
+    /* Itemized Table */
+    .prn-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 14px;
+        font-size: 10.5px;
+    }
+
+    .prn-table th {
+        background: #0f172a !important;
+        color: #ffffff !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 9.5px;
+        padding: 7px 9px;
+        text-align: left;
+    }
+
+    .prn-table th.tar,
+    .prn-table td.tar {
+        text-align: right;
+    }
+
+    .prn-table th.tac,
+    .prn-table td.tac {
+        text-align: center;
+    }
+
+    .prn-table td {
+        padding: 8px 9px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #0f172a;
+        vertical-align: top;
+    }
+
+    .prn-table tbody tr:nth-child(even) {
+        background: #f8fafc !important;
+    }
+
+    .prn-item-name {
+        font-weight: 800;
+        font-size: 11px;
+        color: #0f172a;
+    }
+
+    .prn-item-desc {
+        font-size: 9px;
+        color: #64748b;
+    }
+
+    /* Bottom Section */
+    .prn-bottom-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 16px;
+        margin-bottom: 14px;
+    }
+
+    .prn-terms-box {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 9.5px;
+        color: #475569;
+    }
+
+    .prn-terms-box h5 {
+        margin: 0 0 4px;
+        font-size: 10px;
+        font-weight: 800;
+        color: #0f172a;
+        text-transform: uppercase;
+    }
+
+    .prn-terms-box ol {
+        margin: 0;
+        padding-left: 14px;
+        line-height: 1.4;
+    }
+
+    .prn-totals-table {
+        width: 100%;
+        font-size: 10.5px;
+        border-collapse: collapse;
+    }
+
+    .prn-totals-table td {
+        padding: 3px 0;
+    }
+
+    .prn-totals-table td.tar {
+        text-align: right;
+        font-weight: 750;
+    }
+
+    .prn-totals-table tr.grand-row {
+        border-top: 1.5px solid #0f172a;
+        border-bottom: 1.5px solid #0f172a;
+    }
+
+    .prn-totals-table tr.grand-row td {
+        padding: 6px 0;
+        font-size: 13px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    /* Signatures & Seal */
+    .prn-sig-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid #cbd5e1;
+        font-size: 9.5px;
+        color: #475569;
+    }
+
+    .prn-sig-box {
+        text-align: center;
+        width: 180px;
+    }
+
+    .prn-sig-space {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .prn-seal-circle {
+        width: 58px;
+        height: 58px;
+        border: 1.8px dashed #047857 !important;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #047857 !important;
+        font-size: 7px;
+        font-weight: 900;
+        text-transform: uppercase;
+        line-height: 1.1;
+        transform: rotate(-6deg);
+    }
+
+    .prn-seal-circle span {
+        font-size: 8px;
+        font-weight: 900;
+        margin: 1px 0;
+    }
+
+    .prn-sig-name {
+        font-weight: 800;
+        color: #0f172a;
+        border-top: 1px solid #94a3b8;
+        padding-top: 3px;
+    }
+
+    .prn-footer-text {
+        text-align: center;
+        font-size: 8.5px;
+        color: #64748b;
+        margin-top: 10px;
+        padding-top: 6px;
+        border-top: 1px dashed #cbd5e1;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE (TABLET & MOBILE)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .ps-card-shell {
+        padding: 28px 24px 32px;
+    }
+
+    .ps-highlights-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ps-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px 14px;
+    }
+
+    .ps-guide-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ps-actions-primary-row,
+    .ps-actions-secondary-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 680px) {
+    .checkout-page.status-page {
+        padding: 18px 0 40px;
+    }
+
+    .status-container {
+        padding: 0 14px;
+    }
+
+    .ps-stepper-wrap {
+        padding: 12px 14px;
+        margin-bottom: 18px;
+    }
+
+    .ps-step-desc {
+        display: none;
+    }
+
+    .ps-step-name {
+        font-size: 12px;
+    }
+
+    .ps-step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 11.5px;
+    }
+
+    .ps-card-shell {
+        padding: 24px 16px 28px;
+        border-radius: 16px;
+    }
+
+    .ps-hero-icon-ring {
+        width: 68px;
+        height: 68px;
+        margin-bottom: 14px;
+    }
+
+    .ps-title {
+        font-size: 21px;
+    }
+
+    .ps-subtitle {
+        font-size: 13px;
+    }
+
+    .ps-btn-pay-now {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 14.5px;
+    }
+
+    .ps-tracker-steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px 12px;
+    }
+
+    .ps-tracker-icon-tile {
+        width: 44px;
+        height: 44px;
+    }
+
+    .ps-demo-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .ps-btn-demo-sim,
+    .ps-btn-demo-reset {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Stack buttons full-width vertically on small screens */
+    .ps-actions-primary-row,
+    .ps-actions-secondary-row {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .ps-btn-action {
+        width: 100%;
+        padding: 13px 16px;
+    }
+
+    .ps-summary-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .ps-item-card {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .ps-item-thumb {
+        width: 52px;
+        height: 52px;
+    }
+
+    .ps-support-bar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="checkout-page status-page">
     <div class="container status-container">
 
-        <!-- Stepper -->
-        <div class="stepper-wrap">
-            <div class="stepper-track">
+        <!-- ─── Checkout Flow Stepper ─── -->
+        <div class="ps-stepper-wrap">
+            <div class="ps-stepper-track">
                 <!-- Step 1: Data Pembeli -->
-                <div class="step-item is-completed">
-                    <span class="step-circle">✓</span>
-                    <div class="step-meta">
-                        <strong class="step-name">Data Pembeli</strong>
-                        <span class="step-desc">Terkonfirmasi</span>
+                <div class="ps-step-item is-completed">
+                    <span class="ps-step-circle">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </span>
+                    <div class="ps-step-meta">
+                        <strong class="ps-step-name">Data Pembeli</strong>
+                        <span class="ps-step-desc">Terkonfirmasi</span>
                     </div>
                 </div>
-                <div class="step-line is-completed"></div>
+
+                <div class="ps-step-line is-completed"></div>
 
                 <!-- Step 2: Pembayaran -->
-                <div class="step-item {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-completed{% elif order.status == 'dibatalkan' %}is-failed{% else %}is-active{% endif %}">
-                    <span class="step-circle">
-                        {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}✓{% elif order.status == 'dibatalkan' %}×{% else %}2{% endif %}
+                <div class="ps-step-item {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-completed{% elif order.status == 'dibatalkan' %}is-failed{% else %}is-active{% endif %}">
+                    <span class="ps-step-circle">
+                        {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        {% elif order.status == 'dibatalkan' %}
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                        {% endif %}
                     </span>
-                    <div class="step-meta">
-                        <strong class="step-name">Pembayaran</strong>
-                        <span class="step-desc">
+                    <div class="ps-step-meta">
+                        <strong class="ps-step-name">Pembayaran</strong>
+                        <span class="ps-step-desc">
                             {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}Lunas terverifikasi{% elif order.status == 'dibatalkan' %}Dibatalkan{% else %}Menunggu proses{% endif %}
                         </span>
                     </div>
                 </div>
-                <div class="step-line {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-completed{% endif %}"></div>
+
+                <div class="ps-step-line {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-completed{% endif %}"></div>
 
                 <!-- Step 3: Pesanan Siap -->
-                <div class="step-item {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-active is-completed{% endif %}">
-                    <span class="step-circle">
-                        {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}✓{% else %}3{% endif %}
+                <div class="ps-step-item {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}is-active is-completed{% endif %}">
+                    <span class="ps-step-circle">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                     </span>
-                    <div class="step-meta">
-                        <strong class="step-name">Pesanan Siap</strong>
-                        <span class="step-desc">
-                            {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}Siap dikirim{% else %}Pengemasan & kirim{% endif %}
+                    <div class="ps-step-meta">
+                        <strong class="ps-step-name">Pesanan Siap</strong>
+                        <span class="ps-step-desc">
+                            {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}Siap diproses &amp; kirim{% else %}Pengemasan unit{% endif %}
                         </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Status Card -->
-        <div class="status-card-shell">
+        <!-- ─── Main Shell Card ─── -->
+        <div class="ps-card-shell">
 
-            <!-- Hero Status Icon & Headings -->
-            <div class="status-hero">
-                <div class="status-icon-wrap status-{{ order.status }}">
+            <!-- Hero Status Section -->
+            <div class="ps-hero">
+                <div class="ps-hero-icon-ring {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}status-paid{% elif order.status == 'dibatalkan' %}status-cancelled{% else %}status-waiting{% endif %}">
                     {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     {% elif order.status == "dibatalkan" %}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     {% else %}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     {% endif %}
                 </div>
 
                 {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
                 <div>
-                    <span class="status-badge-verified">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        PEMBAYARAN LUNAS TERVERIFIKASI
+                    <span class="ps-badge-verified">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                        <span>Pembayaran Lunas Terverifikasi</span>
                     </span>
                 </div>
                 {% endif %}
 
-                <div class="order-id-badge">
+                <div class="ps-order-id-chip">
                     <span>ID PESANAN #{{ order.nomor|stringformat:".8s"|upper }}</span>
-                    <button type="button" class="btn-copy-id" id="copy-order-btn" data-clipboard="{{ order.nomor }}" title="Salin Nomor Pesanan">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <button type="button" class="ps-btn-copy-id" id="copy-order-btn" data-clipboard="{{ order.nomor }}" title="Salin Nomor Pesanan">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                         <span id="copy-tooltip">Salin</span>
                     </button>
                 </div>
 
-                <h1 class="status-title">
+                <h1 class="ps-title">
                     {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
                     Pesanan Siap Diproses!
                     {% elif order.status == "dibatalkan" %}
@@ -91,25 +1526,28 @@
                     {% endif %}
                 </h1>
 
-                <p class="status-subtitle">
+                <p class="ps-subtitle">
                     {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
-                    Terima kasih atas pesanan Anda. Pembayaran telah diverifikasi secara otomatis oleh sistem. Unit pesanan Anda saat ini masuk ke antrean pengemasan aman standar Losari Computer dengan Free Bubble Wrap tebal dan proteksi packing kayu sebelum diserahkan ke kurir pengiriman.
+                    Terima kasih atas pesanan Anda. Pembayaran telah diverifikasi secara otomatis oleh sistem. Unit pesanan Anda saat ini masuk ke antrean pengemasan aman standar Losari Computer dengan Free Bubble Wrap ekstra tebal dan proteksi packing kayu sebelum diserahkan ke kurir pengiriman.
                     {% elif order.status == "dibatalkan" %}
-                    Transaksi ini dibatalkan atau waktu pembayaran telah kedaluwarsa. Silakan lakukan pemesanan ulang untuk unit yang diinginkan.
+                    Transaksi ini dibatalkan atau batas waktu pembayaran telah kedaluwarsa. Silakan lakukan pemesanan ulang untuk unit yang diinginkan.
                     {% else %}
-                    Silakan klik tombol <b>Bayar Sekarang</b> di bawah untuk membuka jendela pembayaran resmi Midtrans. Sistem akan memverifikasi secara otomatis setelah pembayaran berhasil.
+                    Silakan klik tombol <b>Bayar Sekarang</b> di bawah untuk membuka jendela pembayaran resmi Midtrans. Sistem akan memverifikasi status pembayaran secara otomatis setelah Anda menyelesaikan transaksi.
                     {% endif %}
                 </p>
 
                 <!-- Action Button for Waiting State -->
                 {% if snap_token and order.status == "menunggu" %}
-                <div class="status-action-area">
-                    <button class="btn-pay-now" id="pay-button" type="button">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <div class="ps-action-area">
+                    <button class="ps-btn-pay-now" id="pay-button" type="button">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                         <span>Bayar Sekarang (Midtrans)</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
-                    <p class="pay-methods-hint">🔒 Mendukung QRIS, GoPay, BCA, BRI, BNI, Mandiri & Transfer Bank</p>
+                    <div class="ps-security-hint">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <span>Transaksi Aman &amp; Terenkripsi &middot; QRIS, GoPay, BCA, BRI, BNI, Mandiri &amp; Transfer Bank</span>
+                    </div>
                 </div>
                 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ midtrans_client_key }}"></script>
                 <script>
@@ -125,191 +1563,256 @@
                 {% endif %}
             </div>
 
-            <!-- Demo Simulation / Testing Bar -->
+            <!-- ─── Demo Simulation / Testing Bar ─── -->
             {% if order.status == "menunggu" %}
-            <div class="demo-test-bar">
-                <div class="demo-test-info">
-                    <span class="demo-tag">MODE PENGUJIAN / DEMO</span>
-                    <p>Ingin melihat dan mendemokan tampilan <strong>Pesanan Siap</strong> secara langsung tanpa perlu transfer uang riil?</p>
+            <div class="ps-demo-bar">
+                <div class="ps-demo-info">
+                    <span class="ps-demo-tag">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        <span>Mode Demo</span>
+                    </span>
+                    <p>Ingin melihat dan mendemokan tampilan <strong>Pesanan Siap</strong> secara instan tanpa perlu transfer uang riil?</p>
                 </div>
-                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=bayar" class="btn-demo-sim">
-                    <span>⚡ Simulasi Pembayaran Sukses</span>
+                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=bayar" class="ps-btn-demo-sim">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>Simulasi Pembayaran Sukses</span>
                 </a>
             </div>
             {% else %}
-            <div class="demo-test-bar is-success">
-                <div class="demo-test-info">
-                    <span class="demo-tag">PENGUJIAN DEMO</span>
+            <div class="ps-demo-bar is-success">
+                <div class="ps-demo-info">
+                    <span class="ps-demo-tag">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Pengujian Demo</span>
+                    </span>
                     <p>Ini adalah tampilan resmi <strong>Pesanan Siap</strong> setelah status pembayaran lunas terverifikasi.</p>
                 </div>
-                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=reset" class="btn-demo-reset">
-                    <span>↩ Reset ke Menunggu Pembayaran</span>
+                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=reset" class="ps-btn-demo-reset">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                    <span>Reset ke Menunggu Pembayaran</span>
                 </a>
             </div>
             {% endif %}
 
-            <!-- TAHAPAN PESANAN SIAP (Hanya tampil jika pesanan sudah dibayar/diproses) -->
+            <!-- ─── 4-Step Order Tracker Box (Hanya Tampil Jika Pesanan Sudah Lunas/Diproses) ─── -->
             {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
-            <div class="order-tracker-box">
-                <div class="order-tracker-title">
-                    <span>Tahapan Pesanan Anda</span>
-                    <span class="tracker-pill">Status: {% if order.status == 'dibayar' %}Siap Dikemas{% elif order.status == 'diproses' %}Sedang Dikemas{% elif order.status == 'dikirim' %}Dalam Pengiriman{% else %}Selesai{% endif %}</span>
+            <div class="ps-tracker-box">
+                <div class="ps-tracker-header">
+                    <div class="ps-tracker-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <span>Tahapan Pesanan Anda</span>
+                    </div>
+                    <span class="ps-tracker-pill">
+                        <span class="ps-pulse-dot"></span>
+                        <span>Status: {% if order.status == 'dibayar' %}Siap Dikemas{% elif order.status == 'diproses' %}Sedang Dikemas{% elif order.status == 'dikirim' %}Dalam Pengiriman{% else %}Selesai{% endif %}</span>
+                    </span>
                 </div>
-                <div class="order-tracker-steps">
-                    <div class="tracker-step is-done">
-                        <span class="tracker-icon-badge">✓</span>
-                        <strong class="tracker-name">1. Pesanan Masuk</strong>
-                        <span class="tracker-status">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</span>
+
+                <div class="ps-tracker-steps-grid">
+                    <!-- Step 1: Pesanan Masuk -->
+                    <div class="ps-tracker-step is-done">
+                        <div class="ps-tracker-icon-tile">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <strong class="ps-tracker-step-title">1. Pesanan Masuk</strong>
+                        <span class="ps-tracker-step-meta">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</span>
                     </div>
-                    <div class="tracker-step is-done">
-                        <span class="tracker-icon-badge">✓</span>
-                        <strong class="tracker-name">2. Pembayaran Lunas</strong>
-                        <span class="tracker-status">{{ order.midtrans_payment_type|default:"Payment Gateway"|upper }}</span>
+
+                    <!-- Step 2: Pembayaran Lunas -->
+                    <div class="ps-tracker-step is-done">
+                        <div class="ps-tracker-icon-tile">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <strong class="ps-tracker-step-title">2. Pembayaran Lunas</strong>
+                        <span class="ps-tracker-step-meta">{{ order.midtrans_payment_type|default:"Payment Gateway"|upper }}</span>
                     </div>
-                    <div class="tracker-step {% if order.status == 'dibayar' or order.status == 'diproses' %}is-current{% else %}is-done{% endif %}">
-                        <span class="tracker-icon-badge">📦</span>
-                        <strong class="tracker-name">3. Pengemasan Unit</strong>
-                        <span class="tracker-status">QC & Packing Kayu</span>
+
+                    <!-- Step 3: Pengemasan Unit -->
+                    <div class="ps-tracker-step {% if order.status == 'dibayar' or order.status == 'diproses' %}is-current{% else %}is-done{% endif %}">
+                        <div class="ps-tracker-icon-tile">
+                            {% if order.status == 'dikirim' or order.status == 'selesai' %}
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            {% else %}
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                            {% endif %}
+                        </div>
+                        <strong class="ps-tracker-step-title">3. Pengemasan Unit</strong>
+                        <span class="ps-tracker-step-meta">QC &amp; Packing Kayu</span>
                     </div>
-                    <div class="tracker-step {% if order.status == 'dikirim' %}is-current{% elif order.status == 'selesai' %}is-done{% endif %}">
-                        <span class="tracker-icon-badge">🚚</span>
-                        <strong class="tracker-name">4. Pengiriman Kurir</strong>
-                        <span class="tracker-status">Estimasi 1-3 Hari</span>
+
+                    <!-- Step 4: Pengiriman Kurir -->
+                    <div class="ps-tracker-step {% if order.status == 'dikirim' %}is-current{% elif order.status == 'selesai' %}is-done{% endif %}">
+                        <div class="ps-tracker-icon-tile">
+                            {% if order.status == 'selesai' %}
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            {% else %}
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            {% endif %}
+                        </div>
+                        <strong class="ps-tracker-step-title">4. Pengiriman Kurir</strong>
+                        <span class="ps-tracker-step-meta">Estimasi 1-3 Hari</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Highlight Layanan Pengiriman & Garansi Toko -->
-            <div class="shipping-highlight-grid">
-                <div class="ship-highlight-card">
-                    <span class="ship-highlight-icon">📦</span>
-                    <div class="ship-highlight-copy">
+            <!-- ─── 3 Service & Guarantee Cards ─── -->
+            <div class="ps-highlights-grid">
+                <!-- Card 1: Proteksi Pengemasan Toko -->
+                <div class="ps-highlight-card">
+                    <div class="ps-highlight-icon-box" style="background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 7.5 14.6 3 12"></polyline><polyline points="21 12 16.5 14.6 16.5 19.79"></polyline><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    </div>
+                    <div class="ps-highlight-copy">
                         <strong>Proteksi Pengemasan Toko</strong>
-                        <span>Free Bubble Wrap ekstra tebal dan packing kayu pelindung guncangan kurir.</span>
+                        <p>Free Bubble Wrap ekstra tebal dan proteksi packing kayu peredam guncangan kurir.</p>
                     </div>
                 </div>
-                <div class="ship-highlight-card">
-                    <span class="ship-highlight-icon">🛡️</span>
-                    <div class="ship-highlight-copy">
+
+                <!-- Card 2: Garansi Toko 1 Bulan -->
+                <div class="ps-highlight-card">
+                    <div class="ps-highlight-icon-box" style="background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                    </div>
+                    <div class="ps-highlight-copy">
                         <strong>Garansi Toko 1 Bulan</strong>
-                        <span>Jaminan tukar unit langsung jika terjadi kendala mesin atau hardware.</span>
+                        <p>Jaminan tukar unit langsung jika terjadi kendala pada mesin, baterai, atau hardware.</p>
                     </div>
                 </div>
-                <div class="ship-highlight-card">
-                    <span class="ship-highlight-icon">⚡</span>
-                    <div class="ship-highlight-copy">
-                        <strong>Unit Teruji & Siap Pakai</strong>
-                        <span>Unit telah melewati uji kelayakan baterai, keyboard, layar, speaker, & OS.</span>
+
+                <!-- Card 3: Unit Teruji & Siap Pakai -->
+                <div class="ps-highlight-card">
+                    <div class="ps-highlight-icon-box" style="background: #faf5ff; color: #7c3aed; border: 1px solid #ede9fe;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                    </div>
+                    <div class="ps-highlight-copy">
+                        <strong>Unit Teruji &amp; Siap Pakai</strong>
+                        <p>Unit telah lulus 25 titik uji kelayakan baterai, keyboard, layar, speaker, WiFi, &amp; OS.</p>
                     </div>
                 </div>
             </div>
             {% endif %}
 
-            <!-- Summary Info Grid -->
-            <div class="status-info-box">
-                <div class="info-metric">
-                    <span class="metric-label">Total Pembayaran</span>
-                    <strong class="metric-value metric-price">Rp{{ order.total|floatformat:"0g" }}</strong>
+            <!-- ─── 4-Metric Summary Grid ─── -->
+            <div class="ps-summary-grid">
+                <div class="ps-summary-item">
+                    <span class="ps-summary-label">Total Pembayaran</span>
+                    <strong class="ps-summary-value ps-price-bold">{{ order.total_rupiah|default:order.total }}</strong>
                 </div>
-                <div class="info-metric">
-                    <span class="metric-label">Status Pesanan</span>
-                    <span class="status-pill status-pill-{{ order.status }}">{{ order.get_status_display }}</span>
+                <div class="ps-summary-item">
+                    <span class="ps-summary-label">Status Pesanan</span>
+                    <span class="ps-status-pill-subtle status-{{ order.status }}">
+                        <span class="ps-pulse-dot" style="width:6px;height:6px;"></span>
+                        <span>{{ order.get_status_display }}</span>
+                    </span>
                 </div>
-                <div class="info-metric">
-                    <span class="metric-label">Waktu Pemesanan</span>
-                    <strong class="metric-value">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</strong>
+                <div class="ps-summary-item">
+                    <span class="ps-summary-label">Waktu Pemesanan</span>
+                    <strong class="ps-summary-value">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</strong>
                 </div>
-                <div class="info-metric">
-                    <span class="metric-label">Nama Pemesan</span>
-                    <strong class="metric-value">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong>
+                <div class="ps-summary-item">
+                    <span class="ps-summary-label">Nama Pemesan</span>
+                    <strong class="ps-summary-value">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong>
                 </div>
             </div>
 
-            <!-- Ordered Items Breakdown -->
-            <div class="status-items-section">
-                <h3 class="section-heading">Rincian Unit Pesanan</h3>
-                <div class="status-items-list">
+            <!-- ─── Ordered Items Breakdown ─── -->
+            <div class="ps-items-section">
+                <h3 class="ps-section-title">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span>Rincian Unit Pesanan ({{ order.item.count }} item)</span>
+                </h3>
+
+                <div class="ps-items-list">
                     {% for item in order.item.all %}
-                    <div class="status-item-card">
-                        <div class="item-thumb">
+                    <div class="ps-item-card">
+                        <div class="ps-item-thumb">
                             {% if item.produk.gambar %}
                             <img src="{{ item.produk.gambar.url }}" alt="{{ item.nama_produk }}">
                             {% else %}
-                            <div class="thumb-fallback">💻</div>
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
                             {% endif %}
                         </div>
-                        <div class="item-info">
-                            <h4 class="item-name">{{ item.nama_produk }}</h4>
-                            <span class="item-sub">Harga Satuan: Rp{{ item.harga_satuan|floatformat:"0g" }} &times; {{ item.jumlah }} unit</span>
+                        <div class="ps-item-info">
+                            <h4 class="ps-item-name">{{ item.nama_produk }}</h4>
+                            <span class="ps-item-meta">Harga Satuan: {{ item.harga_satuan_rupiah|default:item.harga_satuan }} &times; {{ item.jumlah }} unit</span>
                         </div>
-                        <strong class="item-subtotal">Rp{{ item.subtotal|floatformat:"0g" }}</strong>
+                        <strong class="ps-item-subtotal">{{ item.subtotal_rupiah|default:item.subtotal }}</strong>
                     </div>
                     {% empty %}
-                    <p class="empty-items">Tidak ada rincian item.</p>
+                    <p style="color:#64748b; font-size:13px; text-align:center; padding:16px;">Tidak ada rincian item.</p>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- Shipping Destination Box -->
-            <div class="status-address-box">
-                <div class="address-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <!-- ─── Shipping Destination Card ─── -->
+            <div class="ps-address-box">
+                <div class="ps-address-icon-tile">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                 </div>
-                <div class="address-copy">
-                    <strong>Alamat Pengiriman</strong>
+                <div class="ps-address-copy">
+                    <strong>Alamat Tujuan Pengiriman</strong>
                     <p>{{ order.alamat_pengiriman }}{% if order.kecamatan %}, Kec. {{ order.kecamatan }}{% endif %}{% if order.kota %}, {{ order.kota }}{% endif %}{% if order.provinsi %}, {{ order.provinsi }}{% endif %}</p>
                 </div>
             </div>
 
-            <!-- Quick Instructions for Waiting State -->
+            <!-- ─── Payment Guide (Only in Waiting State) ─── -->
             {% if order.status == "menunggu" %}
-            <div class="payment-steps-guide">
-                <h4 class="guide-title">Cara Menyelesaikan Pembayaran:</h4>
-                <div class="guide-grid">
-                    <div class="guide-item">
-                        <span class="guide-num">1</span>
-                        <p>Klik tombol <b>Bayar Sekarang</b> untuk memunculkan jendela aman Midtrans.</p>
+            <div class="ps-guide-box">
+                <h4 class="ps-guide-title">Langkah Pembayaran Resmi:</h4>
+                <div class="ps-guide-grid">
+                    <div class="ps-guide-step">
+                        <span class="ps-guide-num">1</span>
+                        <p>Klik tombol <b>Bayar Sekarang</b> untuk memunculkan jendela aman transaksi Midtrans.</p>
                     </div>
-                    <div class="guide-item">
-                        <span class="guide-num">2</span>
-                        <p>Pilih metode yang diinginkan (QRIS, GoPay, atau Transfer Bank / Virtual Account).</p>
+                    <div class="ps-guide-step">
+                        <span class="ps-guide-num">2</span>
+                        <p>Pilih metode yang diinginkan (QRIS, GoPay, BCA, BRI, BNI, Mandiri atau Transfer Bank).</p>
                     </div>
-                    <div class="guide-item">
-                        <span class="guide-num">3</span>
-                        <p>Selesaikan pembayaran, status pesanan akan terverifikasi secara otomatis.</p>
+                    <div class="ps-guide-step">
+                        <span class="ps-guide-num">3</span>
+                        <p>Selesaikan pembayaran, sistem akan memverifikasi lunas secara otomatis tanpa perlu kirim bukti struk.</p>
                     </div>
                 </div>
             </div>
             {% endif %}
 
-            <!-- Tombol Aksi Pesanan Siap (Cetak Invoice, WhatsApp, Dashboard) -->
+            <!-- ─── BALANCED ACTION BUTTONS (2 Rows, 2 Columns Each - No Orphan Wrap) ─── -->
             {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
-            <div class="ready-action-buttons">
-                <button type="button" class="btn-ready-primary" onclick="window.print()">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                    <span>Cetak Nota / Invoice</span>
-                </button>
-                <a class="btn-ready-wa" href="https://wa.me/{{ footer_setting.whatsapp|default:'6281234567890' }}?text=Halo%20Losari%20Computer,%20saya%20sudah%20menyelesaikan%20pembayaran%20untuk%20pesanan%20nomor%20{{ order.nomor|stringformat:'.8s'|upper }}%20senilai%20Rp{{ order.total|floatformat:'0g' }}.%20Mohon%20segera%20diproses%20pengirimannya.%20Terima%20kasih!" target="_blank" rel="noopener">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    <span>Konfirmasi ke WhatsApp Admin</span>
-                </a>
-                <a class="btn-ready-outline" href="{% url 'app:profile_pengguna' %}">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    <span>Dashboard Pesanan Saya</span>
-                </a>
-                <a class="btn-ready-outline" href="{% url 'shop' %}">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    <span>Belanja Laptop Lainnya</span>
-                </a>
+            <div class="ps-actions-suite">
+                <!-- Baris 1: Aksi Utama Pesanan -->
+                <div class="ps-actions-primary-row">
+                    <a class="ps-btn-action ps-btn-print" href="{% url 'app:order_receipt' order.nomor %}">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        <span>Cetak Nota / Struk</span>
+                    </a>
+
+                    <a class="ps-btn-action ps-btn-wa" href="https://api.whatsapp.com/send?phone={{ footer_setting.whatsapp_clean|default:'6282399213651' }}&text=Halo%20Losari%20Computer,%20saya%20sudah%20menyelesaikan%20pembayaran%20untuk%20pesanan%20nomor%20%23{{ order.nomor|stringformat:'.8s'|upper }}%20senilai%20{{ order.total_rupiah|default:order.total }}.%20Mohon%20segera%20diproses%20pengirimannya.%20Terima%20kasih!" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                        <span>Konfirmasi ke WhatsApp Admin</span>
+                    </a>
+                </div>
+
+                <!-- Baris 2: Navigasi Toko (2 Kolom Seimbang) -->
+                <div class="ps-actions-secondary-row">
+                    <a class="ps-btn-action ps-btn-secondary" href="{% url 'app:profile_pengguna' %}">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>Riwayat Pesanan Saya</span>
+                    </a>
+
+                    <a class="ps-btn-action ps-btn-secondary" href="{% url 'shop' %}">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        <span>Lanjut Belanja Laptop Lainnya</span>
+                    </a>
+                </div>
             </div>
             {% endif %}
 
-            <!-- Support Footer -->
-            <div class="status-support-bar">
-                <span>Butuh bantuan atau konfirmasi pesanan?</span>
-                <a href="https://wa.me/{{ footer_setting.whatsapp|default:'6281234567890' }}?text=Halo%20Losari%20Computer,%20saya%20butuh%20bantuan%20terkait%20pesanan%20nomor%20{{ order.nomor }}" target="_blank" rel="noopener" class="btn-wa-support">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    <span>Hubungi CS WhatsApp</span>
+            <!-- ─── Support Footer ─── -->
+            <div class="ps-support-bar">
+                <span>Butuh bantuan atau pertanyaan seputar pesanan Anda?</span>
+                <a href="https://api.whatsapp.com/send?phone={{ footer_setting.whatsapp_clean|default:'6282399213651' }}&text=Halo%20Losari%20Computer,%20saya%20butuh%20bantuan%20terkait%20pesanan%20nomor%20%23{{ order.nomor|stringformat:'.8s'|upper }}" target="_blank" rel="noopener" class="ps-support-link">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    <span>Hubungi CS WhatsApp Losari Computer &rarr;</span>
                 </a>
             </div>
 
@@ -318,26 +1821,200 @@
     </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const copyBtn = document.getElementById("copy-order-btn");
-    const tooltip = document.getElementById("copy-tooltip");
+<!-- ═══════════════════════════════════════════════════════════════
+     DEDICATED 1-SHEET OFFICIAL PRINT INVOICE DOCUMENT
+     Printed strictly as 1 Sheet of Paper (No Blank 2nd Page)
+     High-contrast Dark Lines (No Empty Circles in Print)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="ps-print-document">
+    <!-- Header -->
+    <div class="prn-header">
+        <div>
+            <div class="prn-brand-row">
+                <div class="prn-brand-icon">LC</div>
+                <h2 class="prn-brand-name">LOSARI COMPUTER</h2>
+            </div>
+            <div class="prn-tagline">Pusat Penjualan Laptop, Gadget &amp; Komputer Makassar</div>
+            <p class="prn-store-address">
+                {{ footer_setting.alamat|default:"Jl. Karebosi Link Makassar Blok R-161" }}<br>
+                <strong>WhatsApp:</strong> {{ footer_setting.whatsapp|default:"0823-9921-3651" }} &middot; 
+                <strong>Email:</strong> {{ footer_setting.email|default:"computerlosari@gmail.com" }} &middot; 
+                <strong>Web:</strong> www.losaricomputer.com
+            </p>
+        </div>
+        <div class="prn-meta-side">
+            <h1 class="prn-doc-title">NOTA PEMBELIAN</h1>
+            <div class="prn-doc-subtitle">Official Retail Invoice &amp; Receipt</div>
+            <!-- High-Contrast Stamp Box: Always Visible, Even Without Background Graphics -->
+            <div class="prn-stamp-box">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#047857" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>LUNAS / VERIFIED</span>
+            </div>
+        </div>
+    </div>
 
-    if (copyBtn) {
-        copyBtn.addEventListener("click", function () {
-            const textToCopy = this.getAttribute("data-clipboard") || "";
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    if (tooltip) tooltip.textContent = "Disalin!";
-                    copyBtn.classList.add("copied");
-                    setTimeout(() => {
-                        if (tooltip) tooltip.textContent = "Salin";
-                        copyBtn.classList.remove("copied");
-                    }, 2000);
-                });
-            }
-        });
-    }
+    <!-- Two-Column Details (Customer & Transaction) -->
+    <div class="prn-details-grid">
+        <div class="prn-detail-col">
+            <h4>Ditagihkan Kepada (Penerima)</h4>
+            <table class="prn-kv">
+                <tr>
+                    <td class="k">Nama Pembeli</td>
+                    <td class="v">: {{ order.pengguna.get_full_name|default:order.pengguna.username }}</td>
+                </tr>
+                <tr>
+                    <td class="k">No. Telepon</td>
+                    <td class="v">: {{ profile.telp|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="k">Email</td>
+                    <td class="v">: {{ order.pengguna.email|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="k">Alamat Kirim</td>
+                    <td class="v">: {{ order.alamat_pengiriman }}{% if order.kecamatan %}, Kec. {{ order.kecamatan }}{% endif %}{% if order.kota %}, {{ order.kota }}{% endif %}{% if order.provinsi %}, {{ order.provinsi }}{% endif %}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="prn-detail-col">
+            <h4>Informasi Transaksi</h4>
+            <table class="prn-kv">
+                <tr>
+                    <td class="k">No. Invoice</td>
+                    <td class="v">: <strong>INV/LC/{{ order.nomor|stringformat:".8s"|upper }}</strong></td>
+                </tr>
+                <tr>
+                    <td class="k">Tanggal Transaksi</td>
+                    <td class="v">: {{ order.dibuat_pada|date:"d F Y, H:i" }} WIB</td>
+                </tr>
+                <tr>
+                    <td class="k">Metode Bayar</td>
+                    <td class="v">: {{ order.midtrans_payment_type|default:"Payment Gateway (Midtrans)"|upper }}</td>
+                </tr>
+                <tr>
+                    <td class="k">Proteksi Pengemasan</td>
+                    <td class="v">: Free Packing Kayu + Bubble Wrap Tebal</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Itemized Products Table -->
+    <table class="prn-table">
+        <thead>
+            <tr>
+                <th class="tac" style="width:36px;">No.</th>
+                <th>Nama Produk / Unit Gadget</th>
+                <th class="tac" style="width:110px;">Garansi</th>
+                <th class="tac" style="width:60px;">Jumlah</th>
+                <th class="tar" style="width:125px;">Harga Satuan</th>
+                <th class="tar" style="width:135px;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.item.all %}
+            <tr>
+                <td class="tac">{{ forloop.counter }}</td>
+                <td>
+                    <div class="prn-item-name">{{ item.nama_produk }}</div>
+                    <div class="prn-item-desc">Unit Original Berstandar QC &middot; Bebas Kendala Hardware</div>
+                </td>
+                <td class="tac" style="font-weight:750;">1 Bulan Toko</td>
+                <td class="tac">{{ item.jumlah }} Unit</td>
+                <td class="tar">{{ item.harga_satuan_rupiah|default:item.harga_satuan }}</td>
+                <td class="tar" style="font-weight:800;">{{ item.subtotal_rupiah|default:item.subtotal }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="tac" style="padding:16px;">Tidak ada rincian item.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Totals & Guarantee Terms -->
+    <div class="prn-bottom-grid">
+        <div class="prn-terms-box">
+            <h5>Ketentuan Garansi Resmi Toko:</h5>
+            <ol>
+                <li>Garansi Toko berlaku <strong>30 hari kalender</strong> sejak unit diterima oleh pelanggan.</li>
+                <li>Garansi mencakup fungsi mesin, motherboard, LCD, keyboard, dan baterai bukan karena kelalaian fisik (terkena air/jatuh).</li>
+                <li>Simpan nota resmi ini sebagai dokumen sah saat membutuhkan klaim unit di Losari Computer.</li>
+                <li>Unit telah lulus 25 titik inspeksi kelayakan teknis sebelum dikirimkan.</li>
+            </ol>
+        </div>
+
+        <table class="prn-totals-table">
+            <tr>
+                <td>Subtotal Produk</td>
+                <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+            </tr>
+            <tr>
+                <td>Ongkos Kirim</td>
+                <td class="tar">Rp0 (FREE ONGKIR)</td>
+            </tr>
+            <tr>
+                <td>Proteksi Packing Kayu</td>
+                <td class="tar">Rp0 (FREE SAFETY)</td>
+            </tr>
+            <tr class="grand-row">
+                <td>TOTAL DIBAYAR</td>
+                <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Signatures & Seal -->
+    <div class="prn-sig-row">
+        <div class="prn-sig-box">
+            <div>Penerima / Pelanggan,</div>
+            <div class="prn-sig-space"></div>
+            <div class="prn-sig-name">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</div>
+        </div>
+
+        <div class="prn-sig-box">
+            <div>Losari Computer Makassar,</div>
+            <div class="prn-sig-space">
+                <div class="prn-seal-circle">
+                    <small>&star; LOSARI &star;</small>
+                    <span>LUNAS</span>
+                    <small>VERIFIED</small>
+                </div>
+            </div>
+            <div class="prn-sig-name">Authorized Store Manager</div>
+        </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="prn-footer-text">
+        Dokumen ini adalah bukti transaksi resmi yang sah dan diterbitkan otomatis oleh sistem Losari Computer.<br>
+        Terima kasih telah mempercayakan kebutuhan teknologi Anda kepada Losari Computer Makassar.
+    </div>
+</div>
+
+<script>
+// Copy Order ID with tooltip feedback
+document.getElementById('copy-order-btn')?.addEventListener('click', function() {
+    const textToCopy = this.getAttribute('data-clipboard');
+    const tooltip = document.getElementById('copy-tooltip');
+    if (!textToCopy) return;
+
+    navigator.clipboard.writeText(textToCopy).then(function() {
+        if (tooltip) {
+            tooltip.innerText = 'Tersalin!';
+            setTimeout(function() {
+                tooltip.innerText = 'Salin';
+            }, 2000);
+        }
+    }).catch(function() {
+        if (tooltip) {
+            tooltip.innerText = 'Gagal';
+            setTimeout(function() {
+                tooltip.innerText = 'Salin';
+            }, 2000);
+        }
+    });
 });
 </script>
 {% endblock %}

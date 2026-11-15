@@ -1,0 +1,692 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<style>
+/* ═══════════════════════════════════════════════════════════
+   MODERN ABOUT US MANAGER (EXECUTIVE SAAS / CLEAN / RESPONSIVE)
+═══════════════════════════════════════════════════════════ */
+.about-manager-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ─── Top Command Bar ─── */
+.about-command-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.about-bar-title-group h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+.about-bar-title-group .muted {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+.btn-live-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    transition: all 0.15s ease;
+}
+.btn-live-preview:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+}
+
+/* ─── Executive Section Cards ─── */
+.about-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+.about-card:hover {
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+/* Card Header */
+.about-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fafbfc;
+}
+.about-header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.about-header-copy h3 {
+    margin: 0 0 2px;
+    font-size: 15.5px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+.about-header-copy p {
+    margin: 0;
+    font-size: 12.5px;
+    color: #64748b;
+}
+
+/* Card Body */
+.about-card-body {
+    padding: 24px;
+}
+
+/* ─── Grid Systems ─── */
+.about-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.about-grid-1col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ─── Fields & Inputs ─── */
+.about-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.about-field-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #334155;
+}
+.about-field-help {
+    margin: 4px 0 0;
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.4;
+}
+.about-char-counter {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.about-field-group input[type="text"],
+.about-field-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: #0f172a;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+.about-field-group input[type="text"]:focus,
+.about-field-group textarea:focus {
+    background: #ffffff;
+    border-color: #dc2626;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+.about-field-group textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+/* ─── Custom Media Dropzone (Logo & CEO Photo) ─── */
+.media-upload-card-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    width: 100%;
+}
+.media-upload-card-box:hover {
+    background: #f8fafc;
+    border-color: #2563eb;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.08);
+}
+.media-upload-card-box.is-selected {
+    background: #f0fdf4;
+    border-color: #16a34a;
+    border-style: solid;
+}
+
+.media-thumb-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.media-thumb-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
+}
+.media-thumb-box.avatar-mode {
+    border-radius: 50%;
+}
+.media-thumb-box.avatar-mode img {
+    object-fit: cover;
+    padding: 0;
+}
+
+.media-meta-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+.media-action-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+}
+.media-filename-tag {
+    font-size: 11.5px;
+    color: #64748b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.media-upload-card-box.is-selected .media-filename-tag {
+    color: #15803d;
+    font-weight: 700;
+}
+
+.media-btn-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+.media-upload-card-box:hover .media-btn-tag {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+.media-upload-card-box.is-selected .media-btn-tag {
+    background: #dcfce7;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+/* Hidden File Input Accessible */
+.about-hidden-file {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ─── Bottom Actions Bar ─── */
+.about-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 10px;
+    padding: 20px 24px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.btn-save-about {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+    transition: all 0.15s ease;
+}
+.btn-save-about:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+}
+.btn-save-about:active {
+    transform: translateY(0);
+}
+
+/* ─── Responsive Media Queries (Mobile & Tablet) ─── */
+@media (max-width: 860px) {
+    .about-grid-2col {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .about-command-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .about-form-actions {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    .btn-save-about {
+        justify-content: center;
+        width: 100%;
+    }
+}
+@media (max-width: 640px) {
+    .about-card-body {
+        padding: 18px 16px;
+    }
+    .about-card-header {
+        padding: 14px 16px;
+    }
+    .media-upload-card-box {
+        padding: 12px;
+    }
+    .media-btn-tag {
+        display: none;
+    }
+}
+</style>
+
+<div class="about-manager-container">
+    <!-- Top Action / Command Bar -->
+    <div class="about-command-bar">
+        <div class="about-bar-title-group">
+            <h2>Pengaturan Halaman Tentang Kami</h2>
+            <p class="muted">Kelola profil narasi perusahaan, logo brand, sejarah perjalanan, data pimpinan (CEO), serta visi dan misi.</p>
+        </div>
+        <a class="btn-live-preview" href="{{ public_url }}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Lihat Tampilan Website ↗</span>
+        </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div style="margin-bottom:20px; padding:12px 16px; background:#fef2f2; border:1px solid #fecaca; border-radius:10px; color:#b91c1c; font-size:13px;">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- ═══════════════════════════════════════════════════════════
+             CARD 1: IDENTITAS UTAMA & LOGO BRAND
+        ═══════════════════════════════════════════════════════════ -->
+        <div class="about-card">
+            <div class="about-card-header">
+                <div class="about-header-icon" style="background:#eff6ff; color:#2563eb;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
+                <div class="about-header-copy">
+                    <h3>Identitas Utama &amp; Logo Brand</h3>
+                    <p>Judul, slogan, dan logo resmi yang tampil pada header halaman Tentang Kami.</p>
+                </div>
+            </div>
+            <div class="about-card-body">
+                <div class="about-grid-2col">
+                    <!-- Left: Judul & Tagline -->
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div class="about-field-group">
+                            <label class="about-field-label" for="{{ form.judul.id_for_label }}">
+                                <span>Judul Halaman:</span>
+                            </label>
+                            {{ form.judul }}
+                            <p class="about-field-help">Contoh: Tentang Losari Computer</p>
+                            {{ form.judul.errors }}
+                        </div>
+                        <div class="about-field-group">
+                            <label class="about-field-label" for="{{ form.tagline.id_for_label }}">
+                                <span>Tagline / Slogan Bisnis:</span>
+                            </label>
+                            {{ form.tagline }}
+                            <p class="about-field-help">Kalimat singkat yang merefleksikan dedikasi toko kepada pelanggan.</p>
+                            {{ form.tagline.errors }}
+                        </div>
+                    </div>
+
+                    <!-- Right: Logo Dropzone -->
+                    <div class="about-field-group">
+                        <label class="about-field-label">
+                            <span>Logo Brand Perusahaan:</span>
+                            <span style="font-size:11px; color:#94a3b8;">PNG, JPG, WEBP</span>
+                        </label>
+                        <label class="media-upload-card-box" id="logo-dropzone" for="{{ form.logo.id_for_label }}" title="Klik untuk mengganti logo perusahaan">
+                            <div class="media-thumb-box">
+                                {% if setting.logo %}
+                                <img src="{{ setting.logo.url }}" alt="Logo Perusahaan" data-preview-logo>
+                                {% else %}
+                                <div data-preview-logo-placeholder style="color:#94a3b8; display:flex; align-items:center; justify-content:center;">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="media-meta-box">
+                                <span class="media-action-heading">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    <span>Ganti Logo Brand</span>
+                                </span>
+                                <span class="media-filename-tag" data-logo-filename>
+                                    {% if setting.logo %}Logo aktif terpasang{% else %}Klik untuk memilih file logo{% endif %}
+                                </span>
+                            </div>
+                            <span class="media-btn-tag">Pilih File</span>
+                        </label>
+                        <div class="about-hidden-file">
+                            {{ form.logo }}
+                        </div>
+                        {{ form.logo.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             CARD 2: NARASI PROFIL & SEJARAH PERJALANAN
+        ═══════════════════════════════════════════════════════════ -->
+        <div class="about-card">
+            <div class="about-card-header">
+                <div class="about-header-icon" style="background:#fef3c7; color:#d97706;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </div>
+                <div class="about-header-copy">
+                    <h3>Narasi Profil &amp; Sejarah Perjalanan</h3>
+                    <p>Cerita di balik lahirnya toko dan komitmen pelayanan yang membangun kepercayaan pembeli.</p>
+                </div>
+            </div>
+            <div class="about-card-body">
+                <div class="about-grid-1col">
+                    <!-- Deskripsi Ringkas -->
+                    <div class="about-field-group">
+                        <label class="about-field-label" for="{{ form.deskripsi.id_for_label }}">
+                            <span>01. Profil Singkat Perusahaan:</span>
+                            <span class="about-char-counter" id="desc-counter">0 karakter</span>
+                        </label>
+                        {{ form.deskripsi }}
+                        <p class="about-field-help">Menjelaskan fokus solusi, keunggulan toko, dan komitmen pelayanan kepada calon pembeli.</p>
+                        {{ form.deskripsi.errors }}
+                    </div>
+
+                    <!-- Sejarah Toko -->
+                    <div class="about-field-group">
+                        <label class="about-field-label" for="{{ form.sejarah.id_for_label }}">
+                            <span>02. Sejarah &amp; Perjalanan Toko:</span>
+                        </label>
+                        {{ form.sejarah }}
+                        <p class="about-field-help">Cerita awal mula toko berdiri di Losari hingga terus berkembang dan dipercaya pelanggan.</p>
+                        {{ form.sejarah.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             CARD 3: KEPEMIMPINAN & PROFIL PIMPINAN (CEO)
+        ═══════════════════════════════════════════════════════════ -->
+        <div class="about-card">
+            <div class="about-card-header">
+                <div class="about-header-icon" style="background:#f3e8ff; color:#9333ea;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="about-header-copy">
+                    <h3>Kepemimpinan &amp; Profil Pimpinan (CEO)</h3>
+                    <p>Menampilkan sosok pendiri toko untuk memberikan sentuhan personal dan kredibilitas tinggi.</p>
+                </div>
+            </div>
+            <div class="about-card-body">
+                <div class="about-grid-2col">
+                    <!-- Left: Nama & Jabatan -->
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div class="about-field-group">
+                            <label class="about-field-label" for="{{ form.ceo_nama.id_for_label }}">
+                                <span>Nama Lengkap Pimpinan:</span>
+                            </label>
+                            {{ form.ceo_nama }}
+                            <p class="about-field-help">Nama lengkap pendiri atau penanggung jawab toko.</p>
+                            {{ form.ceo_nama.errors }}
+                        </div>
+                        <div class="about-field-group">
+                            <label class="about-field-label" for="{{ form.ceo_jabatan.id_for_label }}">
+                                <span>Jabatan Resmi:</span>
+                            </label>
+                            {{ form.ceo_jabatan }}
+                            <p class="about-field-help">Contoh: Founder &amp; CEO</p>
+                            {{ form.ceo_jabatan.errors }}
+                        </div>
+                    </div>
+
+                    <!-- Right: CEO Foto Dropzone -->
+                    <div class="about-field-group">
+                        <label class="about-field-label">
+                            <span>Foto Profil Pimpinan (CEO):</span>
+                            <span style="font-size:11px; color:#94a3b8;">PNG, JPG, WEBP</span>
+                        </label>
+                        <label class="media-upload-card-box" id="ceo-dropzone" for="{{ form.ceo_foto.id_for_label }}" title="Klik untuk mengganti foto CEO">
+                            <div class="media-thumb-box avatar-mode">
+                                {% if setting.ceo_foto %}
+                                <img src="{{ setting.ceo_foto.url }}" alt="{{ setting.ceo_nama }}" data-preview-ceo>
+                                {% else %}
+                                <div data-preview-ceo-placeholder style="color:#94a3b8; display:flex; align-items:center; justify-content:center;">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="media-meta-box">
+                                <span class="media-action-heading">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    <span>Ganti Foto Profil</span>
+                                </span>
+                                <span class="media-filename-tag" data-ceo-filename>
+                                    {% if setting.ceo_foto %}Foto aktif terpasang{% else %}Klik untuk memilih foto CEO{% endif %}
+                                </span>
+                            </div>
+                            <span class="media-btn-tag">Pilih Foto</span>
+                        </label>
+                        <div class="about-hidden-file">
+                            {{ form.ceo_foto }}
+                        </div>
+                        {{ form.ceo_foto.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             CARD 4: VISI & MISI PERUSAHAAN
+        ═══════════════════════════════════════════════════════════ -->
+        <div class="about-card">
+            <div class="about-card-header">
+                <div class="about-header-icon" style="background:#f0fdf4; color:#16a34a;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                </div>
+                <div class="about-header-copy">
+                    <h3>Visi &amp; Misi Toko</h3>
+                    <p>Arah tujuan masa depan dan prinsip operasional bisnis dalam melayani pelanggan.</p>
+                </div>
+            </div>
+            <div class="about-card-body">
+                <div class="about-grid-2col">
+                    <!-- Visi -->
+                    <div class="about-field-group">
+                        <label class="about-field-label" for="{{ form.visi.id_for_label }}">
+                            <span>03. Visi Jangka Panjang:</span>
+                        </label>
+                        {{ form.visi }}
+                        <p class="about-field-help">Aspirasi dan cita-cita besar yang ingin dicapai toko.</p>
+                        {{ form.visi.errors }}
+                    </div>
+
+                    <!-- Misi -->
+                    <div class="about-field-group">
+                        <label class="about-field-label" for="{{ form.misi.id_for_label }}">
+                            <span>04. Misi &amp; Komitmen Layanan:</span>
+                        </label>
+                        {{ form.misi }}
+                        <p class="about-field-help">Langkah konkret dan nilai-nilai yang diterapkan dalam keseharian bisnis.</p>
+                        {{ form.misi.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             BOTTOM FORM ACTIONS
+        ═══════════════════════════════════════════════════════════ -->
+        <div class="about-form-actions">
+            <div style="font-size:13px; color:#64748b;">
+                Perubahan yang disimpan akan langsung diperbarui di halaman <a href="{{ public_url }}" target="_blank" style="color:#dc2626; font-weight:700; text-decoration:none;">Tentang Kami ↗</a>
+            </div>
+            <button class="btn-save-about" type="submit">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                <span>Simpan Profil Tentang Kami</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Live Character Counter on Deskripsi
+    var descEl = document.getElementById("{{ form.deskripsi.id_for_label }}");
+    var counterEl = document.getElementById("desc-counter");
+    if (descEl && counterEl) {
+        function updateCounter() {
+            var len = descEl.value ? descEl.value.length : 0;
+            counterEl.textContent = len + " karakter";
+        }
+        descEl.addEventListener("input", updateCounter);
+        updateCounter();
+    }
+
+    // 2. Instant Live Image Preview for Logo
+    var logoInput = document.getElementById("{{ form.logo.id_for_label }}");
+    if (logoInput) {
+        logoInput.addEventListener("change", function () {
+            var file = logoInput.files && logoInput.files[0];
+            if (!file) return;
+
+            var dropzone = document.getElementById("logo-dropzone");
+            if (dropzone) dropzone.classList.add("is-selected");
+
+            var filenameLabel = document.querySelector("[data-logo-filename]");
+            if (filenameLabel) {
+                filenameLabel.textContent = "✓ " + file.name;
+                filenameLabel.title = file.name;
+            }
+
+            var objectUrl = URL.createObjectURL(file);
+            var previewImg = document.querySelector("[data-preview-logo]");
+            if (previewImg) {
+                previewImg.src = objectUrl;
+            } else {
+                var placeholder = document.querySelector("[data-preview-logo-placeholder]");
+                if (placeholder && placeholder.parentElement) {
+                    placeholder.parentElement.innerHTML = '<img src="' + objectUrl + '" alt="Pratinjau Logo" data-preview-logo style="width:100%;height:100%;object-fit:contain;padding:4px;">';
+                }
+            }
+        });
+    }
+
+    // 3. Instant Live Image Preview for CEO Photo
+    var ceoInput = document.getElementById("{{ form.ceo_foto.id_for_label }}");
+    if (ceoInput) {
+        ceoInput.addEventListener("change", function () {
+            var file = ceoInput.files && ceoInput.files[0];
+            if (!file) return;
+
+            var dropzone = document.getElementById("ceo-dropzone");
+            if (dropzone) dropzone.classList.add("is-selected");
+
+            var filenameLabel = document.querySelector("[data-ceo-filename]");
+            if (filenameLabel) {
+                filenameLabel.textContent = "✓ " + file.name;
+                filenameLabel.title = file.name;
+            }
+
+            var objectUrl = URL.createObjectURL(file);
+            var previewImg = document.querySelector("[data-preview-ceo]");
+            if (previewImg) {
+                previewImg.src = objectUrl;
+            } else {
+                var placeholder = document.querySelector("[data-preview-ceo-placeholder]");
+                if (placeholder && placeholder.parentElement) {
+                    placeholder.parentElement.innerHTML = '<img src="' + objectUrl + '" alt="Pratinjau Foto CEO" data-preview-ceo style="width:100%;height:100%;object-fit:cover;">';
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

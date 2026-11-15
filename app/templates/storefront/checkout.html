@@ -244,6 +244,9 @@
                             <button type="button" class="qty-btn" id="qty-plus" aria-label="Tambah jumlah">+</button>
                             <div class="hidden-qty">{{ form.jumlah }}</div>
                         </div>
+                        {% if product.stok <= 1 %}
+                        <small style="display:block; margin-top:6px; color:#dc2626; font-weight:600; font-size:12px;">⚠️ Maksimal 1 unit (Stok Terakhir dari Toko)</small>
+                        {% endif %}
                     </div>
 
                     <!-- Calculation Breakdown -->

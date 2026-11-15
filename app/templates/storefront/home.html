@@ -1,7 +1,7 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}Home - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}?v=11"><link rel="stylesheet" href="{% static 'css/shop.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}?v=12"><link rel="stylesheet" href="{% static 'css/shop.css' %}">{% endblock %}
 {% block content %}
 <section class="hero" aria-label="Losari Computer">
     <img src="{% static 'images/Toko UMKM Losari Computer.jpeg' %}" alt="Toko Losari Computer">
@@ -129,32 +129,126 @@
     </section>
     {% endif %}
     <section class="home-articles" aria-labelledby="latest-articles-title">
-        <div class="section-head">
-            <div>
-                <p class="home-section-eyebrow">Insight Losari Computer</p>
-                <h2 id="latest-articles-title">Artikel Terbaru</h2>
-                <p class="muted">Baca informasi dan cerita terbaru dari Losari Computer.</p>
+        <div class="home-articles-header">
+            <div class="home-articles-title-block">
+                <div class="article-section-pill">
+                    <span class="pill-dot"></span>
+                    <span>Wawasan &amp; Artikel</span>
+                </div>
+                <h2 id="latest-articles-title" class="home-articles-heading">Artikel &amp; Cerita Terbaru</h2>
+                <p class="home-articles-subtitle">Eksplorasi ulasan mendalam, panduan perangkat komputer, dan berita teknologi terkini dari Losari Computer.</p>
             </div>
-            <a class="section-link" href="{% url 'article_list' %}?semua=1"><svg class="section-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 18-6-6 6-6"></path></svg><span>Lihat semua artikel</span></a>
+            <a class="btn-all-articles" href="{% url 'article_list' %}?semua=1">
+                <span>Lihat Semua Artikel</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
         </div>
-        <div class="home-article-grid">
+
+        {% if latest_articles|length == 1 %}
             {% for article in latest_articles %}
-            <article class="home-article-card">
-                <a class="home-article-image" href="{% url 'article_detail' article.slug %}">
-                    {% if article.images %}<img src="{{ article.images.url }}" alt="{{ article.title_articles }}">{% else %}<span>Losari Computer</span>{% endif %}
+            <!-- Single Featured Hero Magazine Card -->
+            <article class="featured-editorial-card">
+                <a class="featured-editorial-media" href="{% url 'article_detail' article.slug %}" aria-label="{{ article.title_articles }}">
+                    {% if article.images %}
+                    <img src="{{ article.images.url }}" alt="{{ article.title_articles }}" loading="lazy">
+                    {% else %}
+                    <div class="featured-editorial-placeholder">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span>Losari Computer</span>
+                    </div>
+                    {% endif %}
+                    <span class="featured-editorial-badge">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Artikel Pilihan
+                    </span>
                 </a>
-                <div class="home-article-body">
-                    <p class="home-article-category">{{ article.category }}</p>
-                    <p class="home-article-date">{{ article.created_at|date:"F d, Y" }}</p>
-                    <h3><a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a></h3>
-                    <p class="home-article-summary">{{ article.desc_seo }}</p>
-                    <a class="home-article-read-more" href="{% url 'article_detail' article.slug %}"><span>Baca artikel</span><span class="home-article-read-more-icon" aria-hidden="true">→</span></a>
+                <div class="featured-editorial-content">
+                    <div class="editorial-meta-row">
+                        <span class="editorial-cat-tag">{{ article.category|default:"Berita Terkini" }}</span>
+                        <span class="editorial-meta-divider">•</span>
+                        <span class="editorial-date">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            {{ article.created_at|date:"d F Y" }}
+                        </span>
+                        <span class="editorial-meta-divider">•</span>
+                        <span class="editorial-views">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            {{ article.views|default:0 }} dibaca
+                        </span>
+                    </div>
+
+                    <h3 class="featured-editorial-title">
+                        <a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a>
+                    </h3>
+
+                    <p class="featured-editorial-excerpt">
+                        {{ article.desc_seo|default:article.content|striptags|truncatewords:35 }}
+                    </p>
+
+                    <div class="featured-editorial-footer">
+                        <div class="editorial-author-info">
+                            <div class="editorial-author-avatar">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            <div class="editorial-author-text">
+                                <span class="author-label">Penulis</span>
+                                <strong class="author-name">{{ article.authors|default:"Tim Redaksi Losari" }}</strong>
+                            </div>
+                        </div>
+
+                        <a class="btn-read-editorial" href="{% url 'article_detail' article.slug %}">
+                            <span>Baca Selengkapnya</span>
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                        </a>
+                    </div>
                 </div>
             </article>
-            {% empty %}
-            <p class="muted">Belum ada artikel yang diterbitkan.</p>
             {% endfor %}
-        </div>
+        {% else %}
+            <!-- Multi-Card Grid for 2 or 3 Articles -->
+            <div class="home-article-grid">
+                {% for article in latest_articles %}
+                <article class="modern-article-card">
+                    <a class="modern-article-media" href="{% url 'article_detail' article.slug %}" aria-label="{{ article.title_articles }}">
+                        {% if article.images %}
+                        <img src="{{ article.images.url }}" alt="{{ article.title_articles }}" loading="lazy">
+                        {% else %}
+                        <div class="featured-editorial-placeholder">Losari Computer</div>
+                        {% endif %}
+                        <span class="modern-card-cat-badge">{{ article.category|default:"Berita Terkini" }}</span>
+                    </a>
+                    <div class="modern-article-body">
+                        <div class="modern-card-meta">
+                            <span class="modern-card-date">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                {{ article.created_at|date:"d M Y" }}
+                            </span>
+                            <span>•</span>
+                            <span class="modern-card-views">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                {{ article.views|default:0 }}
+                            </span>
+                        </div>
+                        <h3 class="modern-card-title">
+                            <a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a>
+                        </h3>
+                        <p class="modern-card-excerpt">{{ article.desc_seo|default:article.content|striptags|truncatewords:20 }}</p>
+                        <div class="modern-card-footer">
+                            <span class="modern-card-author">{{ article.authors|default:"Redaksi" }}</span>
+                            <a class="modern-card-link" href="{% url 'article_detail' article.slug %}">
+                                <span>Baca</span>
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="empty-articles-box">
+                    <p>Belum ada artikel yang diterbitkan.</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </section>
 </div>
 <script>

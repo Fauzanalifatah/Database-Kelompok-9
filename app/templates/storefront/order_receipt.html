@@ -1,0 +1,1510 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nota Transaksi #{{ order.nomor|stringformat:".8s"|upper }} - Losari Computer</title>
+    <link rel="icon" type="image/jpeg" href="{% static 'images/losari-computer-mark.jpg' %}">
+    
+    <style>
+        /* ═══════════════════════════════════════════════════════════
+           RESET & ESSENTIALS
+        ═══════════════════════════════════════════════════════════ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: radial-gradient(circle at 50% 28%, #ffffff 0%, #fbf8f3 40%, #f4eee5 80%, #ebe2d2 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           TOP NAVIGATION & UTILITY BAR (GLASSMORPHISM)
+        ═══════════════════════════════════════════════════════════ */
+        .receipt-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+            padding: 10px 24px;
+        }
+
+        .receipt-nav-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .receipt-nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #334155;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .receipt-nav-back:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateX(-3px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .receipt-nav-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .receipt-nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand-logo {
+            height: 32px;
+            width: auto;
+            max-width: 90px;
+            border-radius: 6px;
+            object-fit: contain;
+            display: block;
+            box-shadow: 0 2px 8px rgba(227, 6, 19, 0.25);
+        }
+
+        .nav-brand-text-wrap {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .nav-brand-title {
+            font-size: 13.5px;
+            font-weight: 850;
+            color: #0f172a;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-brand-sub {
+            font-family: ui-monospace, monospace;
+            font-size: 10.5px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .receipt-nav-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 11px;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 750;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .receipt-nav-pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #64748b;
+            animation: pulse-dot 1.8s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .receipt-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-nav-print {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: #0f172a;
+            color: #ffffff;
+            border: 0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-nav-print:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.32);
+        }
+
+        .btn-nav-replay {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 15px;
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-nav-replay:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           MAIN STAGE: DISPENSER & RECEIPT SHOWCASE
+        ═══════════════════════════════════════════════════════════ */
+        .receipt-main-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 38px 16px 70px;
+            position: relative;
+        }
+
+        /* Ambient spotlight glow */
+        .stage-spotlight {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 440px;
+            height: 240px;
+            background: radial-gradient(ellipse at center, rgba(251, 191, 36, 0.22) 0%, rgba(251, 191, 36, 0) 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .dispenser-container {
+            width: 100%;
+            max-width: 410px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+            animation: stage-reveal 0.4s ease-out;
+        }
+
+        @keyframes stage-reveal {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ─── Golden Metallic Dispenser Slot Casing (Reference 100% Match) ─── */
+        .ps-dispenser-casing {
+            width: 100%;
+            max-width: 396px;
+            background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 15%, #fbbf24 45%, #b45309 85%, #78350f 100%);
+            padding: 12px 18px;
+            border-radius: 16px 16px 8px 8px;
+            box-shadow: 0 16px 36px rgba(180, 83, 9, 0.32), inset 0 2px 4px rgba(255, 255, 255, 0.95), inset 0 -2px 4px rgba(0, 0, 0, 0.45);
+            position: relative;
+            z-index: 20;
+            box-sizing: border-box;
+        }
+
+        .ps-dispenser-slot {
+            height: 9px;
+            background: #381503;
+            border-radius: 5px;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        /* ─── Dispenser Feed Tray (Clips Top Edge for Authentic Emergence) ─── */
+        .ps-dispenser-feed-tray {
+            width: 100%;
+            max-width: 386px;
+            margin: -3px auto 0;
+            position: relative;
+            z-index: 10;
+            clip-path: inset(0px -30px -40px -30px);
+            -webkit-clip-path: inset(0px -30px -40px -30px);
+            padding-bottom: 12px;
+        }
+
+        /* ─── Receipt Paper Dispensed Downwards Slowly Like Cashier Printer ─── */
+        .ps-receipt-paper {
+            width: 100%;
+            background: #ffffff;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+            padding: 24px 22px 20px;
+            position: relative;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1e293b;
+            box-sizing: border-box;
+            transform: translateY(-100%);
+            animation: dispense-paper 2.5s cubic-bezier(0.12, 0.8, 0.22, 1) forwards;
+            will-change: transform;
+        }
+
+        @keyframes dispense-paper {
+            0% { transform: translateY(-100%); }
+            10% { transform: translateY(-90%); }
+            35% { transform: translateY(-65%); }
+            65% { transform: translateY(-30%); }
+            85% { transform: translateY(-8%); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Sawtooth Serrated Bottom Edge */
+        .ps-receipt-sawtooth {
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        /* ─── Inside Receipt Content ─── */
+        .ps-rcpt-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .ps-rcpt-status {
+            font-size: 11px;
+            font-weight: 850;
+            color: #15803d;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .ps-rcpt-price {
+            font-size: 24px;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.15;
+            margin: 2px 0 3px;
+        }
+
+        .ps-rcpt-meta {
+            font-size: 10.5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .ps-rcpt-logo-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ps-rcpt-logo-img {
+            height: 38px;
+            width: auto;
+            max-width: 86px;
+            border-radius: 6px;
+            object-fit: contain;
+            display: block;
+            box-shadow: 0 3px 10px rgba(227, 6, 19, 0.22);
+        }
+
+        .ps-rcpt-dashed-line {
+            border-top: 1.5px dashed #cbd5e1;
+            margin: 14px 0;
+        }
+
+        .ps-rcpt-kv {
+            width: 100%;
+            font-size: 11px;
+            border-collapse: collapse;
+        }
+
+        .ps-rcpt-kv td {
+            padding: 3px 0;
+            vertical-align: top;
+        }
+
+        .ps-rcpt-kv td.k {
+            color: #64748b;
+            width: 32%;
+            font-weight: 600;
+        }
+
+        .ps-rcpt-kv td.v {
+            color: #0f172a;
+            font-weight: 750;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .ps-rcpt-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 6px 0;
+        }
+
+        .ps-rcpt-item-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .ps-rcpt-item-title {
+            font-weight: 750;
+            color: #0f172a;
+            line-height: 1.25;
+        }
+
+        .ps-rcpt-item-sub {
+            font-size: 10.5px;
+            color: #64748b;
+            margin-top: 1px;
+        }
+
+        .ps-rcpt-item-val {
+            font-weight: 800;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+
+        .ps-rcpt-totals-table {
+            width: 100%;
+            font-size: 11.5px;
+            border-collapse: collapse;
+        }
+
+        .ps-rcpt-totals-table td {
+            padding: 3px 0;
+        }
+
+        .ps-rcpt-totals-table td.tar {
+            text-align: right;
+            font-weight: 750;
+        }
+
+        .ps-rcpt-totals-table tr.total-row td {
+            font-size: 14px;
+            font-weight: 900;
+            color: #0f172a;
+            padding-top: 6px;
+            border-top: 1.5px dashed #94a3b8;
+        }
+
+        .ps-rcpt-totals-table tr.total-row td.tar {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .ps-rcpt-tag-guarantee {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 12px 0;
+            line-height: 1.4;
+            letter-spacing: 0.02em;
+        }
+
+        .ps-rcpt-barcode-wrap {
+            text-align: center;
+            margin: 10px 0 6px;
+        }
+
+        .ps-rcpt-barcode-svg {
+            height: 36px;
+            width: 80%;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .ps-rcpt-barcode-num {
+            font-family: ui-monospace, monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .ps-rcpt-footer-wish {
+            text-align: center;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #475569;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* ─── Buttons Under Dispensed Receipt ─── */
+        .dispenser-bottom-actions {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 10px;
+            margin-top: 22px;
+            width: 100%;
+            max-width: 386px;
+            box-sizing: border-box;
+            animation: ps-actions-appear 0.4s ease 2.3s both;
+        }
+
+        @keyframes ps-actions-appear {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-action-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #0f172a;
+            color: #ffffff;
+            border: 0;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action-primary:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.28);
+        }
+
+        .btn-action-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 14px;
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action-secondary:hover {
+            background: #f8fafc;
+            color: #0f172a;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+        }
+
+        .btn-action-full {
+            grid-column: 1 / -1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            background: transparent;
+            color: #64748b;
+            border: 0;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 700;
+            transition: color 0.15s ease;
+        }
+
+        .btn-action-full:hover {
+            color: #0f172a;
+        }
+
+        /* ─── Tablet & Mobile Responsiveness ─── */
+        @media (max-width: 860px) {
+            .receipt-navbar {
+                padding: 10px 16px;
+            }
+            .nav-brand-sub {
+                display: none;
+            }
+            .receipt-nav-title {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .receipt-navbar {
+                padding: 8px 12px;
+            }
+            .receipt-nav-title {
+                display: none;
+            }
+            .receipt-nav-back span {
+                display: none;
+            }
+            .receipt-nav-back {
+                padding: 8px 12px;
+            }
+            .btn-nav-replay span {
+                display: none;
+            }
+            .btn-nav-replay {
+                padding: 8px 12px;
+            }
+            .btn-nav-print {
+                padding: 8px 14px;
+                font-size: 12.5px;
+            }
+            .receipt-main-stage {
+                padding: 20px 12px 50px;
+            }
+            .ps-dispenser-casing {
+                padding: 10px 14px;
+            }
+            .ps-receipt-paper {
+                padding: 18px 14px 16px;
+            }
+            .ps-rcpt-price {
+                font-size: 21px;
+            }
+            .dispenser-bottom-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           OFFICIAL A4 DIGITAL INVOICE (CLEAN, MODERN & PROFESSIONAL)
+           ═══════════════════════════════════════════════════════════ */
+        .ps-print-document {
+            display: none;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 14mm 10mm 14mm;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                font-size: 8pt !important;
+                line-height: 1.4 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .receipt-navbar,
+            .stage-spotlight,
+            .ps-dispenser-casing,
+            .ps-dispenser-feed-tray,
+            .dispenser-bottom-actions,
+            header,
+            footer,
+            nav {
+                display: none !important;
+            }
+
+            .receipt-main-stage {
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+                background: transparent !important;
+            }
+
+            .dispenser-container {
+                display: none !important;
+            }
+
+            .ps-print-document {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                max-width: 182mm !important;
+                height: 270mm !important;
+                min-height: 270mm !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+                color: #0f172a !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+                box-sizing: border-box !important;
+            }
+
+            /* ─── 1. Header & Kop Surat ─── */
+            .prn-header-grid {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding-bottom: 12px !important;
+                border-bottom: 2px solid #0f172a !important;
+            }
+
+            .prn-logo-box {
+                display: flex !important;
+                align-items: center !important;
+                gap: 14px !important;
+            }
+
+            .prn-logo-img {
+                width: 86px !important;
+                height: 44px !important;
+                border-radius: 6px !important;
+                object-fit: contain !important;
+                background: #e30613 !important;
+                display: block !important;
+                flex-shrink: 0 !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+            }
+
+            .prn-store-name {
+                font-size: 18pt !important;
+                font-weight: 900 !important;
+                color: #0f172a !important;
+                letter-spacing: -0.02em !important;
+                line-height: 1.1 !important;
+                margin-bottom: 2px !important;
+            }
+
+            .prn-store-tag {
+                font-size: 7.8pt !important;
+                color: #64748b !important;
+                font-weight: 700 !important;
+                letter-spacing: 0.02em !important;
+                margin-bottom: 2px !important;
+            }
+
+            .prn-store-address {
+                font-size: 7.2pt !important;
+                color: #64748b !important;
+                line-height: 1.35 !important;
+            }
+
+            .prn-meta-side {
+                text-align: right !important;
+            }
+
+            .prn-doc-title {
+                font-size: 16pt !important;
+                font-weight: 900 !important;
+                color: #0f172a !important;
+                letter-spacing: 0.03em !important;
+                text-transform: uppercase !important;
+                margin-bottom: 2px !important;
+            }
+
+            .prn-invoice-badge {
+                font-family: ui-monospace, monospace !important;
+                font-size: 10.5pt !important;
+                font-weight: 850 !important;
+                color: #0f172a !important;
+            }
+
+            .prn-status-pill {
+                display: inline-block !important;
+                font-size: 7.8pt !important;
+                font-weight: 850 !important;
+                padding: 3px 10px !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 999px !important;
+                margin-top: 4px !important;
+                letter-spacing: 0.04em !important;
+                color: #0f172a !important;
+                background: #f8fafc !important;
+            }
+
+            .prn-date-text {
+                font-size: 7.2pt !important;
+                color: #64748b !important;
+                margin-top: 3px !important;
+                font-weight: 600 !important;
+            }
+
+            /* ─── 2. Info Pelanggan & Pembayaran (Clean Strip) ─── */
+            .prn-info-strip {
+                display: flex !important;
+                justify-content: space-between !important;
+                gap: 20px !important;
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                padding: 10px 14px !important;
+                font-size: 7.8pt !important;
+            }
+
+            .prn-info-col {
+                flex: 1 !important;
+            }
+
+            .prn-info-heading {
+                font-size: 7pt !important;
+                font-weight: 850 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.06em !important;
+                color: #64748b !important;
+                margin-bottom: 4px !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                padding-bottom: 3px !important;
+            }
+
+            .prn-info-item {
+                margin-bottom: 2.5px !important;
+                color: #334155 !important;
+            }
+
+            .prn-info-item strong {
+                color: #0f172a !important;
+                font-weight: 750 !important;
+            }
+
+            /* ─── 3. Clean Table ─── */
+            .prn-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 7.8pt !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                overflow: hidden !important;
+            }
+
+            .prn-table th {
+                background: #f8fafc !important;
+                color: #475569 !important;
+                font-weight: 800 !important;
+                padding: 8px 10px !important;
+                text-align: left !important;
+                font-size: 7.2pt !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.05em !important;
+                border-bottom: 1.5px solid #cbd5e1 !important;
+            }
+
+            .prn-table td {
+                padding: 9px 10px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                vertical-align: middle !important;
+            }
+
+            .prn-table th.tar,
+            .prn-table td.tar {
+                text-align: right !important;
+            }
+
+            .prn-table th.tac,
+            .prn-table td.tac {
+                text-align: center !important;
+            }
+
+            .prn-item-name {
+                font-size: 8.5pt !important;
+                font-weight: 800 !important;
+                color: #0f172a !important;
+            }
+
+            .prn-item-desc {
+                font-size: 7pt !important;
+                color: #64748b !important;
+                margin-top: 2px !important;
+                line-height: 1.35 !important;
+            }
+
+            .prn-grade-badge {
+                display: inline-block !important;
+                padding: 2px 7px !important;
+                background: #f1f5f9 !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 5px !important;
+                font-size: 6.8pt !important;
+                font-weight: 800 !important;
+                color: #334155 !important;
+            }
+
+            .prn-item-total {
+                font-weight: 850 !important;
+                color: #0f172a !important;
+                font-size: 8.5pt !important;
+            }
+
+            /* ─── 4. Totals & Confirmation Row ─── */
+            .prn-totals-row {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: stretch !important;
+                gap: 16px !important;
+            }
+
+            .prn-note-card {
+                flex: 1.15 !important;
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                padding: 8px 12px !important;
+                font-size: 7.2pt !important;
+                color: #475569 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                line-height: 1.35 !important;
+            }
+
+            .prn-note-title {
+                font-size: 7.4pt !important;
+                font-weight: 850 !important;
+                color: #0f172a !important;
+                margin-bottom: 3px !important;
+            }
+
+            .prn-totals-table {
+                flex: 1 !important;
+                border-collapse: collapse !important;
+                font-size: 7.8pt !important;
+            }
+
+            .prn-totals-table td {
+                padding: 3px 0 !important;
+            }
+
+            .prn-totals-table td.tar {
+                text-align: right !important;
+                font-weight: 700 !important;
+            }
+
+            .prn-free-tag {
+                color: #0f172a !important;
+                font-weight: 750 !important;
+            }
+
+            .prn-grand-total-row td {
+                font-size: 11pt !important;
+                font-weight: 900 !important;
+                color: #0f172a !important;
+                border-top: 1.5px solid #0f172a !important;
+                padding-top: 5px !important;
+            }
+
+            /* ─── 5. Warranty Terms (Clean Compact List) ─── */
+            .prn-terms-box {
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                padding: 8px 12px !important;
+                font-size: 7pt !important;
+                color: #475569 !important;
+                line-height: 1.35 !important;
+            }
+
+            .prn-terms-title {
+                font-size: 7.4pt !important;
+                font-weight: 850 !important;
+                color: #0f172a !important;
+                margin-bottom: 4px !important;
+            }
+
+            .prn-terms-list {
+                margin: 0 !important;
+                padding-left: 14px !important;
+            }
+
+            .prn-terms-list li {
+                margin-bottom: 2px !important;
+            }
+
+            .prn-terms-list li strong {
+                color: #0f172a !important;
+            }
+
+            /* ─── 6. Signatures, Barcode & Stamp (3-Column Layout) ─── */
+            .prn-bottom-grid {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: flex-end !important;
+                padding-top: 4px !important;
+            }
+
+            .prn-sig-col {
+                width: 31% !important;
+                text-align: center !important;
+                font-size: 7.2pt !important;
+            }
+
+            .prn-sig-label {
+                color: #475569 !important;
+                margin-bottom: 2px !important;
+            }
+
+            .prn-sig-space {
+                height: 38px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .prn-sig-name {
+                font-weight: 850 !important;
+                color: #0f172a !important;
+                border-top: 1px solid #94a3b8 !important;
+                padding-top: 3px !important;
+                display: inline-block !important;
+                min-width: 130px !important;
+            }
+
+            .prn-sig-date {
+                font-size: 6.5pt !important;
+                color: #64748b !important;
+                margin-top: 2px !important;
+            }
+
+            .prn-barcode-col {
+                width: 30% !important;
+                text-align: center !important;
+                font-size: 6.8pt !important;
+                color: #64748b !important;
+            }
+
+            .prn-barcode-svg {
+                height: 20px !important;
+                width: 130px !important;
+                display: block !important;
+                margin: 0 auto 3px !important;
+            }
+
+            .prn-barcode-code {
+                font-family: ui-monospace, monospace !important;
+                font-weight: 800 !important;
+                color: #0f172a !important;
+                font-size: 7.5pt !important;
+            }
+
+            .prn-barcode-hash {
+                font-size: 6pt !important;
+                color: #94a3b8 !important;
+                letter-spacing: 0.05em !important;
+            }
+
+            .prn-seal-circle {
+                width: 44px !important;
+                height: 44px !important;
+                border: 1.5px dashed #0f172a !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                color: #0f172a !important;
+                font-size: 5.5pt !important;
+                font-weight: 900 !important;
+                line-height: 1 !important;
+                transform: rotate(-6deg) !important;
+            }
+
+            .prn-seal-circle span {
+                font-size: 7.2pt !important;
+                font-weight: 950 !important;
+                letter-spacing: 0.08em !important;
+            }
+
+            .prn-footer-note {
+                border-top: 1px solid #e2e8f0 !important;
+                padding-top: 4px !important;
+                text-align: center !important;
+                font-size: 6.5pt !important;
+                color: #94a3b8 !important;
+                line-height: 1.3 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ═══════════════════════════════════════════════════════════
+         TOP UTILITY BAR
+    ═══════════════════════════════════════════════════════════ -->
+    <header class="receipt-navbar">
+        <div class="receipt-nav-inner">
+            <a href="{% url 'app:payment_status' order.nomor %}" class="receipt-nav-back" title="Kembali ke Detail Pesanan">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>Kembali ke Detail Pesanan</span>
+            </a>
+
+            <div class="receipt-nav-title">
+                <div class="receipt-nav-brand">
+                    {% if about_setting and about_setting.logo %}
+                    <img src="{{ about_setting.logo.url }}" alt="Logo Losari Computer" class="nav-brand-logo">
+                    {% else %}
+                    <img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Losari Computer" class="nav-brand-logo">
+                    {% endif %}
+                    <div class="nav-brand-text-wrap">
+                        <span class="nav-brand-title">{{ footer_setting.nama_toko|default:"Losari Computer" }}</span>
+                        <span class="nav-brand-sub">#INV-LC-{{ order.nomor|stringformat:".8s"|upper }}</span>
+                    </div>
+                </div>
+                <div class="receipt-nav-pill">
+                    <span class="receipt-nav-pill-dot"></span>
+                    <span>Struk Nota Resmi Lunas</span>
+                </div>
+            </div>
+
+            <div class="receipt-nav-actions">
+                <button type="button" class="btn-nav-replay" onclick="replayDispense()" title="Putar ulang animasi struk kasir">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    <span>Putar Ulang</span>
+                </button>
+                <button type="button" class="btn-nav-print" onclick="window.print()" title="Cetak nota fisik A4">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>Cetak Nota Fisik</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MAIN STAGE: DEDICATED THERMAL DISPENSER EXPERIENCE
+    ═══════════════════════════════════════════════════════════ -->
+    <main class="receipt-main-stage">
+        <div class="stage-spotlight"></div>
+
+        <div class="dispenser-container">
+            <!-- Golden Metallic Dispenser Slot Top (100% Reference Match) -->
+            <div class="ps-dispenser-casing">
+                <div class="ps-dispenser-slot"></div>
+            </div>
+
+            <!-- Dispenser Feed Tray (Clips paper from top so it looks like it emerges from slot) -->
+            <div class="ps-dispenser-feed-tray">
+                <!-- Dispensed Paper Receipt Slip -->
+                <div class="ps-receipt-paper" id="paper-receipt-slip">
+                    <!-- Header -->
+                    <div class="ps-rcpt-header">
+                        <div>
+                            <div class="ps-rcpt-status">PAYMENT SUCCESSFUL</div>
+                            <div class="ps-rcpt-price">{{ order.total_rupiah|default:order.total }}</div>
+                            <div class="ps-rcpt-meta">{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB &middot; {{ order.midtrans_payment_type|default:"MIDTRANS"|upper }} (PAID)</div>
+                        </div>
+                        <div class="ps-rcpt-logo-badge" title="Logo Resmi Losari Computer">
+                            {% if about_setting and about_setting.logo %}
+                            <img src="{{ about_setting.logo.url }}" alt="Logo Resmi Losari Computer" class="ps-rcpt-logo-img">
+                            {% else %}
+                            <img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Resmi Losari Computer" class="ps-rcpt-logo-img">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Customer & Transaction Details -->
+                    <div class="ps-rcpt-dashed-line"></div>
+                    <table class="ps-rcpt-kv">
+                        <tr>
+                            <td class="k">INVOICE</td>
+                            <td class="v">#INV-LC-{{ order.nomor|stringformat:".8s"|upper }}</td>
+                        </tr>
+                        <tr>
+                            <td class="k">PENERIMA</td>
+                            <td class="v">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</td>
+                        </tr>
+                        <tr>
+                            <td class="k">TELEPON</td>
+                            <td class="v">{{ profile.telp|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <td class="k">TUJUAN</td>
+                            <td class="v">{{ order.alamat_pengiriman }}{% if order.kota %}, {{ order.kota }}{% endif %}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Itemized List -->
+                    <div class="ps-rcpt-dashed-line"></div>
+                    <div class="ps-rcpt-items">
+                        {% for item in order.item.all %}
+                        <div class="ps-rcpt-item-row">
+                            <div>
+                                <div class="ps-rcpt-item-title">{{ item.jumlah }}X {{ item.nama_produk }}</div>
+                                <div class="ps-rcpt-item-sub">Harga Satuan: {{ item.harga_satuan_rupiah|default:item.harga_satuan }}</div>
+                            </div>
+                            <div class="ps-rcpt-item-val">{{ item.subtotal_rupiah|default:item.subtotal }}</div>
+                        </div>
+                        {% empty %}
+                        <div style="font-size:11px; color:#64748b;">1X Unit Pesanan</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="ps-rcpt-dashed-line"></div>
+                    <table class="ps-rcpt-totals-table">
+                        <tr>
+                            <td>Subtotal</td>
+                            <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+                        </tr>
+                        <tr>
+                            <td>Ongkir</td>
+                            <td class="tar" style="color:#0f172a; font-weight:750;">Rp0 (FREE ONGKIR)</td>
+                        </tr>
+                        <tr>
+                            <td>Proteksi Packing Kayu</td>
+                            <td class="tar" style="color:#0f172a; font-weight:750;">Rp0 (FREE QC)</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>TOTAL</td>
+                            <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Guarantee Note -->
+                    <div class="ps-rcpt-tag-guarantee">
+                        GARANSI TOKO 1 BULAN &middot; UNIT LULUS 25 TITIK QC<br>
+                        <small style="font-size:9px; font-weight:600; color:#64748b;">Simpan struk nota ini sebagai bukti klaim garansi resmi.</small>
+                    </div>
+
+                    <!-- Barcode Simulation SVG -->
+                    <div class="ps-rcpt-barcode-wrap">
+                        <svg class="ps-rcpt-barcode-svg" viewBox="0 0 200 40" preserveAspectRatio="none">
+                            <rect x="0" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="5" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="8" y="0" width="4" height="40" fill="#0f172a"></rect>
+                            <rect x="15" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="20" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="23" y="0" width="5" height="40" fill="#0f172a"></rect>
+                            <rect x="31" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="36" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="42" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="45" y="0" width="4" height="40" fill="#0f172a"></rect>
+                            <rect x="52" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="56" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="62" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="66" y="0" width="5" height="40" fill="#0f172a"></rect>
+                            <rect x="74" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="78" y="0" width="4" height="40" fill="#0f172a"></rect>
+                            <rect x="85" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="89" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="95" y="0" width="4" height="40" fill="#0f172a"></rect>
+                            <rect x="102" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="107" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="113" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="117" y="0" width="5" height="40" fill="#0f172a"></rect>
+                            <rect x="125" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="130" y="0" width="4" height="40" fill="#0f172a"></rect>
+                            <rect x="137" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="141" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="147" y="0" width="5" height="40" fill="#0f172a"></rect>
+                            <rect x="155" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="160" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="166" y="0" width="1" height="40" fill="#0f172a"></rect>
+                            <rect x="170" y="0" width="4" height="40" fill="#0f172a"></rect>
+                            <rect x="177" y="0" width="2" height="40" fill="#0f172a"></rect>
+                            <rect x="182" y="0" width="3" height="40" fill="#0f172a"></rect>
+                            <rect x="188" y="0" width="5" height="40" fill="#0f172a"></rect>
+                            <rect x="196" y="0" width="3" height="40" fill="#0f172a"></rect>
+                        </svg>
+                        <div class="ps-rcpt-barcode-num">#INV-LC-{{ order.nomor|stringformat:".8s"|upper }}</div>
+                    </div>
+
+                    <!-- Footer Greeting -->
+                    <div class="ps-rcpt-footer-wish">HAVE A NICE DAY! TERIMA KASIH</div>
+
+                    <!-- Serrated Sawtooth Paper Cut SVG at Bottom -->
+                    <div class="ps-receipt-sawtooth">
+                        <svg viewBox="0 0 100 8" preserveAspectRatio="none" style="width:100%; height:12px; display:block;">
+                            <polygon points="0,0 2.5,8 5,0 7.5,8 10,0 12.5,8 15,0 17.5,8 20,0 22.5,8 25,0 27.5,8 30,0 32.5,8 35,0 37.5,8 40,0 42.5,8 45,0 47.5,8 50,0 52.5,8 55,0 57.5,8 60,0 62.5,8 65,0 67.5,8 70,0 72.5,8 75,0 77.5,8 80,0 82.5,8 85,0 87.5,8 90,0 92.5,8 95,0 97.5,8 100,0 100,0 0,0" fill="#ffffff"></polygon>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons Directly Underneath Receipt -->
+            <div class="dispenser-bottom-actions" id="receipt-actions-bar">
+                <button type="button" class="btn-action-primary" onclick="window.print()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>Cetak Nota Fisik (A4)</span>
+                </button>
+                <button type="button" class="btn-action-secondary" onclick="replayDispense()">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    <span>Putar Ulang</span>
+                </button>
+                <a href="{% url 'app:payment_status' order.nomor %}" class="btn-action-full">
+                    &larr; Kembali ke Status Pesanan
+                </a>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             OFFICIAL 1-PAGE A4 PRINT INVOICE DOCUMENT
+        ═══════════════════════════════════════════════════════════ -->
+        <div class="ps-print-document">
+            <!-- 1. KOP SURAT RESMI -->
+            <div class="prn-header-grid">
+                <div class="prn-logo-box">
+                    {% if about_setting and about_setting.logo %}
+                    <img src="{{ about_setting.logo.url }}" alt="Logo Resmi Losari Computer" class="prn-logo-img">
+                    {% else %}
+                    <img src="{% static 'images/losari-computer-logo.jpg' %}" alt="Logo Resmi Losari Computer" class="prn-logo-img">
+                    {% endif %}
+                    <div>
+                        <div class="prn-store-name">{{ footer_setting.nama_toko|default:"LOSARI COMPUTER" }}</div>
+                        <div class="prn-store-tag">Pusat Laptop Berkualitas &amp; Solusi IT Profesional Makassar</div>
+                        <div class="prn-store-address">
+                            {{ footer_setting.alamat|default:"Karebosi Link Blok R-161, Jl. Ahmad Yani No. 1, Makassar" }} &middot; 
+                            WA: {{ footer_setting.whatsapp|default:"0823-9921-3651" }} &middot; 
+                            Email: {{ footer_setting.email|default:"computerlosari@gmail.com" }}
+                        </div>
+                    </div>
+                </div>
+                <div class="prn-meta-side">
+                    <div class="prn-doc-title">FAKTUR PENJUALAN</div>
+                    <div class="prn-invoice-badge">#INV-LC-{{ order.nomor|stringformat:".8s"|upper }}</div>
+                    <div>
+                        <span class="prn-status-pill">&check; LUNAS &middot; {{ order.midtrans_payment_type|default:"MIDTRANS"|upper }}</span>
+                    </div>
+                    <div class="prn-date-text">{{ order.dibuat_pada|date:"d F Y, H:i" }} WITA</div>
+                </div>
+            </div>
+
+            <!-- 2. INFORMASI PELANGGAN & DETAIL TRANSAKSI -->
+            <div class="prn-info-strip">
+                <div class="prn-info-col">
+                    <div class="prn-info-heading">Diterbitkan Untuk:</div>
+                    <div class="prn-info-item"><strong>Nama:</strong> {{ order.pengguna.get_full_name|default:order.pengguna.username }}</div>
+                    <div class="prn-info-item"><strong>No. Telepon / WA:</strong> {{ profile.telp|default:"-" }}</div>
+                    <div class="prn-info-item"><strong>Alamat:</strong> {{ order.alamat_pengiriman }}{% if order.kota %}, {{ order.kota }}{% endif %}</div>
+                </div>
+                <div class="prn-info-col" style="border-left: 1px solid #e2e8f0; padding-left: 18px;">
+                    <div class="prn-info-heading">Informasi Transaksi:</div>
+                    <div class="prn-info-item"><strong>No. Pesanan:</strong> #INV-LC-{{ order.nomor|stringformat:".8s"|upper }}</div>
+                    <div class="prn-info-item"><strong>Metode Pembayaran:</strong> {{ order.midtrans_payment_type|default:"QRIS / Payment Gateway"|upper }}</div>
+                    <div class="prn-info-item"><strong>Status:</strong> <span style="color:#0f172a; font-weight:750;">Pembayaran Lunas (Terverifikasi)</span></div>
+                </div>
+            </div>
+
+            <!-- 3. TABEL RINCIAN PRODUK & KELENGKAPAN -->
+            <table class="prn-table">
+                <thead>
+                    <tr>
+                        <th class="tac" style="width: 28px;">No</th>
+                        <th>Deskripsi Produk &amp; Layanan</th>
+                        <th class="tac" style="width: 75px;">Kondisi</th>
+                        <th class="tac" style="width: 48px;">Jumlah</th>
+                        <th class="tar" style="width: 105px;">Harga Satuan</th>
+                        <th class="tar" style="width: 110px;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.item.all %}
+                    <tr>
+                        <td class="tac">{{ forloop.counter }}</td>
+                        <td>
+                            <div class="prn-item-name">{{ item.nama_produk }}</div>
+                            <div class="prn-item-desc">
+                                Unit Laptop + Charger Original Adaptor &middot; Bonus Tas &amp; Mouse &middot; Terinstall Windows &amp; Office Siap Pakai &middot; Lulus 25 Titik QC
+                            </div>
+                        </td>
+                        <td class="tac"><span class="prn-grade-badge">Grade A+</span></td>
+                        <td class="tac" style="font-weight:750;">{{ item.jumlah }} Unit</td>
+                        <td class="tar">{{ item.harga_satuan_rupiah|default:item.harga_satuan }}</td>
+                        <td class="tar prn-item-total">{{ item.subtotal_rupiah|default:item.subtotal }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td class="tac">1</td>
+                        <td>
+                            <div class="prn-item-name">Unit Pesanan Komputer / Laptop</div>
+                            <div class="prn-item-desc">Lulus 25 Titik QC &middot; Garansi Toko 1 Bulan</div>
+                        </td>
+                        <td class="tac"><span class="prn-grade-badge">Grade A+</span></td>
+                        <td class="tac" style="font-weight:750;">1 Unit</td>
+                        <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+                        <td class="tar prn-item-total">{{ order.total_rupiah|default:order.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- 4. TOTALS & KETERANGAN PEMBAYARAN -->
+            <div class="prn-totals-row">
+                <div class="prn-note-card">
+                    <div class="prn-note-title">Keterangan &amp; Bukti Pelunasan:</div>
+                    <div style="line-height:1.4;">
+                        Pembayaran untuk pesanan ini telah dinyatakan <strong>LUNAS</strong> dan telah terverifikasi oleh kasir resmi Losari Computer. Simpan dokumen faktur ini dengan baik sebagai bukti transaksi yang sah dan kartu klaim garansi resmi toko.
+                    </div>
+                </div>
+
+                <table class="prn-totals-table">
+                    <tr>
+                        <td>Subtotal Produk:</td>
+                        <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+                    </tr>
+                    <tr>
+                        <td>Biaya Pengiriman (Ekspedisi):</td>
+                        <td class="tar prn-free-tag">Rp0 (Gratis Ongkir)</td>
+                    </tr>
+                    <tr>
+                        <td>Proteksi Packing Kayu &amp; Bubble:</td>
+                        <td class="tar prn-free-tag">Rp0 (Gratis Safety)</td>
+                    </tr>
+                    <tr class="prn-grand-total-row">
+                        <td>TOTAL PEMBAYARAN:</td>
+                        <td class="tar">{{ order.total_rupiah|default:order.total }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 5. SYARAT & KETENTUAN GARANSI RESMI TOKO -->
+            <div class="prn-terms-box">
+                <div class="prn-terms-title">SYARAT &amp; KETENTUAN GARANSI TOKO (30 HARI KALENDER):</div>
+                <ul class="prn-terms-list">
+                    <li><strong>Masa Berlaku:</strong> Garansi toko berlaku selama 30 hari kalender sejak tanggal penerimaan unit oleh pelanggan.</li>
+                    <li><strong>Cakupan Garansi:</strong> Meliputi servis atau pergantian komponen atas kerusakan mesin (motherboard), layar LCD, keyboard, baterai, dan adaptor charger normal.</li>
+                    <li><strong>Prosedur Klaim:</strong> Wajib menunjukkan fisik lembar faktur nota ini atau nomor invoice ke toko fisik Losari Computer Makassar atau via WhatsApp Customer Care di <strong>{{ footer_setting.whatsapp|default:"0823-9921-3651" }}</strong>.</li>
+                    <li><strong>Pengecualian:</strong> Garansi gugur apabila segel toko rusak/dibongkar mandiri, terkena cairan (water damage), terbentur/pecah, atau lonjakan arus petir.</li>
+                </ul>
+            </div>
+
+            <!-- 6. TANDA TANGAN, BARCODE KEAMANAN & CAP RESMI -->
+            <div class="prn-bottom-grid">
+                <div class="prn-sig-col">
+                    <div class="prn-sig-label">Penerima / Pelanggan,</div>
+                    <div class="prn-sig-space"></div>
+                    <div class="prn-sig-name">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</div>
+                    <div class="prn-sig-date">Tanggal Terima: .......................................</div>
+                </div>
+
+                <div class="prn-barcode-col">
+                    <svg class="prn-barcode-svg" viewBox="0 0 140 20" preserveAspectRatio="none">
+                        <rect x="0" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="4" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="7" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="12" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="15" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="19" y="0" width="4" height="20" fill="#0f172a"></rect>
+                        <rect x="25" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="28" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="33" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="37" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="40" y="0" width="4" height="20" fill="#0f172a"></rect>
+                        <rect x="46" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="50" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="53" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="58" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="62" y="0" width="4" height="20" fill="#0f172a"></rect>
+                        <rect x="68" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="71" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="76" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="80" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="83" y="0" width="4" height="20" fill="#0f172a"></rect>
+                        <rect x="89" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="93" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="98" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="101" y="0" width="4" height="20" fill="#0f172a"></rect>
+                        <rect x="107" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="111" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="114" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="119" y="0" width="2" height="20" fill="#0f172a"></rect>
+                        <rect x="123" y="0" width="4" height="20" fill="#0f172a"></rect>
+                        <rect x="129" y="0" width="1" height="20" fill="#0f172a"></rect>
+                        <rect x="132" y="0" width="3" height="20" fill="#0f172a"></rect>
+                        <rect x="137" y="0" width="2" height="20" fill="#0f172a"></rect>
+                    </svg>
+                    <div class="prn-barcode-code">#INV-LC-{{ order.nomor|stringformat:".8s"|upper }}</div>
+                    <div class="prn-barcode-hash">SISTEM VERIFIKASI RESMI TOKO</div>
+                </div>
+
+                <div class="prn-sig-col">
+                    <div class="prn-sig-label">Makassar, {{ order.dibuat_pada|date:"d F Y" }}<br>Hormat Kami, <strong>Losari Computer</strong></div>
+                    <div class="prn-sig-space">
+                        <div class="prn-seal-circle" title="Cap Stempel Resmi Toko">
+                            <small>LOSARI</small>
+                            <span>LUNAS</span>
+                            <small>OFFICIAL</small>
+                        </div>
+                    </div>
+                    <div class="prn-sig-name">Authorized Store Manager</div>
+                    <div class="prn-sig-date">Divisi Penjualan &amp; Garansi</div>
+                </div>
+            </div>
+
+            <!-- 7. CATATAN KAKI LEGALITAS -->
+            <div class="prn-footer-note">
+                Dokumen faktur ini adalah bukti transaksi resmi yang sah dan diterbitkan otomatis oleh sistem Losari Computer Makassar.<br>
+                Terima kasih telah mempercayakan kebutuhan komputer dan laptop Anda kepada kami.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function replayDispense() {
+            const paper = document.getElementById('paper-receipt-slip');
+            const actions = document.getElementById('receipt-actions-bar');
+            if (paper) {
+                paper.style.animation = 'none';
+                void paper.offsetWidth; // trigger reflow
+                paper.style.animation = 'dispense-paper 2.5s cubic-bezier(0.12, 0.8, 0.22, 1) forwards';
+            }
+            if (actions) {
+                actions.style.animation = 'none';
+                void actions.offsetWidth; // trigger reflow
+                actions.style.animation = 'ps-actions-appear 0.4s ease 2.3s both';
+            }
+        }
+    </script>
+</body>
+</html>
+

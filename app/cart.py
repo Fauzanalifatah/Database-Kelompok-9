@@ -21,25 +21,33 @@ def get_cart(request):
 
 
 def add_to_cart(request, produk, jumlah=1):
-    """Add a product to the cart (or increase qty)."""
+    """Add a product to the cart, strictly capped by database stock."""
+    max_stok = getattr(produk, "stok", 1)
+    if max_stok < 1:
+        return None
+
     cart = _get_or_create_cart(request)
     item, created = ItemKeranjang.objects.get_or_create(
-        keranjang=cart, produk=produk, defaults={"jumlah": jumlah}
+        keranjang=cart, produk=produk, defaults={"jumlah": min(jumlah, max_stok)}
     )
     if not created:
-        item.jumlah += jumlah
+        new_qty = item.jumlah + jumlah
+        item.jumlah = min(new_qty, max_stok)
         item.save()
     return item
 
 
 def update_cart_item(item_id, jumlah):
-    """Update quantity of a cart item."""
-    item = ItemKeranjang.objects.get(pk=item_id)
+    """Update quantity of a cart item, strictly respecting database stock."""
+    item = ItemKeranjang.objects.select_related("produk").get(pk=item_id)
     if jumlah <= 0:
         item.delete()
-    else:
-        item.jumlah = jumlah
-        item.save()
+        return None
+
+    max_stok = getattr(item.produk, "stok", 1)
+    # Clamp quantity between 1 and available stock in database
+    item.jumlah = min(max(1, jumlah), max_stok)
+    item.save()
     return item
 
 
@@ -69,14 +77,15 @@ def merge_guest_cart(request):
 
     user_cart, _ = Keranjang.objects.get_or_create(pengguna=request.user)
 
-    for guest_item in guest_cart.item.all():
+    for guest_item in guest_cart.item.select_related("produk").all():
+        max_stok = getattr(guest_item.produk, "stok", 1)
         user_item, created = ItemKeranjang.objects.get_or_create(
             keranjang=user_cart,
             produk=guest_item.produk,
-            defaults={"jumlah": guest_item.jumlah},
+            defaults={"jumlah": min(guest_item.jumlah, max_stok)},
         )
         if not created:
-            user_item.jumlah += guest_item.jumlah
+            user_item.jumlah = min(user_item.jumlah + guest_item.jumlah, max_stok)
             user_item.save()
 
     guest_cart.delete()

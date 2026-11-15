@@ -30,6 +30,7 @@ urlpatterns = [
     path("produk/<slug:slug>/", views.product_detail, name="product_detail"),
     path("checkout/<slug:slug>/", views.checkout, name="checkout"),
     path("pesanan/<uuid:nomor>/", views.payment_status, name="payment_status"),
+    path("pesanan/<uuid:nomor>/nota/", views.order_receipt, name="order_receipt"),
     path("midtrans/notification/", views.midtrans_notification, name="midtrans_notification"),
     path("artikel/", views.article_list, name="article_list"),
     path("tentang-kami/", views.about, name="about"),

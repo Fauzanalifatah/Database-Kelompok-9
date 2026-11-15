@@ -1920,6 +1920,11 @@
 
 /* Print Stylesheet for Invoices */
 @media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+    }
+
     .topbar,
     header,
     .announcement,
@@ -1929,25 +1934,35 @@
     .demo-test-bar,
     .status-support-bar,
     footer,
-    .btn-copy-id {
+    .btn-copy-id,
+    .ps-card-shell,
+    .status-card-shell,
+    .ps-stepper-wrap,
+    .ps-actions-suite,
+    .ps-dispenser-modal,
+    .ps-dispenser-stage {
         display: none !important;
     }
 
     body {
         background: #fff !important;
-        color: #000 !important;
-        font-size: 12pt;
+        color: #0f172a !important;
+        font-size: 11pt !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
-    .checkout-page {
+    .checkout-page,
+    .status-container {
         padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
         background: transparent !important;
     }
 
-    .status-card-shell {
-        box-shadow: none !important;
-        border: 1px solid #ccc !important;
-        padding: 20px !important;
+    .official-invoice-wrapper,
+    .ps-print-document {
+        display: block !important;
     }
 }
 

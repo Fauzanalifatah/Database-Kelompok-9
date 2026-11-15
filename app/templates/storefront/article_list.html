@@ -1,13 +1,19 @@
 {% extends "storefront/base.html" %}
 {% load static %}
-{% block title %}Artikel - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}?v=5">{% endblock %}
+{% block title %}Wawasan &amp; Artikel - Losari Computer{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/articles.css' %}?v=6">{% endblock %}
 {% block content %}
 <section class="article-heading">
     <div class="container">
         <div class="article-heading-row">
-            <h1><span>Check Out!</span> Read more »</h1>
-            <a href="{% url 'home' %}">Lihat semua</a>
+            <div>
+                <p style="margin:0 0 8px; color:#2563eb; font-size:12px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;">Eksplorasi Wawasan</p>
+                <h1 style="margin:0; font-size:clamp(26px, 3.2vw, 36px); font-weight:800; color:#0f172a; letter-spacing:-0.03em;">Artikel &amp; Cerita Teknologi</h1>
+            </div>
+            <a href="{% url 'home' %}" style="display:inline-flex; align-items:center; gap:6px; padding:9px 16px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; font-weight:700; color:#334155; text-decoration:none; transition:all 0.15s ease;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+                <span>Kembali ke Beranda</span>
+            </a>
         </div>
     </div>
 </section>
@@ -23,10 +29,10 @@
                 {% endif %}
             </a>
             <div class="article-list-body">
-                <p class="article-list-label">{{ article.category.nama_category }}</p>
+                <p class="article-list-label">{{ article.category.nama_category|default:"Berita Terkini" }}</p>
                 <h2><a href="{% url 'article_detail' article.slug %}">{{ article.title_articles }}</a></h2>
-                <p class="article-list-summary">{{ article.desc_seo }}</p>
-                <p class="article-list-meta">Oleh <strong>{{ article.authors|default:"Losari Computer" }}</strong> <span>·</span> {{ article.created_at|date:"l, F d, Y" }}</p>
+                <p class="article-list-summary">{{ article.desc_seo|default:article.content|striptags|truncatewords:28 }}</p>
+                <p class="article-list-meta">Oleh <strong>{{ article.authors|default:"Tim Redaksi Losari" }}</strong> <span>·</span> {{ article.created_at|date:"d F Y" }} <span>·</span> {{ article.views|default:0 }} kali dibaca</p>
             </div>
         </article>
         {% empty %}

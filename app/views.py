@@ -152,14 +152,13 @@ def about_manager(request):
         return redirect("app:about_manager")
     return render(
         request,
-        "app/content_manager_form.html",
+        "app/about_manager.html",
         {
-            "title": "Tentang Kami",
+            "title": "Pengaturan Tentang Kami",
             "heading": "Pengaturan Tentang Kami",
             "section": "tentang-kami",
+            "setting": setting,
             "form": form,
-            "item_label": "Tentang Kami",
-            "cancel_url": reverse("app:about_manager"),
             "public_url": reverse("about"),
         },
     )
@@ -421,6 +420,7 @@ def pelanggan_manager_form(request, username):
             "record_type": "pelanggan",
             "cancel_url": reverse("app:pelanggan_manager"),
             "record_name": member.user.get_full_name() or member.user.username,
+            "member": member,
         },
     )
 
@@ -1107,11 +1107,21 @@ def checkout(request, slug):
         Produk.objects.select_related("kategori"), slug=slug, aktif=True
     )
     profile = UserPengguna.objects.filter(user=request.user).first()
+    try:
+        req_jumlah = int(request.GET.get("jumlah", 1))
+        if req_jumlah < 1:
+            req_jumlah = 1
+        elif product.stok and req_jumlah > product.stok:
+            req_jumlah = max(1, product.stok)
+    except (ValueError, TypeError):
+        req_jumlah = 1
+
     initial = {
         "nama": request.user.get_full_name() or request.user.username,
         "email": request.user.email,
         "telp": profile.telp if profile else "",
         "alamat": profile.alamat if profile else "",
+        "jumlah": req_jumlah,
     }
     form = CheckoutForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
@@ -1237,11 +1247,11 @@ def payment_status(request, nomor):
         except Exception:
             pass
 
+    profile = UserPengguna.objects.filter(user=request.user).first()
     # 3. Siapkan Snap Token jika pesanan masih dalam status menunggu pembayaran
     snap_token = request.session.get(f"snap_{order.nomor}")
     if not snap_token and order.status == "menunggu":
         try:
-            profile = UserPengguna.objects.filter(user=request.user).first()
             customer = {
                 "name": order.pengguna.get_full_name() or order.pengguna.username,
                 "email": order.pengguna.email,
@@ -1258,8 +1268,41 @@ def payment_status(request, nomor):
         "storefront/payment_status.html",
         {
             "order": order,
+            "profile": profile,
             "snap_token": snap_token,
             "midtrans_client_key": settings.MIDTRANS_CLIENT_KEY,
+        },
+    )
+
+
+def order_receipt(request, nomor):
+    """Halaman khusus cetak nota / struk resmi dengan animasi dispenser termal kasir."""
+    if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+        order = get_object_or_404(
+            Pesanan.objects.select_related("pengguna").prefetch_related("item__produk"),
+            nomor=nomor,
+        )
+    elif request.user.is_authenticated:
+        order = get_object_or_404(
+            Pesanan.objects.select_related("pengguna").prefetch_related("item__produk"),
+            nomor=nomor,
+            pengguna=request.user,
+        )
+    else:
+        return redirect(f"{reverse('app:login')}?next={request.path}")
+
+    profile = UserPengguna.objects.filter(user=order.pengguna).first()
+    footer_setting, _ = FooterSetting.objects.get_or_create(pk=1)
+    about_setting = AboutSetting.objects.first()
+
+    return render(
+        request,
+        "storefront/order_receipt.html",
+        {
+            "order": order,
+            "profile": profile,
+            "footer_setting": footer_setting,
+            "about_setting": about_setting,
         },
     )
 
@@ -1358,9 +1401,19 @@ def logout_view(request):
 # ═══════════════════════════════════════════════════
 
 def cart_view(request):
-    """Display the shopping cart page."""
+    """Display the shopping cart page, automatically syncing with database stock."""
     from .cart import get_cart
     cart = get_cart(request)
+
+    # Automatically synchronize cart item quantities with admin-managed DB stock
+    for item in cart.item.select_related("produk").all():
+        max_stok = getattr(item.produk, "stok", 1)
+        if max_stok < 1:
+            pass
+        elif item.jumlah > max_stok:
+            item.jumlah = max_stok
+            item.save(update_fields=["jumlah"])
+
     items = cart.item.select_related("produk", "produk__kategori").all()
     return render(request, "storefront/cart.html", {
         "cart": cart,
@@ -1370,25 +1423,49 @@ def cart_view(request):
 
 @require_POST
 def cart_add(request, slug):
-    """Add a product to the cart."""
-    from .cart import add_to_cart
+    """Add a product to the cart with database stock validation."""
+    from .cart import add_to_cart, get_cart
     produk = get_object_or_404(Produk, slug=slug)
-    jumlah = int(request.POST.get("jumlah", 1))
-    add_to_cart(request, produk, jumlah)
-    messages.success(request, f"{produk.merek} {produk.nama} ditambahkan ke keranjang!")
+    if not produk.tersedia or produk.stok < 1:
+        messages.error(request, f"Maaf, stok {produk.merek} {produk.nama} sedang habis.")
+        next_url = request.POST.get("next", request.META.get("HTTP_REFERER", reverse("app:cart_view")))
+        return redirect(next_url)
+
+    try:
+        jumlah = int(request.POST.get("jumlah", 1))
+    except (ValueError, TypeError):
+        jumlah = 1
+    cart = get_cart(request)
+    existing_item = cart.item.filter(produk=produk).first()
+    current_qty = existing_item.jumlah if existing_item else 0
+
+    if current_qty >= produk.stok:
+        messages.warning(
+            request,
+            f"Jumlah {produk.merek} {produk.nama} di keranjang sudah mencapai batas stok maksimal ({produk.stok} unit)."
+        )
+    else:
+        add_to_cart(request, produk, jumlah)
+        messages.success(request, f"{produk.merek} {produk.nama} ditambahkan ke keranjang!")
     next_url = request.POST.get("next", request.META.get("HTTP_REFERER", reverse("app:cart_view")))
     return redirect(next_url)
 
 
 @require_POST
 def cart_update(request, item_id):
-    """Update quantity of a cart item."""
+    """Update quantity of a cart item with stock limits."""
     from .cart import update_cart_item
-    jumlah = int(request.POST.get("jumlah", 1))
+    item = get_object_or_404(ItemKeranjang.objects.select_related("produk"), pk=item_id)
     try:
-        update_cart_item(item_id, jumlah)
-    except ItemKeranjang.DoesNotExist:
-        pass
+        jumlah = int(request.POST.get("jumlah", 1))
+    except (ValueError, TypeError):
+        jumlah = 1
+    if jumlah > item.produk.stok:
+        messages.warning(
+            request,
+            f"Jumlah produk {item.produk.nama} tidak dapat melebihi stok yang tersedia ({item.produk.stok} unit)."
+        )
+    update_cart_item(item_id, jumlah)
     return redirect(reverse("app:cart_view"))
 
 

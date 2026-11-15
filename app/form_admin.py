@@ -1,3 +1,5 @@
+import re
+import urllib.parse
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -90,46 +92,88 @@ class FooterSettingForm(forms.ModelForm):
         ]
         widgets = {
             "alamat": forms.Textarea(attrs={"rows": 3}),
-            "deskripsi": forms.TextInput(),
+            "deskripsi": forms.Textarea(attrs={"rows": 2, "maxlength": 255}),
         }
 
 
 class FooterSocialForm(forms.ModelForm):
-    url = forms.URLField(required=False, label="Link URL")
+    url = forms.URLField(
+        required=False,
+        label="Tautan Link URL",
+        widget=forms.URLInput(attrs={"placeholder": "https://..."}),
+    )
     nomor_telepon = forms.CharField(
         required=False,
-        label="Nomor telepon",
-        help_text="Isi URL atau nomor telepon. Salah satu wajib diisi.",
+        label="Nomor WhatsApp",
+        widget=forms.TextInput(attrs={"placeholder": "Contoh: 082399213651 atau 6282399213651"}),
     )
     aktif = forms.BooleanField(required=False, initial=True)
-    ikon = forms.ImageField(required=False)
+    ikon = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={"accept": "image/*", "class": "form-file-input"}),
+    )
 
     def clean(self):
         cleaned_data = super().clean()
         if not self.instance.pk and not cleaned_data.get("ikon"):
             self.add_error("ikon", "Unggah gambar ikon untuk sosial media ini.")
-        if not cleaned_data.get("url") and not cleaned_data.get("nomor_telepon"):
-            raise forms.ValidationError("Isi link URL atau nomor telepon.")
-        if cleaned_data.get("url") and cleaned_data.get("nomor_telepon"):
-            raise forms.ValidationError("Isi salah satu saja: link URL atau nomor telepon.")
+
+        platform_name = (
+            getattr(self.instance, "nama", "")
+            or self.data.get("social_name", "")
+            or self.data.get("nama", "")
+        ).strip().lower()
+
+        is_whatsapp = platform_name == "whatsapp"
+
+        if is_whatsapp:
+            telp = (cleaned_data.get("nomor_telepon") or "").strip()
+            if not telp:
+                self.add_error("nomor_telepon", "Nomor WhatsApp wajib diisi.")
+            else:
+                digits = re.sub(r"\D", "", telp)
+                if digits.startswith("0"):
+                    digits = "62" + digits[1:]
+                elif digits.startswith("8"):
+                    digits = "62" + digits
+                store_name = (
+                    self.instance.footer.nama_toko
+                    if self.instance and hasattr(self.instance, "footer") and self.instance.footer and self.instance.footer.nama_toko
+                    else "Losari Computer"
+                )
+                text = f"Halo {store_name}, saya ingin minta bantuan dan konsultasi."
+                encoded_text = urllib.parse.quote(text)
+                cleaned_data["url"] = f"https://api.whatsapp.com/send?phone={digits}&text={encoded_text}"
+        elif platform_name:
+            url = (cleaned_data.get("url") or "").strip()
+            if not url:
+                self.add_error("url", f"Tautan Link URL {self.instance.nama or 'platform'} wajib diisi.")
+            cleaned_data["nomor_telepon"] = ""
+        else:
+            if not cleaned_data.get("url") and not cleaned_data.get("nomor_telepon"):
+                self.add_error("url", "Isi tautan link URL atau nomor telepon.")
+
         return cleaned_data
 
     class Meta:
         model = FooterSocial
         fields = ["url", "nomor_telepon", "ikon", "aktif"]
         widgets = {
-            "ikon": forms.FileInput(attrs={"accept": "image/*"}),
+            "ikon": forms.FileInput(attrs={"accept": "image/*", "class": "form-file-input"}),
         }
 
 
 class FooterPaymentForm(forms.ModelForm):
-    ikon = forms.ImageField(required=False)
+    ikon = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={"accept": "image/*", "class": "form-file-input"}),
+    )
 
     class Meta:
         model = FooterPayment
         fields = ["ikon", "aktif"]
         widgets = {
-            "ikon": forms.FileInput(attrs={"accept": "image/*"}),
+            "ikon": forms.FileInput(attrs={"accept": "image/*", "class": "form-file-input"}),
         }
 
     def clean(self):
@@ -168,13 +212,29 @@ class AboutSettingForm(forms.ModelForm):
             "visi",
             "misi",
         ]
+        labels = {
+            "judul": "Judul Halaman",
+            "tagline": "Tagline / Slogan Bisnis",
+            "deskripsi": "Profil Utama (Tentang Kami)",
+            "sejarah": "Sejarah & Perjalanan Bisnis",
+            "ceo_nama": "Nama Lengkap CEO / Pimpinan",
+            "ceo_jabatan": "Jabatan Resmi Pimpinan",
+            "visi": "Visi Perusahaan",
+            "misi": "Misi Perusahaan",
+            "logo": "Logo Perusahaan",
+            "ceo_foto": "Foto Profil CEO / Pimpinan",
+        }
         widgets = {
-            "deskripsi": forms.Textarea(attrs={"rows": 4}),
-            "sejarah": forms.Textarea(attrs={"rows": 5}),
-            "visi": forms.Textarea(attrs={"rows": 4}),
-            "misi": forms.Textarea(attrs={"rows": 4}),
-            "logo": forms.FileInput(attrs={"accept": "image/*"}),
-            "ceo_foto": forms.FileInput(attrs={"accept": "image/*"}),
+            "judul": forms.TextInput(attrs={"placeholder": "Contoh: Tentang Losari Computer"}),
+            "tagline": forms.TextInput(attrs={"placeholder": "Contoh: Partner teknologi terpercaya untuk kebutuhan digital Anda."}),
+            "deskripsi": forms.Textarea(attrs={"rows": 4, "placeholder": "Tuliskan ringkasan profil dan layanan utama toko..."}),
+            "sejarah": forms.Textarea(attrs={"rows": 5, "placeholder": "Ceritakan awal mula berdirinya toko dan perkembangannya hingga saat ini..."}),
+            "ceo_nama": forms.TextInput(attrs={"placeholder": "Contoh: Fauzan Ali Fatah"}),
+            "ceo_jabatan": forms.TextInput(attrs={"placeholder": "Contoh: Founder & CEO"}),
+            "visi": forms.Textarea(attrs={"rows": 4, "placeholder": "Tuliskan visi jangka panjang toko..."}),
+            "misi": forms.Textarea(attrs={"rows": 4, "placeholder": "Tuliskan poin-poin misi utama toko..."}),
+            "logo": forms.FileInput(attrs={"accept": "image/*", "class": "form-file-input"}),
+            "ceo_foto": forms.FileInput(attrs={"accept": "image/*", "class": "form-file-input"}),
         }
 
 
@@ -207,42 +267,63 @@ class MitraDeepublishForm(forms.ModelForm):
 
 
 class AdminPelangganForm(forms.ModelForm):
-    nama = forms.CharField(max_length=150, label="Nama pelanggan", required=False)
-    telp = forms.CharField(max_length=15, label="Nomor telepon", required=False)
+    nama = forms.CharField(
+        max_length=150,
+        label="Nama Lengkap Pelanggan",
+        required=True,
+        widget=forms.TextInput(attrs={"placeholder": "Contoh: Fauzan Ali Fatah"}),
+    )
+    email = forms.EmailField(
+        label="Alamat Email",
+        required=True,
+        widget=forms.EmailInput(attrs={"placeholder": "nama@domain.com"}),
+    )
+    telp = forms.CharField(
+        max_length=15,
+        label="Nomor Telepon / WhatsApp",
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Contoh: 08123456789"}),
+    )
     password_baru = forms.CharField(
-        label="Kata sandi baru",
+        label="Kata Sandi Baru",
         required=False,
         strip=False,
         widget=forms.PasswordInput(
-            attrs={"autocomplete": "new-password", "placeholder": "Kosongkan jika tidak ingin mengganti"}
+            attrs={"autocomplete": "new-password", "placeholder": "Minimal 8 karakter (kosongkan jika tidak ingin diubah)"}
         ),
         help_text="Kosongkan jika kata sandi pelanggan tidak ingin diubah.",
     )
     konfirmasi_password = forms.CharField(
-        label="Konfirmasi kata sandi",
+        label="Konfirmasi Kata Sandi Baru",
         required=False,
         strip=False,
         widget=forms.PasswordInput(
-            attrs={"autocomplete": "new-password", "placeholder": "Ulangi kata sandi baru"}
+            attrs={"autocomplete": "new-password", "placeholder": "Ulangi kata sandi baru untuk verifikasi"}
         ),
     )
     alamat = forms.CharField(
-        label="Alamat",
+        label="Alamat Pengiriman Lengkap",
         required=False,
-        widget=forms.Textarea(attrs={"rows": 3}),
+        widget=forms.Textarea(attrs={
+            "rows": 3,
+            "placeholder": "Tuliskan nama jalan, RT/RW, nomor rumah, patokan, kelurahan, kecamatan, dan kota..."
+        }),
     )
 
     class Meta:
         model = User
         fields = ["nama", "email", "telp", "alamat", "is_active"]
         labels = {
-            "email": "Email",
-            "is_active": "Akun aktif",
+            "email": "Alamat Email",
+            "is_active": "Status Akses Akun",
         }
 
     def __init__(self, *args, **kwargs):
         self.member = kwargs.pop("member", None)
         super().__init__(*args, **kwargs)
+        if "is_active" in self.fields:
+            self.fields["is_active"].label = "Status Akses Akun"
+            self.fields["is_active"].help_text = "Aktifkan agar pelanggan dapat login dan berbelanja di website."
         if self.member:
             self.fields["nama"].initial = self.instance.get_full_name()
             self.fields["telp"].initial = self.member.telp
@@ -425,6 +506,19 @@ class AdminProdukForm(forms.ModelForm):
             "unggulan",
             "aktif",
         ]
+        labels = {
+            "nama": "Nama Produk",
+            "merek": "Merek / Brand",
+            "kategori": "Kategori",
+            "deskripsi": "Deskripsi Lengkap Produk",
+            "harga": "Harga Normal (Rp)",
+            "diskon_persen": "Diskon (%)",
+            "stok": "Jumlah Stok Fisik",
+            "kondisi": "Kondisi Barang",
+            "gambar": "Foto Sampul Utama",
+            "unggulan": "Keunggulan",
+            "aktif": "Status Publikasi Produk",
+        }
         widgets = {
             "deskripsi": forms.Textarea(attrs={"rows": 6}),
             "gambar": forms.FileInput(attrs={"accept": "image/*"}),
@@ -432,6 +526,12 @@ class AdminProdukForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if "unggulan" in self.fields:
+            self.fields["unggulan"].label = "Keunggulan"
+            self.fields["unggulan"].help_text = "Centang jika produk ini merupakan produk pilihan / keunggulan toko."
+        if "aktif" in self.fields:
+            self.fields["aktif"].label = "Status Publikasi Produk"
+            self.fields["aktif"].help_text = "Aktifkan agar produk dapat dilihat dan dibeli oleh pelanggan."
         if self.instance and self.instance.pk:
             spek = self.instance.spesifikasi or {}
             if isinstance(spek, str):
@@ -520,25 +620,30 @@ class AdminProdukForm(forms.ModelForm):
 
 
 class AdminProdukGambarForm(forms.ModelForm):
-    gambar = forms.ImageField(required=False)
+    gambar = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={"accept": "image/*", "class": "admin-gallery-file-input"}),
+        label="File Foto",
+        help_text="Gunakan foto yang terang, jernih, dan tidak buram.",
+    )
 
     class Meta:
         model = ProdukGambar
         fields = ("tipe", "gambar", "urutan")
         labels = {
-            "tipe": "Jenis foto",
-            "gambar": "Pilih foto produk",
+            "tipe": "Jenis / Sudut Foto",
+            "gambar": "File Foto",
             "urutan": "Urutan",
         }
         widgets = {
-            "gambar": forms.FileInput(attrs={"accept": "image/*"}),
+            "gambar": forms.FileInput(attrs={"accept": "image/*", "class": "admin-gallery-file-input"}),
             "urutan": forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["tipe"].help_text = "Pilih bagian produk yang terlihat pada foto."
-        self.fields["gambar"].help_text = "Gunakan foto yang terang dan tidak buram."
+        self.fields["tipe"].help_text = "Pilih bagian produk yang terlihat pada foto ini."
+        self.fields["gambar"].help_text = "Gunakan foto yang terang, jernih, dan tidak buram."
 
 
 class AdminProdukKeunggulanForm(forms.ModelForm):

@@ -1,112 +1,998 @@
 {% extends "app/content_manager.html" %}
 {% block content %}
-<div class="toolbar"><div><h2>{{ heading }}</h2><p class="muted">Simpan perubahan untuk memperbarui tampilan website.</p></div><a class="button secondary" href="{{ cancel_url }}">Kembali</a></div>
+<style>
+/* ─── Modern Admin Form Styling ─── */
+.admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.admin-page-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.admin-page-header .muted {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* Form Container Card */
+.form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    padding: 28px;
+}
+
+/* Section Dividers */
+.admin-form-divider {
+    grid-column: 1 / -1;
+    margin: 26px 0 12px;
+    padding-top: 22px;
+    border-top: 1px solid #e2e8f0;
+}
+.admin-form-divider-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+}
+.admin-form-divider-title svg {
+    flex-shrink: 0;
+    color: #dc2626;
+    width: 18px;
+    height: 18px;
+}
+.admin-form-divider-help {
+    margin: 0;
+    color: #64748b;
+    font-size: 12.5px;
+    line-height: 1.45;
+}
+
+/* ─── Modern SaaS Settings Toggle Cards (No Clunky Boxes, Ultra Clean) ─── */
+.modern-toggle-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.modern-toggle-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+}
+.card-keunggulan {
+    border-color: #e2e8f0;
+    background: #ffffff;
+}
+.card-keunggulan.is-checked {
+    background: #f8fbff;
+    border-color: #93c5fd;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.08);
+}
+.card-aktif {
+    border-color: #e2e8f0;
+    background: #ffffff;
+}
+.card-aktif.is-checked {
+    background: #f0fdf4;
+    border-color: #86efac;
+    box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08);
+}
+
+.toggle-card-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+.toggle-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.toggle-card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+.dot-keunggulan {
+    background: #94a3b8;
+}
+.card-keunggulan.is-checked .dot-keunggulan {
+    background: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
+}
+.dot-aktif {
+    background: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
+}
+.card-aktif.is-checked .dot-aktif {
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.22);
+}
+
+.toggle-label-title {
+    display: inline-block;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+    cursor: pointer;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+.toggle-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    line-height: 1.35;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.pill-keunggulan {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+.card-keunggulan.is-checked .pill-keunggulan {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+.pill-aktif {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+.card-aktif.is-checked .pill-aktif {
+    background: #dcfce7;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.toggle-label-desc {
+    margin: 0;
+    font-size: 12.5px;
+    color: #64748b;
+    line-height: 1.5;
+    width: 100%;
+}
+.card-keunggulan.is-checked .toggle-label-desc {
+    color: #334155;
+}
+.card-aktif.is-checked .toggle-label-desc {
+    color: #334155;
+}
+
+/* Switch Toggle Element */
+.switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.switch-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+.switch-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+}
+.switch-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch-toggle input:checked + .switch-toggle-slider {
+    background-color: #2563eb;
+}
+.switch-toggle input:checked + .switch-slider-green {
+    background-color: #16a34a;
+}
+.switch-toggle input:checked + .switch-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+/* ─── Gallery Section ─── */
+.gallery-section-wrapper {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+}
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+}
+@media (max-width: 860px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.gallery-card-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    transition: all 0.2s ease;
+}
+.gallery-card-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+.gallery-card-item.is-marked-delete {
+    background: #fff5f5;
+    border-color: #fca5a5;
+    opacity: 0.65;
+}
+
+/* Gallery Header */
+.gallery-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.gallery-slot-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.slot-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #ef4444;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.slot-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.slot-subtitle {
+    display: block;
+    font-size: 11.5px;
+    color: #64748b;
+}
+
+/* Photo Status Badges */
+.photo-status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.status-ready {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+.status-none {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+/* Gallery Visual Box */
+.gallery-visual-box {
+    width: 100%;
+    height: 170px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gallery-card-item.has-photo .gallery-visual-box {
+    border-style: solid;
+    border-color: #e2e8f0;
+    background: #f8fafc;
+}
+.visual-img-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gallery-display-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 8px;
+}
+.photo-filename-pill {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+.filename-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.visual-empty-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #64748b;
+    text-align: center;
+    padding: 16px;
+}
+.empty-icon-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #edf2f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+}
+.empty-main-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+}
+.empty-sub-text {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* Gallery Form Fields */
+.gallery-form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.gallery-row-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.gallery-row-tip {
+    margin: 2px 0 0;
+    font-size: 11.5px;
+    color: #64748b;
+}
+
+/* Clean Custom File Uploader */
+.styled-file-uploader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.upload-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.upload-trigger-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+.hidden-real-file input[type="file"] {
+    display: none;
+}
+.selected-file-label {
+    font-size: 12px;
+    color: #64748b;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.selected-file-label.has-file {
+    color: #0284c7;
+    font-weight: 700;
+}
+
+/* Gallery Delete Row - SINGLE, CLEAR ACTION */
+.gallery-delete-row {
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+.delete-action-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.delete-action-box:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+}
+.delete-action-box input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #dc2626;
+    cursor: pointer;
+    margin: 0;
+}
+.delete-info {
+    display: flex;
+    flex-direction: column;
+}
+.delete-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #991b1b;
+}
+.delete-hint {
+    font-size: 11px;
+    color: #b91c1c;
+}
+
+/* Benefit Cards */
+.benefit-form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    transition: all 0.2s ease;
+}
+.benefit-form-card:hover {
+    border-color: #cbd5e1;
+}
+
+/* ════════ MOBILE & TABLET RESPONSIVE ════════ */
+@media (max-width: 640px) {
+    .admin-page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .admin-page-header .button {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+    .form-card {
+        padding: 16px 14px;
+        border-radius: 12px;
+    }
+    .modern-toggle-card {
+        padding: 14px 16px;
+        gap: 8px;
+    }
+    .toggle-card-top-row {
+        gap: 8px;
+    }
+    .toggle-title-group {
+        gap: 6px;
+    }
+    .toggle-label-title {
+        font-size: 14px;
+    }
+    .toggle-badge-pill {
+        font-size: 10.5px;
+        padding: 2px 7px;
+    }
+    .toggle-label-desc {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+    .gallery-card-item {
+        padding: 14px;
+        border-radius: 12px;
+    }
+    .gallery-visual-box {
+        height: 150px;
+    }
+    .styled-file-uploader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .upload-trigger-btn {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .form-actions .button {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+</style>
+
+<div class="admin-page-header">
+    <div>
+        <h2>{{ heading }}</h2>
+        <p class="muted">Simpan perubahan untuk memperbarui tampilan katalog produk di website.</p>
+    </div>
+    <a class="button secondary" href="{{ cancel_url }}">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Kembali ke Daftar
+    </a>
+</div>
+
 <form class="form-card" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+    {% if form.non_field_errors %}
+    <div class="editor-error-box">{{ form.non_field_errors }}</div>
+    {% endif %}
+
     <div class="form-grid">
     {% for field in form %}
         {% if field.name == 'spek_prosesor' %}
-        <div class="field full form-section-header" style="margin-top: 14px; padding-top: 18px; border-top: 1px solid var(--line);">
-            <h3 class="section-title" style="display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font-size: 16px; color: #172033;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
-                Spesifikasi Perangkat
+        <div class="admin-form-divider">
+            <h3 class="admin-form-divider-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                Spesifikasi Teknis Perangkat
             </h3>
-            <p class="section-help" style="margin: 0; color: var(--muted); font-size: 13px;">Isi spesifikasi per bagian (Prosesor, RAM, Penyimpanan, Layar, dll) secara terpisah tanpa perlu mengetik kode JSON.</p>
+            <p class="admin-form-divider-help">Isi spesifikasi per bagian (Prosesor, RAM, Penyimpanan, Layar, dll) secara terpisah tanpa perlu mengetik kode JSON manual.</p>
+        </div>
+        {% elif field.name == 'unggulan' %}
+        <div class="admin-form-divider">
+            <h3 class="admin-form-divider-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Status &amp; Keunggulan Produk
+            </h3>
+            <p class="admin-form-divider-help">Atur penandaan produk unggulan dan visibilitas tayang produk di etalase website.</p>
         </div>
         {% endif %}
-        <div class="field {% if field.name == 'content' or field.name == 'deskripsi' or field.name == 'spesifikasi' or field.name == 'spek_lainnya' %}full{% endif %} {% if field.field.widget.input_type == 'checkbox' %}check{% endif %}">
-            {{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}
+
+        {% if field.name == 'unggulan' %}
+        <!-- Dedicated Keunggulan Toggle Card -->
+        <div class="field full">
+            <div class="modern-toggle-card card-keunggulan{% if field.value %} is-checked{% endif %}" onclick="document.getElementById('{{ field.id_for_label }}').click();">
+                <div class="toggle-card-top-row">
+                    <div class="toggle-title-group">
+                        <span class="toggle-card-dot dot-keunggulan"></span>
+                        <label class="toggle-label-title" for="{{ field.id_for_label }}" onclick="event.stopPropagation();">Keunggulan</label>
+                        <span class="toggle-badge-pill pill-keunggulan">
+                            {% if field.value %}Rekomendasi Utama{% else %}Standar{% endif %}
+                        </span>
+                    </div>
+                    <div class="toggle-action-wrap" onclick="event.stopPropagation();">
+                        <label class="switch-toggle" for="{{ field.id_for_label }}">
+                            {{ field }}
+                            <span class="switch-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <p class="toggle-label-desc">Tandai produk ini sebagai <strong>Produk Keunggulan / Rekomendasi Utama</strong> toko untuk mendapatkan lencana khusus "Unit Asli Teruji" dan diprioritaskan di baris teratas etalase.</p>
+            </div>
+            {% if field.errors %}{{ field.errors }}{% endif %}
         </div>
+        {% elif field.name == 'aktif' %}
+        <!-- Dedicated Status Aktif Toggle Card -->
+        <div class="field full">
+            <div class="modern-toggle-card card-aktif{% if field.value %} is-checked{% endif %}" onclick="document.getElementById('{{ field.id_for_label }}').click();">
+                <div class="toggle-card-top-row">
+                    <div class="toggle-title-group">
+                        <span class="toggle-card-dot dot-aktif"></span>
+                        <label class="toggle-label-title" for="{{ field.id_for_label }}" onclick="event.stopPropagation();">Status Publikasi Produk</label>
+                        <span class="toggle-badge-pill pill-aktif">
+                            {% if field.value %}Tayang di Toko{% else %}Draft (Disembunyikan){% endif %}
+                        </span>
+                    </div>
+                    <div class="toggle-action-wrap" onclick="event.stopPropagation();">
+                        <label class="switch-toggle" for="{{ field.id_for_label }}">
+                            {{ field }}
+                            <span class="switch-toggle-slider switch-slider-green"></span>
+                        </label>
+                    </div>
+                </div>
+                <p class="toggle-label-desc">Aktifkan agar produk ini langsung dapat dilihat, dicari, dan dibeli oleh pelanggan di website storefront.</p>
+            </div>
+            {% if field.errors %}{{ field.errors }}{% endif %}
+        </div>
+        {% else %}
+        <!-- Standard Field -->
+        <div class="field {% if field.name == 'content' or field.name == 'deskripsi' or field.name == 'spesifikasi' or field.name == 'spek_lainnya' %}full{% endif %} {% if field.field.widget.input_type == 'checkbox' %}check{% endif %}">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+            {{ field.errors }}
+        </div>
+        {% endif %}
     {% endfor %}
     </div>
+
+    <!-- ═══ GALERI PRODUK (CLEAN & INTUITIVE FOR ADMIN) ═══ -->
     {% if image_formset %}
-    <section class="admin-extra-section">
+    <section class="admin-extra-section gallery-section-wrapper">
         <div class="section-heading">
-            <div><h3 class="section-title">Galeri produk</h3><p class="section-help">Tambahkan foto dari beberapa sisi agar pelanggan lebih yakin sebelum membeli.</p></div>
-            <span class="section-count">4 foto utama</span>
+            <div>
+                <h3 class="section-title" style="display:flex; align-items:center; gap:8px;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#dc2626" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    Galeri Foto Produk
+                </h3>
+                <p class="section-help">Unggah foto dari beberapa sudut (tampak depan, keyboard, panel layar, dll) agar pelanggan dapat melihat kondisi fisik unit dengan jelas dan yakin sebelum membeli.</p>
+            </div>
+            <span class="section-count">4 Foto Utama</span>
         </div>
         {{ image_formset.management_form }}
-        <div class="extra-form-grid">
+        <div class="gallery-grid">
         {% for inline_form in image_formset %}
-            <article class="extra-form-card gallery-form-card">
-                {{ inline_form.id }}{{ inline_form.urutan }}
-                <div class="extra-form-card-heading"><span class="slot-number">{{ forloop.counter }}</span><div><strong>Foto {{ forloop.counter }}</strong><small>Contoh: tampak depan, keyboard, atau layar</small></div></div>
-                {% if inline_form.instance.gambar %}<img class="gallery-preview" src="{{ inline_form.instance.gambar.url }}" alt="Foto {{ inline_form.instance.get_tipe_display }}" data-preview-image>{% else %}<div class="gallery-preview gallery-preview-empty" data-preview-image><span>Preview foto</span></div>{% endif %}
-                {% for field in inline_form.visible_fields %}
-                    {% if field.name != "urutan" and field.name != "DELETE" %}<div class="field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endif %}
-                {% endfor %}
-                {% if inline_form.DELETE %}<label class="delete-field">{{ inline_form.DELETE }} Hapus foto ini</label>{% endif %}
+            <article class="gallery-card-item{% if inline_form.instance.gambar %} has-photo{% endif %}" id="gallery-card-{{ forloop.counter }}">
+                {{ inline_form.id }}
+                {{ inline_form.urutan }}
+
+                <!-- Slot Card Header -->
+                <div class="gallery-card-top">
+                    <div class="gallery-slot-badge">
+                        <span class="slot-num">{{ forloop.counter }}</span>
+                        <div>
+                            <strong class="slot-title">Foto {{ forloop.counter }}</strong>
+                            <small class="slot-subtitle">
+                                {% if forloop.counter == 1 %}Tampak Depan (Foto Utama)
+                                {% elif forloop.counter == 2 %}Keyboard &amp; Touchpad
+                                {% elif forloop.counter == 3 %}Panel &amp; Layar Display
+                                {% else %}Detail Port &amp; Fisik{% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    {% if inline_form.instance.gambar %}
+                    <span class="photo-status-badge status-ready" data-status-badge>✓ Foto Terpasang</span>
+                    {% else %}
+                    <span class="photo-status-badge status-none" data-status-badge>Belum Ada Foto</span>
+                    {% endif %}
+                </div>
+
+                <!-- Visual Photo Preview -->
+                <div class="gallery-visual-box" data-preview-box>
+                    {% if inline_form.instance.gambar %}
+                    <div class="visual-img-container">
+                        <img class="gallery-display-img" src="{{ inline_form.instance.gambar.url }}" alt="Foto {{ inline_form.instance.get_tipe_display }}" data-preview-img>
+                        <div class="photo-filename-pill">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                            <span class="filename-text">{{ inline_form.instance.gambar.name|cut:"produk/galeri/" }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="visual-empty-container">
+                        <div class="empty-icon-circle">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#94a3b8" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </div>
+                        <span class="empty-main-text">Belum ada foto</span>
+                        <span class="empty-sub-text">Pilih file foto di bawah</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Jenis / Sudut Foto Field -->
+                <div class="gallery-form-row">
+                    <label class="gallery-row-label" for="{{ inline_form.tipe.id_for_label }}">
+                        <span>Jenis / Sudut Foto:</span>
+                    </label>
+                    <div class="gallery-input-wrap">
+                        {{ inline_form.tipe }}
+                    </div>
+                    <p class="gallery-row-tip">Pilih bagian produk yang terlihat pada foto ini.</p>
+                    {% if inline_form.tipe.errors %}{{ inline_form.tipe.errors }}{% endif %}
+                </div>
+
+                <!-- File Foto Field (CLEAN UPLOADER - NO CLUTTER) -->
+                <div class="gallery-form-row">
+                    <label class="gallery-row-label">
+                        <span>{% if inline_form.instance.gambar %}Ganti File Foto:{% else %}Upload File Foto:{% endif %}</span>
+                    </label>
+                    <div class="styled-file-uploader">
+                        <label class="upload-trigger-btn" for="{{ inline_form.gambar.id_for_label }}">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>{% if inline_form.instance.gambar %}Pilih Foto Baru...{% else %}Pilih File Foto...{% endif %}</span>
+                        </label>
+                        <div class="hidden-real-file">
+                            {{ inline_form.gambar }}
+                        </div>
+                        <span class="selected-file-label" data-file-indicator>Belum ada file baru</span>
+                    </div>
+                    <p class="gallery-row-tip">Gunakan foto yang terang, jernih, dan tidak buram (JPG, PNG, WEBP).</p>
+                    {% if inline_form.gambar.errors %}{{ inline_form.gambar.errors }}{% endif %}
+                </div>
+
+                <!-- Single Clear Delete Option -->
+                {% if inline_form.DELETE %}
+                <div class="gallery-delete-row">
+                    <label class="delete-action-box" for="{{ inline_form.DELETE.id_for_label }}">
+                        {{ inline_form.DELETE }}
+                        <div class="delete-info">
+                            <strong class="delete-title">Hapus Foto Ini</strong>
+                            <small class="delete-hint">Centang untuk menghapus foto ini saat disimpan</small>
+                        </div>
+                    </label>
+                </div>
+                {% endif %}
             </article>
         {% endfor %}
         </div>
     </section>
-    <section class="admin-extra-section">
+
+    <!-- ═══ KEUNGGULAN PRODUK (BENEFIT FORMSET) ═══ -->
+    <section class="admin-extra-section" style="margin-top:36px; padding-top:24px; border-top:1px solid #e2e8f0;">
         <div class="section-heading">
-            <div><h3 class="section-title">Keunggulan produk</h3><p class="section-help">Isi manfaat utama produk dengan kalimat singkat dan mudah dipahami.</p></div>
-            <div class="section-heading-actions"><span class="section-count" data-benefit-count>{{ benefit_formset.total_form_count }} keunggulan</span><button class="add-inline-button" type="button" data-add-benefit>+ Tambah keunggulan</button></div>
+            <div>
+                <h3 class="section-title" style="display:flex; align-items:center; gap:8px;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Poin Keunggulan Produk
+                </h3>
+                <p class="section-help">Isi poin kelebihan atau garansi produk dengan kalimat singkat yang meyakinkan pembeli.</p>
+            </div>
+            <div class="section-heading-actions">
+                <span class="section-count" data-benefit-count>{{ benefit_formset.total_form_count }} keunggulan</span>
+                <button class="add-inline-button" type="button" data-add-benefit>+ Tambah Keunggulan</button>
+            </div>
         </div>
         {{ benefit_formset.management_form }}
         <div class="extra-form-grid" data-benefit-grid>
         {% for inline_form in benefit_formset %}
             <article class="extra-form-card benefit-form-card">
                 {{ inline_form.id }}{{ inline_form.urutan }}
-                <div class="extra-form-card-heading"><span class="slot-number">{{ forloop.counter }}</span><div><strong>Keunggulan {{ forloop.counter }}</strong><small>Contoh: Garansi resmi atau siap pakai</small></div></div>
+                <div class="extra-form-card-heading">
+                    <span class="slot-number" style="background:#2563eb;">{{ forloop.counter }}</span>
+                    <div>
+                        <strong>Keunggulan {{ forloop.counter }}</strong>
+                        <small>Contoh: Garansi Resmi Toko atau Siap Pakai</small>
+                    </div>
+                </div>
                 {% for field in inline_form.visible_fields %}
-                    {% if field.name != "urutan" and field.name != "warna" and field.name != "DELETE" %}<div class="field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endif %}
+                    {% if field.name != "urutan" and field.name != "warna" and field.name != "DELETE" %}
+                    <div class="field">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
                 {% endfor %}
-                {{ inline_form.warna }}{% if inline_form.DELETE %}<label class="delete-field">{{ inline_form.DELETE }} Hapus keunggulan ini</label>{% endif %}
+                {{ inline_form.warna }}
+                {% if inline_form.DELETE %}
+                <label class="delete-field" style="margin-top:12px;">
+                    {{ inline_form.DELETE }} Hapus keunggulan ini
+                </label>
+                {% endif %}
             </article>
         {% endfor %}
         </div>
         <template data-benefit-template>
             <article class="extra-form-card benefit-form-card">
                 {{ benefit_formset.empty_form.id }}{{ benefit_formset.empty_form.urutan }}
-                <div class="extra-form-card-heading"><span class="slot-number">__number__</span><div><strong>Keunggulan __number__</strong><small>Contoh: Garansi resmi atau siap pakai</small></div></div>
+                <div class="extra-form-card-heading">
+                    <span class="slot-number" style="background:#2563eb;">__number__</span>
+                    <div>
+                        <strong>Keunggulan __number__</strong>
+                        <small>Contoh: Garansi Resmi Toko atau Siap Pakai</small>
+                    </div>
+                </div>
                 {% for field in benefit_formset.empty_form.visible_fields %}
-                    {% if field.name != "urutan" and field.name != "warna" and field.name != "DELETE" %}<div class="field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endif %}
+                    {% if field.name != "urutan" and field.name != "warna" and field.name != "DELETE" %}
+                    <div class="field">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
                 {% endfor %}
                 {{ benefit_formset.empty_form.warna }}
             </article>
         </template>
     </section>
     {% endif %}
-    <div class="form-actions"><button class="button" type="submit">Simpan {{ item_label }}</button><a class="button secondary" href="{{ cancel_url }}">Batal</a></div>
+
+    <div class="form-actions" style="margin-top:32px; padding-top:20px; border-top:1px solid #e2e8f0;">
+        <button class="button" type="submit" style="padding:12px 24px; font-size:15px; border-radius:10px;">
+            Simpan {{ item_label|title }}
+        </button>
+        <a class="button secondary" href="{{ cancel_url }}" style="padding:12px 20px; font-size:15px; border-radius:10px;">
+            Batal
+        </a>
+    </div>
 </form>
+
 <script>
-document.querySelectorAll('input[type="file"][accept="image/*"]').forEach(function (input) {
-    input.addEventListener("change", function () {
-        var card = input.closest(".gallery-form-card");
-        var preview = card && card.querySelector("[data-preview-image]");
-        var file = input.files && input.files[0];
-        if (!preview || !file) return;
-        preview.src = URL.createObjectURL(file);
-        preview.classList.remove("gallery-preview-empty");
-        preview.innerHTML = "";
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Instant Photo Preview & File Name display on file select
+    document.querySelectorAll('.gallery-card-item input[type="file"]').forEach(function (input) {
+        input.addEventListener("change", function () {
+            var card = input.closest(".gallery-card-item");
+            if (!card) return;
+
+            var fileIndicator = card.querySelector("[data-file-indicator]");
+            var previewBox = card.querySelector("[data-preview-box]");
+            var statusBadge = card.querySelector("[data-status-badge]");
+            var file = input.files && input.files[0];
+
+            if (file) {
+                if (fileIndicator) {
+                    fileIndicator.textContent = file.name;
+                    fileIndicator.classList.add("has-file");
+                }
+                if (previewBox) {
+                    var objUrl = URL.createObjectURL(file);
+                    previewBox.innerHTML = `
+                        <div class="visual-img-container">
+                            <img class="gallery-display-img" src="${objUrl}" alt="Preview Foto Baru">
+                            <div class="photo-filename-pill">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                <span class="filename-text">${file.name}</span>
+                            </div>
+                        </div>
+                    `;
+                    card.classList.add("has-photo");
+                }
+                if (statusBadge) {
+                    statusBadge.textContent = "✓ File Baru Dipilih";
+                    statusBadge.className = "photo-status-badge status-ready";
+                }
+            }
+        });
     });
+
+    // 2. Visual feedback when marking a gallery photo for deletion
+    document.querySelectorAll('.gallery-delete-row input[type="checkbox"]').forEach(function (chk) {
+        function updateDeleteStyle() {
+            var card = chk.closest(".gallery-card-item");
+            if (!card) return;
+            if (chk.checked) {
+                card.classList.add("is-marked-delete");
+            } else {
+                card.classList.remove("is-marked-delete");
+            }
+        }
+        chk.addEventListener("change", updateDeleteStyle);
+        updateDeleteStyle();
+    });
+
+    // 3. Dynamic styling sync for custom switch toggles (Keunggulan & Aktif)
+    document.querySelectorAll('.modern-toggle-card input[type="checkbox"]').forEach(function (chk) {
+        function updateToggleCard() {
+            var card = chk.closest(".modern-toggle-card");
+            if (!card) return;
+            var pill = card.querySelector(".toggle-badge-pill");
+            var isKeunggulan = card.classList.contains("card-keunggulan");
+            var isAktif = card.classList.contains("card-aktif");
+
+            if (chk.checked) {
+                card.classList.add("is-checked");
+                if (isKeunggulan && pill) {
+                    pill.textContent = "Rekomendasi Utama";
+                } else if (isAktif && pill) {
+                    pill.textContent = "Tayang di Toko";
+                }
+            } else {
+                card.classList.remove("is-checked");
+                if (isKeunggulan && pill) {
+                    pill.textContent = "Standar";
+                } else if (isAktif && pill) {
+                    pill.textContent = "Draft (Disembunyikan)";
+                }
+            }
+        }
+        chk.addEventListener("change", updateToggleCard);
+        updateToggleCard();
+    });
+
+    // 4. Benefit inline formset adding
+    var addBenefitButton = document.querySelector("[data-add-benefit]");
+    var benefitGrid = document.querySelector("[data-benefit-grid]");
+    var benefitTemplate = document.querySelector("[data-benefit-template]");
+    var benefitTotal = document.getElementById("id_{{ benefit_formset.prefix }}-TOTAL_FORMS");
+    var benefitCount = document.querySelector("[data-benefit-count]");
+
+    if (addBenefitButton && benefitGrid && benefitTemplate && benefitTotal) {
+        addBenefitButton.addEventListener("click", function () {
+            var index = Number(benefitTotal.value);
+            var card = document.createElement("div");
+            card.innerHTML = benefitTemplate.innerHTML
+                .replace(/__prefix__/g, index)
+                .replace(/__number__/g, index + 1);
+            var newCard = card.firstElementChild;
+            var orderField = newCard.querySelector("[name$='-urutan']");
+            if (orderField) orderField.value = index;
+            benefitGrid.appendChild(newCard);
+            benefitTotal.value = index + 1;
+            if (benefitCount) benefitCount.textContent = benefitTotal.value + " keunggulan";
+            var firstInput = newCard.querySelector("input, select");
+            if (firstInput) firstInput.focus();
+        });
+    }
 });
-
-var addBenefitButton = document.querySelector("[data-add-benefit]");
-var benefitGrid = document.querySelector("[data-benefit-grid]");
-var benefitTemplate = document.querySelector("[data-benefit-template]");
-var benefitTotal = document.getElementById("id_{{ benefit_formset.prefix }}-TOTAL_FORMS");
-var benefitCount = document.querySelector("[data-benefit-count]");
-
-if (addBenefitButton && benefitGrid && benefitTemplate && benefitTotal) {
-    addBenefitButton.addEventListener("click", function () {
-        var index = Number(benefitTotal.value);
-        var card = document.createElement("div");
-        card.innerHTML = benefitTemplate.innerHTML
-            .replace(/__prefix__/g, index)
-            .replace(/__number__/g, index + 1);
-        var newCard = card.firstElementChild;
-        var orderField = newCard.querySelector("[name$='-urutan']");
-        if (orderField) orderField.value = index;
-        benefitGrid.appendChild(newCard);
-        benefitTotal.value = index + 1;
-        benefitCount.textContent = benefitTotal.value + " keunggulan";
-        newCard.querySelector("input, select").focus();
-    });
-}
 </script>
 {% endblock %}
