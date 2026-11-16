@@ -26,7 +26,7 @@ def load_local_env():
         if not line or line.startswith("#") or "=" not in line:
             continue
         name, value = line.split("=", 1)
-        os.environ.setdefault(name.strip(), value.strip().strip("\"'"))
+        os.environ[name.strip()] = value.strip().strip("\"'")
 
 
 load_local_env()

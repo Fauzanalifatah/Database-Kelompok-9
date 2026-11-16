@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 from app.forms import RegistrationForm
 from app.models import UserPengguna
@@ -195,11 +196,8 @@ def registerView(request):
     )
 
 
-@login_required(login_url="app:login")
+@csrf_exempt
 def LogoutView(request):
-    if request.method == "POST":
-        logout(request)
-        messages.success(request, "Anda telah berhasil logout.")
-        return redirect("app:login")
-
-    return redirect("app:dashboard")
+    logout(request)
+    messages.success(request, "Anda telah berhasil logout.")
+    return redirect("app:login")

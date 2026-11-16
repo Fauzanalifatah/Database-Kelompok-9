@@ -67,19 +67,72 @@ FOOTER_PAYMENT_PLATFORMS = ("QRIS", "BRI", "BNI", "Mandiri")
 @admin_required
 @login_required(login_url="app:login")
 def artikel_manager(request):
-    articles = list(Artikel.objects.select_related("category"))
-    return render(
-        request,
-        "app/content_manager_list.html",
-        {
-            "title": "Kelola Artikel",
-            "heading": "Kelola Artikel",
-            "section": "artikel",
-            "objects": articles,
-            "item_label": "artikel",
-            "add_url": reverse("app:artikel_manager_add"),
-        },
-    )
+    status_filter = request.GET.get("status", "").strip().lower()
+    kategori_filter = request.GET.get("kategori", "").strip()
+    search_query = request.GET.get("q", "").strip()
+
+    all_articles = Artikel.objects.select_related("category").order_by("-created_at")
+
+    # Metrics & Executive Feasibility KPIs
+    total_artikel = all_articles.count()
+    total_terbit = all_articles.filter(published=True).count()
+    total_draft = total_artikel - total_terbit
+    persen_terbit = round((total_terbit / total_artikel * 100), 1) if total_artikel > 0 else 0
+    persen_draft = round(100 - persen_terbit, 1) if total_artikel > 0 else 0
+
+    total_views = all_articles.aggregate(Sum("views"))["views__sum"] or 0
+    avg_views = round(total_views / total_artikel, 1) if total_artikel > 0 else 0
+
+    total_kategori = KategoriArtikel.objects.filter(status_category=True).count()
+    kategori_list = list(KategoriArtikel.objects.filter(status_category=True).order_by("nama_category"))
+
+    # Apply search filter
+    filtered_qs = all_articles
+    if search_query:
+        filtered_qs = filtered_qs.filter(
+            Q(title_articles__icontains=search_query)
+            | Q(desc_seo__icontains=search_query)
+            | Q(authors__icontains=search_query)
+            | Q(content__icontains=search_query)
+        )
+
+    # Apply status filter
+    if status_filter == "tayang":
+        filtered_qs = filtered_qs.filter(published=True)
+    elif status_filter == "draft":
+        filtered_qs = filtered_qs.filter(published=False)
+
+    # Apply category filter
+    if kategori_filter:
+        filtered_qs = filtered_qs.filter(category__slug=kategori_filter)
+
+    articles = list(filtered_qs)
+    total_views_formatted = f"{total_views:,}".replace(",", ".")
+
+    context = {
+        "title": "Kelola & Publikasi Artikel",
+        "heading": "Kelola Artikel",
+        "section": "artikel",
+        "objects": articles,
+        "item_label": "artikel",
+        "add_url": reverse("app:artikel_manager_add"),
+        # KPIs
+        "total_artikel": total_artikel,
+        "total_terbit": total_terbit,
+        "total_draft": total_draft,
+        "persen_terbit": persen_terbit,
+        "persen_draft": persen_draft,
+        "total_views": total_views,
+        "total_views_formatted": total_views_formatted,
+        "avg_views": avg_views,
+        "total_kategori": total_kategori,
+        "kategori_list": kategori_list,
+        # Filter States
+        "status_filter": status_filter,
+        "kategori_filter": kategori_filter,
+        "search_query": search_query,
+    }
+    return render(request, "app/artikel_manager.html", context)
 
 
 @admin_required
@@ -318,19 +371,91 @@ def footer_manager(request):
 @admin_required
 @login_required(login_url="app:login")
 def produk_manager(request):
-    products = list(Produk.objects.select_related("kategori"))
-    return render(
-        request,
-        "app/content_manager_list.html",
-        {
-            "title": "Kelola Produk",
-            "heading": "Kelola Produk",
-            "section": "produk",
-            "objects": products,
-            "item_label": "produk",
-            "add_url": reverse("app:produk_manager_add"),
-        },
+    status_filter = request.GET.get("status", "").strip().lower()
+    kategori_filter = request.GET.get("kategori", "").strip()
+    search_query = request.GET.get("q", "").strip()
+
+    all_products = Produk.objects.select_related("kategori").order_by(
+        "-unggulan", "-diperbarui_pada"
     )
+
+    # Calculate Executive Feasibility KPIs
+    total_produk = all_products.count()
+    total_aktif = all_products.filter(aktif=True).count()
+    total_draft = total_produk - total_aktif
+    persen_aktif = round((total_aktif / total_produk * 100), 1) if total_produk > 0 else 0
+    persen_draft = round(100 - persen_aktif, 1) if total_produk > 0 else 0
+
+    total_unggulan = all_products.filter(unggulan=True).count()
+    persen_unggulan = round((total_unggulan / total_produk * 100), 1) if total_produk > 0 else 0
+
+    total_stok_habis = all_products.filter(stok__lte=0).count()
+    total_stok_tersedia = all_products.filter(stok__gt=0, aktif=True).count()
+
+    total_unit_stok = all_products.aggregate(Sum("stok"))["stok__sum"] or 0
+
+    # Calculate inventory valuation
+    total_valuasi = Decimal("0")
+    for p in all_products:
+        if p.stok and p.stok > 0 and p.harga:
+            total_valuasi += (p.harga * p.stok)
+
+    total_kategori = Kategori.objects.filter(aktif=True).count()
+    kategori_list = list(Kategori.objects.filter(aktif=True).order_by("nama"))
+
+    # Apply search query
+    filtered_qs = all_products
+    if search_query:
+        filtered_qs = filtered_qs.filter(
+            Q(nama__icontains=search_query)
+            | Q(merek__icontains=search_query)
+            | Q(deskripsi__icontains=search_query)
+        )
+
+    # Apply status filter
+    if status_filter == "aktif":
+        filtered_qs = filtered_qs.filter(aktif=True)
+    elif status_filter == "draft":
+        filtered_qs = filtered_qs.filter(aktif=False)
+    elif status_filter == "unggulan":
+        filtered_qs = filtered_qs.filter(unggulan=True)
+    elif status_filter == "habis":
+        filtered_qs = filtered_qs.filter(stok__lte=0)
+
+    # Apply kategori filter
+    if kategori_filter:
+        filtered_qs = filtered_qs.filter(kategori__slug=kategori_filter)
+
+    products = list(filtered_qs)
+    total_valuasi_formatted = f"{total_valuasi:,.0f}".replace(",", ".")
+
+    context = {
+        "title": "Kelola & Katalog Produk",
+        "heading": "Kelola Produk",
+        "section": "produk",
+        "objects": products,
+        "item_label": "produk",
+        "add_url": reverse("app:produk_manager_add"),
+        # KPIs
+        "total_produk": total_produk,
+        "total_aktif": total_aktif,
+        "total_draft": total_draft,
+        "persen_aktif": persen_aktif,
+        "persen_draft": persen_draft,
+        "total_unggulan": total_unggulan,
+        "persen_unggulan": persen_unggulan,
+        "total_stok_habis": total_stok_habis,
+        "total_stok_tersedia": total_stok_tersedia,
+        "total_unit_stok": total_unit_stok,
+        "total_valuasi_formatted": total_valuasi_formatted,
+        "total_kategori": total_kategori,
+        "kategori_list": kategori_list,
+        # Filter States
+        "status_filter": status_filter,
+        "kategori_filter": kategori_filter,
+        "search_query": search_query,
+    }
+    return render(request, "app/produk_manager.html", context)
 
 
 @admin_required
@@ -386,9 +511,53 @@ def produk_manager_delete(request, pk):
 @admin_required
 @login_required(login_url="app:login")
 def pelanggan_manager(request):
-    customers = UserPengguna.objects.select_related("user", "provinsi_anggota").order_by(
+    metode_filter = request.GET.get("metode", "").strip().lower()
+    status_filter = request.GET.get("status", "").strip().lower()
+    search_query = request.GET.get("q", "").strip()
+
+    all_customers = UserPengguna.objects.select_related("user", "provinsi_anggota").order_by(
         "-user__date_joined"
     )
+
+    google_q = Q(user__password__startswith="!") | Q(user__password="")
+
+    total_pelanggan = all_customers.count()
+    total_google = all_customers.filter(google_q).count()
+    total_manual = all_customers.exclude(google_q).count()
+    total_aktif = all_customers.filter(user__is_active=True).count()
+    total_nonaktif = all_customers.filter(user__is_active=False).count()
+
+    google_percentage = round((total_google / total_pelanggan * 100), 1) if total_pelanggan > 0 else 0
+    manual_percentage = round((total_manual / total_pelanggan * 100), 1) if total_pelanggan > 0 else 0
+    aktif_percentage = round((total_aktif / total_pelanggan * 100), 1) if total_pelanggan > 0 else 0
+
+    customers = all_customers
+    if metode_filter == "google":
+        customers = customers.filter(google_q)
+    elif metode_filter in ["registrasi", "manual"]:
+        customers = customers.exclude(google_q)
+
+    if status_filter == "aktif":
+        customers = customers.filter(user__is_active=True)
+    elif status_filter == "nonaktif":
+        customers = customers.filter(user__is_active=False)
+
+    if search_query:
+        customers = customers.filter(
+            Q(user__username__icontains=search_query)
+            | Q(user__first_name__icontains=search_query)
+            | Q(user__last_name__icontains=search_query)
+            | Q(user__email__icontains=search_query)
+            | Q(telp__icontains=search_query)
+        )
+
+    for customer in customers:
+        pwd = customer.user.password or ""
+        is_google = pwd.startswith("!") or pwd == "" or not customer.user.has_usable_password()
+        customer.is_google = is_google
+        customer.metode_daftar = "google" if is_google else "registrasi"
+        customer.metode_daftar_label = "Google OAuth" if is_google else "Registrasi Form"
+
     return render(
         request,
         "app/records_manager.html",
@@ -398,6 +567,17 @@ def pelanggan_manager(request):
             "section": "pelanggan",
             "records": customers,
             "record_type": "pelanggan",
+            "total_pelanggan": total_pelanggan,
+            "total_google": total_google,
+            "total_manual": total_manual,
+            "total_aktif": total_aktif,
+            "total_nonaktif": total_nonaktif,
+            "google_percentage": google_percentage,
+            "manual_percentage": manual_percentage,
+            "aktif_percentage": aktif_percentage,
+            "metode_filter": metode_filter,
+            "status_filter": status_filter,
+            "search_query": search_query,
         },
     )
 
@@ -891,6 +1071,11 @@ def index(request):
         .prefetch_related("item")
         .order_by("-dibuat_pada")[:5]
     )
+    google_user_q = Q(user__password__startswith="!") | Q(user__password="")
+    total_anggota_count = UserPengguna.objects.count()
+    total_google_count = UserPengguna.objects.filter(google_user_q).count()
+    total_manual_count = UserPengguna.objects.exclude(google_user_q).count()
+
     dashboard_context = {
         "title": "Dashboard",
         "heading": "Dashboard",
@@ -898,7 +1083,9 @@ def index(request):
         "total_produk": Produk.objects.count(),
         "total_artikel": Artikel.objects.count(),
         "artikel_terbit": Artikel.objects.filter(published=True).count(),
-        "total_anggota": UserPengguna.objects.count(),
+        "total_anggota": total_anggota_count,
+        "total_google_users": total_google_count,
+        "total_manual_users": total_manual_count,
         "total_provinsi": Provinsi.objects.count(),
         "total_admin": UserAdmin.objects.count(),
         "total_user": User.objects.count(),
@@ -1574,9 +1761,9 @@ def register_view(request):
     return render(request, "app/register.html", {"form": form})
 
 
+@csrf_exempt
 def logout_view(request):
-    if request.method == "POST":
-        logout(request)
+    logout(request)
     return redirect("app:login")
 
 
