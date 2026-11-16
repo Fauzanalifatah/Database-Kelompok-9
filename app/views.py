@@ -1637,6 +1637,43 @@ def payment_status(request, nomor):
     )
 
 
+def angka_ke_terbilang(n):
+    """Konversi nominal angka integer/decimal menjadi teks terbilang Bahasa Indonesia resmi."""
+    satuan = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"]
+    try:
+        n = int(n)
+    except (ValueError, TypeError):
+        return ""
+    if n < 0:
+        return "Minus " + angka_ke_terbilang(abs(n))
+    if n < 12:
+        return satuan[n]
+    elif n < 20:
+        return (angka_ke_terbilang(n - 10) + " Belas").strip()
+    elif n < 100:
+        sisa = (" " + angka_ke_terbilang(n % 10)) if (n % 10 != 0) else ""
+        return (angka_ke_terbilang(n // 10) + " Puluh" + sisa).strip()
+    elif n < 200:
+        sisa = (" " + angka_ke_terbilang(n - 100)) if (n - 100 != 0) else ""
+        return ("Seratus" + sisa).strip()
+    elif n < 1000:
+        sisa = (" " + angka_ke_terbilang(n % 100)) if (n % 100 != 0) else ""
+        return (angka_ke_terbilang(n // 100) + " Ratus" + sisa).strip()
+    elif n < 2000:
+        sisa = (" " + angka_ke_terbilang(n - 1000)) if (n - 1000 != 0) else ""
+        return ("Seribu" + sisa).strip()
+    elif n < 1000000:
+        sisa = (" " + angka_ke_terbilang(n % 1000)) if (n % 1000 != 0) else ""
+        return (angka_ke_terbilang(n // 1000) + " Ribu" + sisa).strip()
+    elif n < 1000000000:
+        sisa = (" " + angka_ke_terbilang(n % 1000000)) if (n % 1000000 != 0) else ""
+        return (angka_ke_terbilang(n // 1000000) + " Juta" + sisa).strip()
+    elif n < 1000000000000:
+        sisa = (" " + angka_ke_terbilang(n % 1000000000)) if (n % 1000000000 != 0) else ""
+        return (angka_ke_terbilang(n // 1000000000) + " Miliar" + sisa).strip()
+    return str(n)
+
+
 def order_receipt(request, nomor):
     """Halaman khusus cetak nota / struk resmi dengan animasi dispenser termal kasir."""
     if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
@@ -1666,6 +1703,7 @@ def order_receipt(request, nomor):
     profile = UserPengguna.objects.filter(user=order.pengguna).first()
     footer_setting, _ = FooterSetting.objects.get_or_create(pk=1)
     about_setting = AboutSetting.objects.first()
+    total_terbilang = f"{angka_ke_terbilang(order.total)} Rupiah" if order.total else ""
 
     return render(
         request,
@@ -1675,6 +1713,7 @@ def order_receipt(request, nomor):
             "profile": profile,
             "footer_setting": footer_setting,
             "about_setting": about_setting,
+            "total_terbilang": total_terbilang,
         },
     )
 

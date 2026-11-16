@@ -1,26 +1,26 @@
-.about-hero { position:relative; overflow:hidden; padding:92px 0 102px; color:#fff; background-image:linear-gradient(90deg,#06162ddd 0%,#0b285dcc 48%,#0b285d66 100%),url("../images/Toko%20UMKM%20Losari%20Computer.jpeg"); background-position:center 48%; background-size:cover; }
+.about-hero { position:relative; overflow:hidden; padding:92px 0 102px; color:#fff; background-image:linear-gradient(90deg, rgba(15, 20, 26, 0.88) 0%, rgba(20, 26, 34, 0.78) 48%, rgba(15, 20, 26, 0.48) 100%), url("../images/Toko%20UMKM%20Losari%20Computer.jpeg"); background-position:center 48%; background-size:cover; }
 .about-mobile-image { display:none; }
 .about-hero-grid { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr); align-items:center; gap:70px; }
 .about-hero-copy { max-width:720px; }
-.about-eyebrow { margin:0 0 16px; color:#55e0c8; font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+.about-eyebrow { margin:0 0 16px; color:#5eead4; font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
 .about-hero h1 { max-width:700px; margin:0; font-size:clamp(40px,6vw,76px); letter-spacing:-.06em; line-height:.98; }
-.about-tagline { max-width:580px; margin:25px 0 32px; color:#dbe8ff; font-size:18px; line-height:1.65; }
-.about-hero .button { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px; overflow:hidden; padding:8px 20px; color:#fff; background:#006bb3; border:3px solid #ffffff4d; border-radius:9999px; box-shadow:0 10px 20px #0003; font-size:15px; font-weight:700; outline:none; }
+.about-tagline { max-width:580px; margin:25px 0 32px; color:#e2e8f0; font-size:18px; line-height:1.65; }
+.about-hero .button { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px; overflow:hidden; padding:9px 22px; color:#fff; background:linear-gradient(135deg, #ef4444, #dc2626); border:2px solid rgba(255, 255, 255, 0.25); border-radius:9999px; box-shadow:0 10px 24px rgba(220, 38, 38, 0.35); font-size:15px; font-weight:700; outline:none; transition:all 0.2s ease; }
 .about-hero .button::before { position:absolute; top:0; left:-100px; width:100px; height:100%; background-image:linear-gradient(120deg,transparent 30%,#fffc,transparent 70%); content:""; opacity:.6; }
-.about-hero .button .icon { width:24px; height:24px; color:#006bb3; background:#fff; border-radius:50%; transition:transform .3s ease-in-out; }
-.about-hero .button:hover { border-color:#fff9; transform:scale(1.05); }
+.about-hero .button .icon { width:24px; height:24px; color:#dc2626; background:#fff; border-radius:50%; transition:transform .3s ease-in-out; }
+.about-hero .button:hover { background:linear-gradient(135deg, #dc2626, #b91c1c); border-color:rgba(255, 255, 255, 0.4); box-shadow:0 12px 28px rgba(220, 38, 38, 0.45); transform:scale(1.04); }
 .about-hero .button:hover .icon { transform:translateX(4px); }
 .about-hero .button:hover::before { animation:about-button-shine 1.5s ease-out infinite; }
 @keyframes about-button-shine { 0% { left:-100px; } 60%,to { left:100%; } }
-.about-hero-glow { position:absolute; width:380px; height:380px; border:1px solid #ffffff1c; border-radius:50%; }
-.about-hero-glow::after { position:absolute; inset:28px; border:1px solid #ffffff12; border-radius:50%; content:""; }
+.about-hero-glow { position:absolute; width:380px; height:380px; border:1px solid rgba(255, 255, 255, 0.08); border-radius:50%; }
+.about-hero-glow::after { position:absolute; inset:28px; border:1px solid rgba(255, 255, 255, 0.05); border-radius:50%; content:""; }
 .about-hero-glow-one { top:-240px; right:10%; }
 .about-hero-glow-two { bottom:-300px; left:-120px; }
-.about-logo-card { position:relative; display:grid; width:min(260px,100%); aspect-ratio:1; margin-left:auto; place-items:center; isolation:isolate; background:#fff; border:6px solid #ffffff24; border-radius:28px; box-shadow:0 20px 46px #06153055; }
+.about-logo-card { position:relative; display:grid; width:min(260px,100%); aspect-ratio:1; margin-left:auto; place-items:center; isolation:isolate; background:#fff; border:6px solid rgba(255, 255, 255, 0.15); border-radius:28px; box-shadow:0 20px 46px rgba(0, 0, 0, 0.35); }
 .about-logo-card img { position:relative; z-index:1; width:82%; height:82%; object-fit:contain; border-radius:14px; }
-.about-logo-ring { position:absolute; border:1px solid #1455d926; border-radius:50%; }
+.about-logo-ring { position:absolute; border:1px solid rgba(255, 255, 255, 0.12); border-radius:50%; }
 .about-logo-ring-one { width:115%; height:115%; }
-.about-logo-ring-two { width:135%; height:135%; border-color:#ffffff20; }
+.about-logo-ring-two { width:135%; height:135%; border-color:rgba(255, 255, 255, 0.08); }
 .about-content { padding-top:48px; }
 .about-panel { display:grid; grid-template-columns:180px 1fr; gap:55px; padding:39px 0; border-bottom:1px solid var(--line); }
 .about-section-label { color:var(--blue); font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }

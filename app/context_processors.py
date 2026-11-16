@@ -1,4 +1,4 @@
-from .models import FooterSetting, Kategori
+from .models import FooterSetting, Kategori, AboutSetting
 from .cart import get_cart_total_items
 
 
@@ -8,5 +8,6 @@ def storefront_footer(request):
             "nama", "slug"
         )[:6],
         "footer_setting": FooterSetting.objects.first(),
+        "about_setting": AboutSetting.objects.first(),
         "cart_total_items": get_cart_total_items(request),
     }

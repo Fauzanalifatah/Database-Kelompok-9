@@ -5,6 +5,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }} - Losari Computer</title>
+
+    <!-- Favicon Losari Computer -->
+    {% if about_setting and about_setting.logo %}
+    <link rel="icon" type="image/jpeg" href="{{ about_setting.logo.url }}">
+    <link rel="shortcut icon" type="image/jpeg" href="{{ about_setting.logo.url }}">
+    <link rel="apple-touch-icon" href="{{ about_setting.logo.url }}">
+    {% else %}
+    <link rel="icon" type="image/jpeg" href="{% static 'images/losari-computer-mark.jpg' %}">
+    <link rel="shortcut icon" type="image/jpeg" href="{% static 'images/losari-computer-mark.jpg' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/losari-computer-mark.jpg' %}">
+    {% endif %}
     <style>
         :root { --red:#991b1b; --red-soft:#fef2f2; --text:#172033; --muted:#64748b; --line:#e2e8f0; }
         * { box-sizing:border-box; } body { margin:0; overflow-x:hidden; color:var(--text); background:#f7f9fc; font:14px Arial,sans-serif; }

@@ -6,7 +6,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Losari Computer{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=12">
+    
+    <!-- Favicon Losari Computer -->
+    {% if about_setting and about_setting.logo %}
+    <link rel="icon" type="image/jpeg" href="{{ about_setting.logo.url }}">
+    <link rel="shortcut icon" type="image/jpeg" href="{{ about_setting.logo.url }}">
+    <link rel="apple-touch-icon" href="{{ about_setting.logo.url }}">
+    {% else %}
+    <link rel="icon" type="image/jpeg" href="{% static 'images/losari-computer-mark.jpg' %}">
+    <link rel="shortcut icon" type="image/jpeg" href="{% static 'images/losari-computer-mark.jpg' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/losari-computer-mark.jpg' %}">
+    {% endif %}
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=15">
     <style>
         .nav-cart-btn {
             position: relative;

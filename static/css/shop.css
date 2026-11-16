@@ -293,51 +293,78 @@
     min-height: auto;
 }
 
-/* WhatsApp Button */
+/* WhatsApp Button - Professional Official Two-Tone Emblem */
 .whatsapp-button {
-    display: inline-grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 36px;
     height: 36px;
     flex: 0 0 36px;
-    color: #25d366;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
     border-radius: 50%;
-    font-size: 17px;
     cursor: pointer;
     position: relative;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
+    box-shadow: 0 3px 10px rgba(37, 211, 102, 0.35);
+    background: transparent;
+    border: none;
+    padding: 0;
+    overflow: visible;
+}
+
+.whatsapp-button svg {
+    width: 36px;
+    height: 36px;
+    display: block;
+    border-radius: 50%;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .whatsapp-button:hover {
-    color: #fff;
-    background: #25d366;
-    border-color: #25d366;
-    transform: scale(1.08);
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.48);
 }
 
 .whatsapp-button::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: calc(100% + 6px);
+    bottom: calc(100% + 8px);
     left: 50%;
-    transform: translateX(-50%);
-    padding: 4px 8px;
-    color: #fff;
-    background: #1e293b;
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: 600;
+    transform: translateX(-50%) translateY(4px);
+    padding: 5px 10px;
+    color: #ffffff;
+    background: #0f172a;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.15s ease;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+    z-index: 10;
 }
 
-.whatsapp-button:hover::after {
+.whatsapp-button::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
+    border-color: #0f172a transparent transparent transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.18s ease;
+    z-index: 10;
+}
+
+.whatsapp-button:hover::after,
+.whatsapp-button:hover::before {
     opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Product Description */
@@ -684,6 +711,10 @@
         width: 32px;
         height: 32px;
         flex: 0 0 32px;
-        font-size: 15px;
+    }
+
+    .whatsapp-button svg {
+        width: 32px;
+        height: 32px;
     }
 }
