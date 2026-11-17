@@ -298,6 +298,81 @@
     flex-shrink: 0;
 }
 
+/* ─── Payment Deadline & Countdown Card ─── */
+.ps-countdown-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 18px 0 24px;
+    padding: 12px 20px;
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    border-radius: 12px;
+    color: #92400e;
+    font-size: 13.5px;
+    flex-wrap: wrap;
+}
+
+.ps-countdown-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.ps-countdown-left svg {
+    color: #d97706;
+    flex-shrink: 0;
+}
+
+.ps-countdown-left strong {
+    color: #b45309;
+    font-weight: 750;
+}
+
+.ps-countdown-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid #fde68a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.ps-countdown-right strong {
+    color: #dc2626;
+    font-weight: 800;
+    font-size: 13.5px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ps-btn-reorder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: #dc2626;
+    color: #ffffff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.3);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.ps-btn-reorder:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(220, 38, 38, 0.4);
+}
+
 /* ─── Demo / Simulation Bar ─── */
 .ps-demo-bar {
     display: flex;
@@ -1519,8 +1594,8 @@
                 <h1 class="ps-title">
                     {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
                     Pesanan Siap Diproses!
-                    {% elif order.status == "dibatalkan" %}
-                    Pesanan Dibatalkan
+                    {% elif order.status == "dibatalkan" or order.is_expired %}
+                    Pesanan Dibatalkan / Kedaluwarsa
                     {% else %}
                     Menunggu Pembayaran
                     {% endif %}
@@ -1529,16 +1604,61 @@
                 <p class="ps-subtitle">
                     {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
                     Terima kasih atas pesanan Anda. Pembayaran telah diverifikasi secara otomatis oleh sistem. Unit pesanan Anda saat ini masuk ke antrean pengemasan aman standar Losari Computer dengan Free Bubble Wrap ekstra tebal dan proteksi packing kayu sebelum diserahkan ke kurir pengiriman.
-                    {% elif order.status == "dibatalkan" %}
-                    Transaksi ini dibatalkan atau batas waktu pembayaran telah kedaluwarsa. Silakan lakukan pemesanan ulang untuk unit yang diinginkan.
+                    {% elif order.status == "dibatalkan" or order.is_expired %}
+                    Batas waktu pembayaran pesanan ini telah habis (kedaluwarsa). Sistem telah membatalkan transaksi ini secara otomatis sehingga unit tidak dapat dibayar lagi. Silakan lakukan pemesanan ulang melalui katalog.
                     {% else %}
                     Silakan klik tombol <b>Bayar Sekarang</b> di bawah untuk membuka jendela pembayaran resmi Midtrans. Sistem akan memverifikasi status pembayaran secara otomatis setelah Anda menyelesaikan transaksi.
                     {% endif %}
                 </p>
 
+                <!-- Countdown Bar jika Masih Menunggu Pembayaran -->
+                {% if order.status == 'menunggu' and not order.is_expired %}
+                <div class="ps-countdown-card" data-deadline="{{ order.batas_pembayaran|date:'c' }}">
+                    <div class="ps-countdown-left">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>Batas Waktu Pembayaran: <strong>{{ order.batas_pembayaran|date:"d M Y, H:i" }} WIB</strong></span>
+                    </div>
+                    <div class="ps-countdown-right">
+                        <span class="ps-pulse-dot"></span>
+                        <span>Sisa Waktu:</span>
+                        <strong id="ps-clock-text">Menghitung...</strong>
+                    </div>
+                </div>
+                <script>
+                (function() {
+                    const card = document.querySelector(".ps-countdown-card");
+                    if (!card) return;
+                    const deadlineStr = card.getAttribute("data-deadline");
+                    if (!deadlineStr) return;
+                    const deadline = new Date(deadlineStr).getTime();
+                    const clockText = document.getElementById("ps-clock-text");
+                    const payArea = document.getElementById("ps-pay-area");
+
+                    function updateClock() {
+                        const now = new Date().getTime();
+                        const distance = deadline - now;
+                        if (distance <= 0) {
+                            if (clockText) clockText.textContent = "00:00:00 (Kedaluwarsa)";
+                            if (payArea) payArea.remove();
+                            return;
+                        }
+                        const hours = Math.floor(distance / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        const pad = num => String(num).padStart(2, "0");
+                        if (clockText) {
+                            clockText.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                        }
+                    }
+                    updateClock();
+                    setInterval(updateClock, 1000);
+                })();
+                </script>
+                {% endif %}
+
                 <!-- Action Button for Waiting State -->
-                {% if snap_token and order.status == "menunggu" %}
-                <div class="ps-action-area">
+                {% if snap_token and order.status == "menunggu" and not order.is_expired %}
+                <div class="ps-action-area" id="ps-pay-area">
                     <button class="ps-btn-pay-now" id="pay-button" type="button">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                         <span>Bayar Sekarang (Midtrans)</span>
@@ -1560,39 +1680,15 @@
                     });
                 });
                 </script>
+                {% elif order.status == "dibatalkan" or order.is_expired %}
+                <div class="ps-action-area">
+                    <a class="ps-btn-reorder" href="{% url 'shop' %}">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span>Pesan Ulang di Katalog</span>
+                    </a>
+                </div>
                 {% endif %}
             </div>
-
-            <!-- ─── Demo Simulation / Testing Bar ─── -->
-            {% if order.status == "menunggu" %}
-            <div class="ps-demo-bar">
-                <div class="ps-demo-info">
-                    <span class="ps-demo-tag">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                        <span>Mode Demo</span>
-                    </span>
-                    <p>Ingin melihat dan mendemokan tampilan <strong>Pesanan Siap</strong> secara instan tanpa perlu transfer uang riil?</p>
-                </div>
-                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=bayar" class="ps-btn-demo-sim">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                    <span>Simulasi Pembayaran Sukses</span>
-                </a>
-            </div>
-            {% else %}
-            <div class="ps-demo-bar is-success">
-                <div class="ps-demo-info">
-                    <span class="ps-demo-tag">
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span>Pengujian Demo</span>
-                    </span>
-                    <p>Ini adalah tampilan resmi <strong>Pesanan Siap</strong> setelah status pembayaran lunas terverifikasi.</p>
-                </div>
-                <a href="{% url 'app:payment_status' order.nomor %}?simulasi=reset" class="ps-btn-demo-reset">
-                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                    <span>Reset ke Menunggu Pembayaran</span>
-                </a>
-            </div>
-            {% endif %}
 
             <!-- ─── 4-Step Order Tracker Box (Hanya Tampil Jika Pesanan Sudah Lunas/Diproses) ─── -->
             {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
@@ -1794,8 +1890,8 @@
 
                 <!-- Baris 2: Navigasi Toko (2 Kolom Seimbang) -->
                 <div class="ps-actions-secondary-row">
-                    <a class="ps-btn-action ps-btn-secondary" href="{% url 'app:profile_pengguna' %}">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <a class="ps-btn-action ps-btn-secondary" href="{% url 'app:pesanan_pengguna' %}">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                         <span>Riwayat Pesanan Saya</span>
                     </a>
 

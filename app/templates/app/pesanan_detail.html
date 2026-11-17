@@ -101,200 +101,236 @@
         color: #b91c1c;
         border: 1px solid #fecaca;
     }
-.order-main-grid > div {
-    min-width: 0;
-}
 
-/* ─── Panel Cards ─── */
-.order-panel-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-    box-sizing: border-box;
-    min-width: 0;
-    overflow: hidden;
-}
-.order-panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding-bottom: 16px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #f1f5f9;
-}
-.panel-header-title {
-    font-size: 15.5px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-}
-.panel-header-title svg {
-    color: #dc2626;
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-}
+    .order-main-grid>div {
+        min-width: 0;
+    }
 
-/* ─── Product Items Table (Strictly Contained Within Borders) ─── */
-.order-items-wrapper {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
+    /* ─── Panel Cards ─── */
+    .order-panel-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+        box-sizing: border-box;
+        min-width: 0;
+        overflow: hidden;
+    }
 
-table.desktop-only-items {
-    display: table !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    table-layout: fixed !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    box-sizing: border-box !important;
-    margin: 0 0 16px 0 !important;
-}
-table.desktop-only-items th {
-    background: #f8fafc !important;
-    color: #64748b !important;
-    font-weight: 700 !important;
-    font-size: 11px !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    padding: 11px 12px !important;
-    border-top: 1px solid #e2e8f0 !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-    white-space: nowrap !important;
-    box-sizing: border-box !important;
-}
-table.desktop-only-items th:first-child {
-    border-top-left-radius: 8px !important;
-    border-bottom-left-radius: 8px !important;
-    border-left: 1px solid #e2e8f0 !important;
-}
-table.desktop-only-items th:last-child {
-    border-top-right-radius: 8px !important;
-    border-bottom-right-radius: 8px !important;
-    border-right: 1px solid #e2e8f0 !important;
-}
-table.desktop-only-items td {
-    padding: 14px 12px !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    vertical-align: middle !important;
-    box-sizing: border-box !important;
-}
-table.desktop-only-items tbody tr:last-child td {
-    border-bottom: none !important;
-}
-table.desktop-only-items tbody tr:hover td {
-    background: #fafafa !important;
-}
+    .order-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 16px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #f1f5f9;
+    }
 
-.col-th-prod { width: 50% !important; }
-.col-th-price { width: 20% !important; text-align: right !important; }
-.col-th-qty { width: 12% !important; text-align: center !important; }
-.col-th-subtotal { width: 18% !important; text-align: right !important; }
+    .panel-header-title {
+        font-size: 15.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
 
-.item-product-flex {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-    max-width: 100%;
-}
-.item-thumb-box {
-    width: 58px;
-    height: 58px;
-    border-radius: 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    flex-shrink: 0;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-    overflow: hidden;
-}
-.item-thumb-box img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-    transition: transform 0.2s ease;
-}
-.item-thumb-box:hover img {
-    transform: scale(1.08);
-}
-.item-meta-copy {
-    min-width: 0;
-    flex: 1;
-    overflow: hidden;
-}
-.item-title-name {
-    font-size: 14px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 5px;
-    line-height: 1.35;
-    word-break: break-word;
-}
-.item-pill-row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
-}
-.spec-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 3.5px;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2.5px 7.5px;
-    border-radius: 6px;
-    white-space: nowrap;
-    line-height: 1.25;
-}
-.spec-pill.pill-category {
-    background: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #dbeafe;
-    font-weight: 700;
-}
-.spec-pill.pill-neutral {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-}
-.spec-pill.pill-success {
-    background: #ecfdf5;
-    color: #059669;
-    border: 1px solid #a7f3d0;
-}
-.spec-pill.pill-warning {
-    background: #fffbeb;
-    color: #92400e;
-    border: 1px solid #fde68a;
-}
-.item-qty-pill {
-    display: inline-block;
-    padding: 4px 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    font-weight: 700;
-    font-size: 12px;
-    color: #0f172a;
-}
+    .panel-header-title svg {
+        color: #dc2626;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    /* ─── Product Items Table (Strictly Contained Within Borders) ─── */
+    .order-items-wrapper {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table.desktop-only-items {
+        display: table !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        box-sizing: border-box !important;
+        margin: 0 0 16px 0 !important;
+    }
+
+    table.desktop-only-items th {
+        background: #f8fafc !important;
+        color: #64748b !important;
+        font-weight: 700 !important;
+        font-size: 11px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        padding: 11px 12px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+
+    table.desktop-only-items th:first-child {
+        border-top-left-radius: 8px !important;
+        border-bottom-left-radius: 8px !important;
+        border-left: 1px solid #e2e8f0 !important;
+    }
+
+    table.desktop-only-items th:last-child {
+        border-top-right-radius: 8px !important;
+        border-bottom-right-radius: 8px !important;
+        border-right: 1px solid #e2e8f0 !important;
+    }
+
+    table.desktop-only-items td {
+        padding: 14px 12px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        vertical-align: middle !important;
+        box-sizing: border-box !important;
+    }
+
+    table.desktop-only-items tbody tr:last-child td {
+        border-bottom: none !important;
+    }
+
+    table.desktop-only-items tbody tr:hover td {
+        background: #fafafa !important;
+    }
+
+    .col-th-prod {
+        width: 50% !important;
+    }
+
+    .col-th-price {
+        width: 20% !important;
+        text-align: right !important;
+    }
+
+    .col-th-qty {
+        width: 12% !important;
+        text-align: center !important;
+    }
+
+    .col-th-subtotal {
+        width: 18% !important;
+        text-align: right !important;
+    }
+
+    .item-product-flex {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .item-thumb-box {
+        width: 58px;
+        height: 58px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+    }
+
+    .item-thumb-box img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+        transition: transform 0.2s ease;
+    }
+
+    .item-thumb-box:hover img {
+        transform: scale(1.08);
+    }
+
+    .item-meta-copy {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .item-title-name {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 5px;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .item-pill-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .spec-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3.5px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2.5px 7.5px;
+        border-radius: 6px;
+        white-space: nowrap;
+        line-height: 1.25;
+    }
+
+    .spec-pill.pill-category {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #dbeafe;
+        font-weight: 700;
+    }
+
+    .spec-pill.pill-neutral {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+
+    .spec-pill.pill-success {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #a7f3d0;
+    }
+
+    .spec-pill.pill-warning {
+        background: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fde68a;
+    }
+
+    .item-qty-pill {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 7px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #0f172a;
+    }
 
     .status-pill-menunggu .order-status-dot,
     .status-pill-diproses .order-status-dot,
@@ -303,56 +339,61 @@ table.desktop-only-items tbody tr:hover td {
         box-shadow: 0 0 0 2px #fde68a;
     }
 
-/* Order Totals Clean Strip */
-.order-totals-strip {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-top: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    font-size: 13px;
-    box-sizing: border-box;
-    width: 100%;
-}
-.totals-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #64748b;
-    gap: 12px;
-}
-.totals-row strong {
-    color: #0f172a;
-    font-weight: 700;
-}
-.totals-row.grand-total {
-    padding-top: 12px;
-    margin-top: 4px;
-    border-top: 1px solid #e2e8f0;
-    font-size: 13.5px;
-    font-weight: 800;
-    color: #0f172a;
-}
-.totals-row.grand-total strong {
-    font-size: 18px;
-    font-weight: 900;
-    color: #0f172a;
-}
-.totals-free-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: #ecfdf5;
-    color: #059669;
-    border: 1px solid #a7f3d0;
-    border-radius: 6px;
-    padding: 2px 7px;
-    font-size: 11px;
-    font-weight: 700;
-}
+    /* Order Totals Clean Strip */
+    .order-totals-strip {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        font-size: 13px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .totals-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #64748b;
+        gap: 12px;
+    }
+
+    .totals-row strong {
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .totals-row.grand-total {
+        padding-top: 12px;
+        margin-top: 4px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .totals-row.grand-total strong {
+        font-size: 18px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .totals-free-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #a7f3d0;
+        border-radius: 6px;
+        padding: 2px 7px;
+        font-size: 11px;
+        font-weight: 700;
+    }
 
     .order-meta-info {
         margin: 6px 0 0;
@@ -897,7 +938,7 @@ table.desktop-only-items tbody tr:hover td {
     /* ─── Gateway Midtrans Strip ─── */
     .midtrans-details-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 14px;
     }
 
@@ -1230,7 +1271,8 @@ table.desktop-only-items tbody tr:hover td {
             <div class="order-meta-info">
                 <span>Waktu Dibuat: <strong>{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</strong></span>
                 <span>&middot;</span>
-                <span>Pembeli: <strong>{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong></span>
+                <span>Pembeli: <strong>{{ order.pengguna.get_full_name|default:order.pengguna.username
+                        }}</strong></span>
                 <span>&middot;</span>
                 <span>UUID: <button type="button" class="order-uuid-chip" onclick="copyUUID('{{ order.nomor }}', this)"
                         title="Klik untuk menyalin UUID pesanan"><span>{{ order.nomor|stringformat:".16s" }}...</span>
@@ -1244,7 +1286,8 @@ table.desktop-only-items tbody tr:hover td {
 
         <div class="order-header-actions">
             {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
-            <a class="btn-header-action btn-action-receipt" href="{% url 'app:order_receipt' order.nomor %}" target="_blank" title="Buka cetak struk kasir &amp; faktur A4">
+            <a class="btn-header-action btn-action-receipt" href="{% url 'app:order_receipt' order.nomor %}"
+                target="_blank" title="Buka cetak struk kasir &amp; faktur A4">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3">
                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -1312,7 +1355,8 @@ table.desktop-only-items tbody tr:hover td {
             </div>
             <div class="metric-text-group">
                 <p class="metric-subtitle">Metode Pembayaran</p>
-                <h3 class="metric-headline" style="font-size:16px;">{{ order.midtrans_payment_type|default:"QRIS / GoPay"|upper }}</h3>
+                <h3 class="metric-headline" style="font-size:16px;">{{ order.midtrans_payment_type|default:"QRIS /
+                    GoPay"|upper }}</h3>
                 <p class="metric-hint">Gateway Midtrans Official</p>
             </div>
         </div>
@@ -1371,7 +1415,8 @@ table.desktop-only-items tbody tr:hover td {
 
                 <!-- Tahap 2 -->
                 <div class="order-step-node">
-                    {% if order.status == 'dibayar' or order.status == 'diproses' or order.status == 'dikirim' or order.status == 'selesai' %}
+                    {% if order.status == 'dibayar' or order.status == 'diproses' or order.status == 'dikirim' or
+                    order.status == 'selesai' %}
                     <div class="step-circle done">&check;</div>
                     <span class="step-text-title">2. Pembayaran Lunas</span>
                     <span class="step-text-desc">QRIS / Lunas Terverifikasi</span>
@@ -1438,7 +1483,9 @@ table.desktop-only-items tbody tr:hover td {
                         </svg>
                         <span>Daftar Unit Produk Dipesan</span>
                     </h3>
-                    <span style="font-size:12px; font-weight: 700; color:#475569; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; padding:3px 11px;">{{ order.item.count }} Unit Terdaftar</span>
+                    <span
+                        style="font-size:12px; font-weight: 700; color:#475569; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; padding:3px 11px;">{{
+                        order.item.count }} Unit Terdaftar</span>
                 </div>
 
                 <div class="order-items-wrapper">
@@ -1472,16 +1519,20 @@ table.desktop-only-items tbody tr:hover td {
                                             <h4 class="item-title-name">{{ item.nama_produk }}</h4>
                                             <div class="item-pill-row">
                                                 {% if item.produk.kategori %}
-                                                    <span class="spec-pill pill-category">{{ item.produk.kategori.nama }}</span>
+                                                <span class="spec-pill pill-category">{{ item.produk.kategori.nama
+                                                    }}</span>
                                                 {% endif %}
-                                                <span class="spec-pill pill-neutral">Kondisi {{ item.produk.get_kondisi_display|default:"Grade A+" }}</span>
+                                                <span class="spec-pill pill-neutral">Kondisi {{
+                                                    item.produk.get_kondisi_display|default:"Grade A+" }}</span>
                                                 <span class="spec-pill pill-success">&check; QC Lulus 25 Titik</span>
-                                                <span class="spec-pill pill-warning">&#128737; Garansi Toko 1 Bulan</span>
+                                                <span class="spec-pill pill-warning">&#128737; Garansi Toko 1
+                                                    Bulan</span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="col-th-price" style="font-weight: 600; color: #475569; font-size: 13.5px; white-space: nowrap;">
+                                <td class="col-th-price"
+                                    style="font-weight: 600; color: #475569; font-size: 13.5px; white-space: nowrap;">
                                     {{ item.harga_satuan_rupiah|default:item.harga_satuan }}
                                 </td>
                                 <td class="col-th-qty" style="white-space: nowrap;">
@@ -1489,7 +1540,8 @@ table.desktop-only-items tbody tr:hover td {
                                         {{ item.jumlah }} Unit
                                     </span>
                                 </td>
-                                <td class="col-th-subtotal" style="font-weight: 800; color: #0f172a; font-size: 14.5px; white-space: nowrap;">
+                                <td class="col-th-subtotal"
+                                    style="font-weight: 800; color: #0f172a; font-size: 14.5px; white-space: nowrap;">
                                     {{ item.subtotal_rupiah|default:item.subtotal }}
                                 </td>
                             </tr>
@@ -1521,9 +1573,10 @@ table.desktop-only-items tbody tr:hover td {
                                     <h4 class="item-title-name">{{ item.nama_produk }}</h4>
                                     <div class="item-pill-row">
                                         {% if item.produk.kategori %}
-                                            <span class="spec-pill pill-category">{{ item.produk.kategori.nama }}</span>
+                                        <span class="spec-pill pill-category">{{ item.produk.kategori.nama }}</span>
                                         {% endif %}
-                                        <span class="spec-pill pill-neutral">Kondisi {{ item.produk.get_kondisi_display|default:"Grade A+" }}</span>
+                                        <span class="spec-pill pill-neutral">Kondisi {{
+                                            item.produk.get_kondisi_display|default:"Grade A+" }}</span>
                                         <span class="spec-pill pill-success">&check; QC 25 Titik</span>
                                     </div>
                                 </div>
@@ -1554,14 +1607,20 @@ table.desktop-only-items tbody tr:hover td {
                     <div class="totals-row">
                         <span>Biaya Pengiriman (Ekspedisi Makassar):</span>
                         <span class="totals-free-pill">
-                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
                             Rp0 (FREE ONGKIR)
                         </span>
                     </div>
                     <div class="totals-row">
                         <span>Proteksi Packing Kayu &amp; Bubble Wrap Ekstra:</span>
                         <span class="totals-free-pill">
-                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
                             Rp0 (FREE SAFETY QC)
                         </span>
                     </div>
@@ -1590,7 +1649,8 @@ table.desktop-only-items tbody tr:hover td {
                         <h5 class="sub-panel-title">Profil Pelanggan</h5>
                         <div class="info-field-unit">
                             <span class="k">Nama Lengkap</span>
-                            <strong class="v">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong>
+                            <strong class="v">{{ order.pengguna.get_full_name|default:order.pengguna.username
+                                }}</strong>
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Username Akun</span>
@@ -1599,7 +1659,8 @@ table.desktop-only-items tbody tr:hover td {
                         <div class="info-field-unit">
                             <span class="k">Alamat Email</span>
                             <strong class="v"><a href="mailto:{{ order.pengguna.email }}"
-                                    style="color:#2563eb; text-decoration:none;">{{ order.pengguna.email|default:"—" }}</a></strong>
+                                    style="color:#2563eb; text-decoration:none;">{{ order.pengguna.email|default:"—"
+                                    }}</a></strong>
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Nomor Telepon / WhatsApp</span>
@@ -1633,7 +1694,8 @@ table.desktop-only-items tbody tr:hover td {
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Kecamatan &amp; Provinsi</span>
-                            <strong class="v">{{ order.kecamatan|default:"—" }}, {{ order.provinsi|default:"Sulawesi Selatan" }}</strong>
+                            <strong class="v">{{ order.kecamatan|default:"—" }}, {{ order.provinsi|default:"Sulawesi
+                                Selatan" }}</strong>
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Metode Ekspedisi</span>
@@ -1663,11 +1725,16 @@ table.desktop-only-items tbody tr:hover td {
                 <div class="midtrans-details-grid">
                     <div class="midtrans-metric-box">
                         <span>Transaction ID</span>
-                        <strong title="{{ order.midtrans_transaction_id }}">{{ order.midtrans_transaction_id|default:"LC-AUTO-VERIFIED" }}</strong>
+                        <strong title="{{ order.midtrans_transaction_id }}">{{
+                            order.midtrans_transaction_id|default:"LC-AUTO-VERIFIED" }}</strong>
                     </div>
                     <div class="midtrans-metric-box">
-                        <span>Metode Pembayaran</span>
-                        <strong>{{ order.midtrans_payment_type|default:"QRIS / GOPAY"|upper }}</strong>
+                        <span>Transaction Type</span>
+                        <strong>{{ order.transaction_type }}</strong>
+                    </div>
+                    <div class="midtrans-metric-box">
+                        <span>Channel</span>
+                        <strong>{{ order.channel }}</strong>
                     </div>
                     <div class="midtrans-metric-box">
                         <span>Fraud Status</span>
@@ -1722,7 +1789,8 @@ table.desktop-only-items tbody tr:hover td {
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                     </svg>
-                    <span>Stok Inventori: {% if order.stok_dikurangi %}Terkurang Otomatis{% else %}Belum Terkurang{% endif %}</span>
+                    <span>Stok Inventori: {% if order.stok_dikurangi %}Terkurang Otomatis{% else %}Belum Terkurang{%
+                        endif %}</span>
                 </div>
                 <p class="inventory-desc">
                     {% if order.stok_dikurangi %}

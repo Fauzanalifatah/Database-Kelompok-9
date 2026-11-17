@@ -56,6 +56,11 @@ urlpatterns = [
         views_pengguna.profile_pengguna,
         name="profile_pengguna",
     ),
+    path(
+        "profile/pengguna/pesanan/",
+        views_pengguna.pesanan_pengguna,
+        name="pesanan_pengguna",
+    ),
     path("blog/pengguna/", views_pengguna.blog_pengguna, name="blog_pengguna"),
     path(
         "blog/pengguna/tulis/",

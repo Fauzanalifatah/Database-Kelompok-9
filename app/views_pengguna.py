@@ -1,13 +1,15 @@
+from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.utils import timezone
 import re
 
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .form_pengguna import formProfile
 from .forms import UserBlogForm
-from .models import BlogPengguna, BlogPenggunaImage, UserPengguna
+from .models import BlogPengguna, BlogPenggunaImage, UserPengguna, Pesanan
 
 
 @login_required
@@ -39,6 +41,23 @@ def profile_pengguna(request):
     else:
         form = formProfile(instance=userpengguna, user=request.user)
 
+    # Otomatis tandai pesanan 'menunggu' yang melewati 24 jam sebagai 'dibatalkan' (kedaluwarsa)
+    batas_waktu_kadaluarsa = timezone.now() - timedelta(hours=24)
+    Pesanan.objects.filter(
+        pengguna=request.user,
+        status="menunggu",
+        dibuat_pada__lt=batas_waktu_kadaluarsa,
+    ).update(status="dibatalkan")
+
+    user_orders = (
+        Pesanan.objects.filter(pengguna=request.user)
+        .prefetch_related("item__produk")
+        .order_by("-dibuat_pada")
+    )
+    total_orders = user_orders.count()
+    total_pesanan_pending = user_orders.filter(status="menunggu").count()
+    recent_orders = user_orders[:3]
+
     context = {
         "title": "Profil Pengguna",
         "heading": "Profil Saya Losari Computer",
@@ -50,8 +69,66 @@ def profile_pengguna(request):
             else None
         ),
         "form": form,
+        "active_menu": "profil",
+        "recent_orders": recent_orders,
+        "total_orders": total_orders,
+        "total_pesanan_pending": total_pesanan_pending,
     }
     return render(request, "pengguna/profil_pengguna.html", context)
+
+
+@login_required(login_url="app:login")
+def pesanan_pengguna(request):
+    status_filter = request.GET.get("status", "").strip().lower()
+
+    # Otomatis tandai pesanan 'menunggu' yang melewati batas 24 jam sebagai 'dibatalkan' (kedaluwarsa)
+    batas_waktu_kadaluarsa = timezone.now() - timedelta(hours=24)
+    Pesanan.objects.filter(
+        pengguna=request.user,
+        status="menunggu",
+        dibuat_pada__lt=batas_waktu_kadaluarsa,
+    ).update(status="dibatalkan")
+
+    all_orders = (
+        Pesanan.objects.filter(pengguna=request.user)
+        .prefetch_related("item__produk", "item__produk__galeri")
+        .order_by("-dibuat_pada")
+    )
+
+    total_orders = all_orders.count()
+    total_menunggu = all_orders.filter(status="menunggu").count()
+    total_dibayar = all_orders.filter(status__in=["dibayar", "diproses", "dikirim"]).count()
+    total_selesai = all_orders.filter(status="selesai").count()
+    total_dibatalkan = all_orders.filter(status="dibatalkan").count()
+
+    orders = all_orders
+    if status_filter == "menunggu":
+        orders = orders.filter(status="menunggu")
+    elif status_filter == "dibayar":
+        orders = orders.filter(status__in=["dibayar", "diproses", "dikirim"])
+    elif status_filter == "selesai":
+        orders = orders.filter(status="selesai")
+    elif status_filter == "dibatalkan":
+        orders = orders.filter(status="dibatalkan")
+
+    userpengguna = UserPengguna.objects.filter(user=request.user).first()
+
+    context = {
+        "title": "Pesanan Saya",
+        "heading": "Riwayat Pesanan",
+        "orders": orders,
+        "status_filter": status_filter,
+        "total_orders": total_orders,
+        "total_menunggu": total_menunggu,
+        "total_dibayar": total_dibayar,
+        "total_selesai": total_selesai,
+        "total_dibatalkan": total_dibatalkan,
+        "total_pesanan_pending": total_menunggu,
+        "userpengguna": userpengguna,
+        "photo": userpengguna.photo if userpengguna and userpengguna.photo else None,
+        "active_menu": "pesanan",
+    }
+    return render(request, "pengguna/pesanan_pengguna.html", context)
 
 
 @login_required

@@ -99,6 +99,223 @@
         .nav-icon { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; color: #94a3b8; }
         .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
         .nav-link.active .nav-icon, .nav-link:hover .nav-icon { color: #fff; }
+        .sidebar-badge {
+            margin-left: auto;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #fff;
+            background: #ef4444;
+            border-radius: 999px;
+            line-height: 1.2;
+        }
+        .nav-link.active .sidebar-badge {
+            background: #fff;
+            color: #dc2626;
+        }
+
+        /* Mini Order Cards in Profile */
+        .orders-summary-panel {
+            margin-top: 24px;
+        }
+        .user-order-mini-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        .user-order-mini-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        }
+        .order-mini-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+        }
+        .order-mini-code {
+            font-weight: 800;
+            color: #0f172a;
+            font-size: 13.5px;
+            display: block;
+        }
+        .order-mini-date {
+            font-size: 11.5px;
+            color: #64748b;
+        }
+        .user-status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+        .user-status-pill.status-dibayar,
+        .user-status-pill.status-selesai {
+            background: #ecfdf5;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        .user-status-pill.status-menunggu {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+        .user-status-pill.status-diproses,
+        .user-status-pill.status-dikirim {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+        .user-status-pill.status-dibatalkan {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .order-mini-body {
+            padding: 12px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .order-mini-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+        }
+        .order-mini-item-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .order-mini-item-qty {
+            color: #64748b;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .order-mini-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+        }
+        .order-mini-total {
+            font-size: 12.5px;
+            color: #64748b;
+        }
+        .order-mini-total strong {
+            font-size: 14px;
+            color: #0f172a;
+        }
+        .order-mini-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .mini-btn-pay {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: #dc2626;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .mini-btn-pay:hover {
+            background: #b91c1c;
+        }
+        .mini-btn-receipt {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .mini-btn-receipt:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .mini-btn-detail {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: #fff;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .mini-btn-detail:hover {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        .empty-orders-box {
+            text-align: center;
+            padding: 32px 16px;
+            color: #64748b;
+        }
+        .empty-orders-icon {
+            display: inline-flex;
+            padding: 14px;
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-radius: 50%;
+            margin-bottom: 12px;
+        }
+        .empty-orders-box h3 {
+            margin: 0 0 6px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .empty-orders-box p {
+            margin: 0 0 16px;
+            font-size: 13px;
+        }
+        .btn-start-shopping {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            background: #dc2626;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+        .btn-start-shopping:hover {
+            background: #b91c1c;
+        }
         .sidebar-footer { margin: auto 12px 0; padding: 15px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 12px; line-height: 1.5; }
         .sidebar-footer strong { display: block; margin-bottom: 4px; color: #172033; }
         .logout { display: flex; position: relative; width: 45px; height: 45px; align-items: center; justify-content: flex-start; margin: 0 12px; padding: 0; overflow: hidden; color: #fff; background: #ff4141; border: 0; border-radius: 50%; cursor: pointer; box-shadow: 2px 2px 10px #00000032; transition: width .3s ease, border-radius .3s ease, transform .15s ease; }
@@ -459,6 +676,7 @@
         <nav>
             <a class="nav-link" href="{% url 'home' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span>Kembali ke Website</a>
             <a class="nav-link active" href="{% url 'app:profile_pengguna' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path></svg></span>Profil Saya</a>
+            <a class="nav-link" href="{% url 'app:pesanan_pengguna' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span>Pesanan Saya{% if total_pesanan_pending %}<span class="sidebar-badge">{{ total_pesanan_pending }}</span>{% endif %}</a>
         </nav>
         <p class="menu-label menu-label-spaced">Konten</p>
         <nav>
@@ -514,6 +732,73 @@
                     <div class="profile-info-card"><span class="profile-info-icon"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path></svg></span><div class="profile-info-copy"><span>Alamat</span><strong>{{ userpengguna.alamat|default:"Belum diisi" }}</strong></div></div>
                 </div>
                 </section>
+                </div>
+            </section>
+            <!-- Section Pesanan Terbaru -->
+            <section class="profile-panel orders-summary-panel" id="pesanan-terbaru">
+                <header class="profile-panel-header">
+                    <div>
+                        <h2>Pesanan Terbaru</h2>
+                        <p>Daftar pembelian unit laptop terakhir Anda di Losari Computer</p>
+                    </div>
+                    <a href="{% url 'app:pesanan_pengguna' %}">Lihat semua pesanan ({{ total_orders }}) &rarr;</a>
+                </header>
+                <div class="profile-panel-body">
+                    {% for o in recent_orders %}
+                    <div class="user-order-mini-card">
+                        <div class="order-mini-header">
+                            <div>
+                                <span class="order-mini-code">Pesanan #INV-LC-{{ o.nomor|stringformat:"s"|slice:":8"|upper }}</span>
+                                <span class="order-mini-date">{{ o.dibuat_pada|date:"d M Y, H:i" }} WIB</span>
+                            </div>
+                            <span class="user-status-pill status-{{ o.status }}">{{ o.get_status_display }}</span>
+                        </div>
+                        <div class="order-mini-body">
+                            {% for it in o.item.all %}
+                            <div class="order-mini-item">
+                                <span class="order-mini-item-name">{{ it.nama_produk }}</span>
+                                <span class="order-mini-item-qty">{{ it.jumlah }} unit x {{ it.harga_satuan_rupiah }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="order-mini-footer">
+                            <span class="order-mini-total">Total Belanja: <strong>{{ o.total_rupiah }}</strong></span>
+                            <div class="order-mini-actions">
+                                {% if o.status == 'menunggu' and not o.is_expired %}
+                                <a class="mini-btn-pay" href="{% url 'app:payment_status' o.nomor %}">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                                    Bayar Sekarang
+                                </a>
+                                {% elif o.status == 'dibatalkan' or o.is_expired %}
+                                <a class="mini-btn-detail" href="{% url 'app:payment_status' o.nomor %}">
+                                    Rincian
+                                </a>
+                                {% else %}
+                                <a class="mini-btn-receipt" href="{% url 'app:order_receipt' o.nomor %}" target="_blank">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    Lihat Faktur / Nota
+                                </a>
+                                <a class="mini-btn-detail" href="{% url 'app:payment_status' o.nomor %}">
+                                    Detail
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-orders-box">
+                        <div class="empty-orders-icon">
+                            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                                <path d="M3 6h18"></path>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </div>
+                        <h3>Belum Ada Riwayat Pesanan</h3>
+                        <p>Anda belum pernah melakukan pembelian laptop di Losari Computer.</p>
+                        <a class="btn-start-shopping" href="{% url 'shop' %}">Mulai Belanja di Katalog</a>
+                    </div>
+                    {% endfor %}
                 </div>
             </section>
             <section class="profile-panel blog-profile-panel" id="blog-saya">

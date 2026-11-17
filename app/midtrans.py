@@ -45,6 +45,11 @@ def create_snap_transaction(order, customer, items):
             "email": customer["email"][:50],
             "phone": customer["phone"][:20],
         },
+        "expiry": {
+            "start_time": order.dibuat_pada.strftime("%Y-%m-%d %H:%M:%S +0700"),
+            "unit": "hours",
+            "duration": 24,
+        },
     }
     return snap.create_transaction(params)
 

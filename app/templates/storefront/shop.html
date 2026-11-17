@@ -9,7 +9,7 @@
 <div class="container shop-content">
     <div class="shop-heading"><p class="eyebrow shop-eyebrow">Unit tersedia · {{ products|length }} produk</p><h1>Laptop pilihan untukmu</h1></div>
     <form class="shop-toolbar" method="get">
-        <div class="shop-search"><span class="search-icon" aria-hidden="true">&#9906;</span><input name="q" value="{{ query }}" placeholder="Cari laptop, mis. ThinkPad, ASUS, MacBook..." aria-label="Cari laptop"></div>
+        <div class="shop-search"><span class="search-icon" aria-hidden="true">&#9906;</span><input name="q" value="{{ query }}" placeholder="Cari laptop, mis. ThinkPad, RAM 4, SSD 512, Core i5..." aria-label="Cari laptop"></div>
         <label class="shop-filter"><span>Kategori</span><select name="kategori"><option value="">Semua</option>{% for category in categories %}<option value="{{ category.slug }}" {% if selected_category == category %}selected{% endif %}>{{ category.nama }}</option>{% endfor %}</select></label>
         <label class="shop-filter"><span>Budget</span><select name="budget"><option value="">Semua harga</option><option value="under-5" {% if budget == "under-5" %}selected{% endif %}>Di bawah Rp5 juta</option><option value="5-10" {% if budget == "5-10" %}selected{% endif %}>Rp5–10 juta</option><option value="over-10" {% if budget == "over-10" %}selected{% endif %}>Di atas Rp10 juta</option></select></label>
         <a class="shop-reset" href="{% url 'shop' %}">Reset</a>

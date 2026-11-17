@@ -835,6 +835,69 @@
         color: #64748b;
     }
 
+    /* Transaction Type & Channel Badges (Midtrans Standard) */
+    .tx-type-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 3.5px 10px;
+        background: #f8fafc;
+        color: #334155;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 750;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .channel-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3.5px 10px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .channel-pill.channel-dana {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+    }
+
+    .channel-pill.channel-bank {
+        background: #f8fafc;
+        color: #0f172a;
+        border: 1px solid #cbd5e1;
+    }
+
+    .channel-pill.channel-qris {
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+    }
+
+    .channel-pill.channel-gopay {
+        background: #f0fdfa;
+        color: #0f766e;
+        border: 1px solid #99f6e4;
+    }
+
+    .channel-pill.channel-shopee {
+        background: #fff7ed;
+        color: #c2410c;
+        border: 1px solid #ffedd5;
+    }
+
+    .channel-pill.channel-default {
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+    }
+
     /* Status Badges */
     .status-badge-saas {
         display: inline-flex;
@@ -968,7 +1031,7 @@
         }
 
         .orders-master-table {
-            min-width: 600px;
+            min-width: 820px;
         }
 
         .orders-table-scroll {
@@ -1254,11 +1317,13 @@
             <table class="orders-master-table" id="ordersMasterTable">
                 <thead>
                     <tr>
-                        <th style="width:28%;">Pesanan</th>
-                        <th style="width:26%;">Pelanggan</th>
-                        <th style="width:18%;">Status</th>
-                        <th style="width:16%;">Total</th>
-                        <th style="width:12%; text-align:right;">Aksi</th>
+                        <th style="width:20%;">Pesanan</th>
+                        <th style="width:18%;">Pelanggan</th>
+                        <th style="width:13%;">Transaction type</th>
+                        <th style="width:14%;">Channel</th>
+                        <th style="width:14%;">Status</th>
+                        <th style="width:12%;">Total</th>
+                        <th style="width:9%; text-align:right;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1271,6 +1336,14 @@
                         <td>
                             <span class="customer-name-bold">{{ record.pengguna.get_full_name|default:record.pengguna.username }}</span>
                             <span class="customer-handle-muted">@{{ record.pengguna.username }}</span>
+                        </td>
+                        <td>
+                            <span class="tx-type-pill">{{ record.transaction_type }}</span>
+                        </td>
+                        <td>
+                            <span class="channel-pill {{ record.channel_badge_class }}">
+                                {{ record.channel }}
+                            </span>
                         </td>
                         <td>
                             <span class="status-badge-saas status-{{ record.status }}">
@@ -1294,7 +1367,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" style="text-align:center; padding:32px; color:#64748b;">
+                        <td colspan="7" style="text-align:center; padding:32px; color:#64748b;">
                             Tidak ada data pesanan pada filter ini.
                         </td>
                     </tr>

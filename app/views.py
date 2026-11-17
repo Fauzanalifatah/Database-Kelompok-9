@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
+import re
 from decimal import Decimal, InvalidOperation
 from django.utils import timezone
 from django.utils.text import slugify
@@ -62,6 +63,144 @@ from .midtrans import create_snap_transaction, is_valid_signature
 
 FOOTER_SOCIAL_PLATFORMS = ("Instagram", "TikTok", "WhatsApp")
 FOOTER_PAYMENT_PLATFORMS = ("QRIS", "BRI", "BNI", "Mandiri")
+
+
+def filter_products_by_search(queryset, query_str):
+    """
+    Menyaring queryset produk secara cerdas berdasarkan kata kunci pencarian.
+    Mendukung pencarian nama, merek, deskripsi, kategori, kondisi, slug,
+    dan atribut spesifikasi terstruktur (seperti RAM 'ram 4', 'ram 16',
+    SSD/Penyimpanan 'ssd 512', prosesor 'ryzen 5', 'core i5', layar 'retina', dll).
+    """
+    if not query_str or not str(query_str).strip():
+        return queryset
+
+    cleaned_query = (
+        re.sub(r"[:=,;/\\]", " ", str(query_str).lower())
+        .strip()
+    )
+    cleaned_query = re.sub(r"\s+", " ", cleaned_query)
+    if not cleaned_query:
+        return queryset
+
+    # 1. Ekstrak kebutuhan RAM spesifik (mis. 'ram 4', 'ram 4gb', 'ram 16', '4gb ram')
+    ram_match = re.search(
+        r"\b(?:ram|memory|memori)\s+(\d+)(?:\s*gb)?\b", cleaned_query
+    ) or re.search(r"\b(\d+)\s*gb\s*(?:ram|memory|memori)\b", cleaned_query)
+    required_ram = ram_match.group(1) if ram_match else None
+
+    # 2. Ekstrak kebutuhan Penyimpanan spesifik (mis. 'ssd 512', 'penyimpanan 128', '128gb rom')
+    storage_match = re.search(
+        r"\b(?:ssd|hdd|storage|penyimpanan|rom)\s+(\d+)(?:\s*(?:gb|tb))?\b",
+        cleaned_query,
+    ) or re.search(
+        r"\b(\d+)\s*(?:gb|tb)\s*(?:ssd|hdd|storage|penyimpanan|rom)\b",
+        cleaned_query,
+    )
+    required_storage = storage_match.group(1) if storage_match else None
+
+    # Daftar kata token pencarian
+    words = [w for w in cleaned_query.split() if w]
+
+    candidate_products = list(queryset)
+    matched_ids = []
+
+    for product in candidate_products:
+        spek = product.spesifikasi or {}
+        if isinstance(spek, str):
+            try:
+                spek = json.loads(spek)
+            except Exception:
+                spek = {}
+
+        if not isinstance(spek, dict):
+            spek = {}
+
+        # Validasi RAM spesifik jika diminta user (mis. "ram 4" harus cocok dengan produk ber-RAM 4)
+        if required_ram:
+            p_ram_val = ""
+            for k, v in spek.items():
+                if str(k).lower().strip() in ["ram", "memory", "memori"]:
+                    p_ram_val = str(v).lower()
+                    break
+            ram_digits = re.findall(r"\d+", p_ram_val)
+            if not ram_digits or ram_digits[0] != required_ram:
+                continue
+
+        # Validasi Storage spesifik jika diminta user (mis. "ssd 512" atau "128gb")
+        if required_storage:
+            p_storage_val = ""
+            for k, v in spek.items():
+                if str(k).lower().strip() in [
+                    "penyimpanan", "storage", "ssd", "hdd", "rom"
+                ]:
+                    p_storage_val = str(v).lower()
+                    break
+            storage_digits = re.findall(r"\d+", p_storage_val)
+            p_name = (product.nama or "").lower()
+            has_storage_in_name = (
+                f"{required_storage}gb" in p_name
+                or f"{required_storage} gb" in p_name
+            )
+            if (not storage_digits or storage_digits[0] != required_storage) and not has_storage_in_name:
+                continue
+
+        # Bangun representasi token spesifikasi yang diperluas
+        spec_tokens = []
+        for k, v in spek.items():
+            k_str = str(k).lower()
+            v_str = str(v).lower()
+            spec_tokens.extend([k_str, v_str, f"{k_str} {v_str}"])
+
+            # Konversi inch e.g. 14" -> 14 inch, 6.1" -> 6.1 inch
+            if '"' in v_str:
+                spec_tokens.append(v_str.replace('"', " inch"))
+                spec_tokens.append(v_str.replace('"', " inchi"))
+
+            # Pisahkan angka dan satuan e.g. 4gb -> 4 gb, 4, gb
+            separated = re.sub(r"(\d+)\s*([a-zA-Z]+)", r"\1 \2", v_str)
+            spec_tokens.append(separated)
+            spec_tokens.append(f"{k_str} {separated}")
+            digits = re.findall(r"\d+", v_str)
+            for d in digits:
+                spec_tokens.append(f"{k_str} {d}")
+                spec_tokens.append(d)
+
+        kategori_nama = (
+            product.kategori.nama.lower() if product.kategori and product.kategori.nama else ""
+        )
+        kondisi_display = (
+            product.get_kondisi_display().lower() if hasattr(product, "get_kondisi_display") else ""
+        )
+
+        searchable_blob = " ".join([
+            (product.nama or "").lower(),
+            (product.merek or "").lower(),
+            (product.deskripsi or "").lower(),
+            kategori_nama,
+            (product.kondisi or "").lower(),
+            kondisi_display,
+            (product.slug or "").lower(),
+            " ".join(spec_tokens),
+        ]).lower()
+
+        # Setiap kata dalam query harus ditemukan dalam searchable_blob
+        match_all = True
+        for word in words:
+            if required_ram and (word == required_ram or word in ["ram", "memory", "memori"]):
+                continue
+            if required_storage and (word == required_storage or word in ["ssd", "hdd", "storage", "penyimpanan", "rom"]):
+                continue
+            if word not in searchable_blob:
+                match_all = False
+                break
+
+        if match_all:
+            matched_ids.append(product.pk)
+
+    if not matched_ids:
+        return queryset.none()
+    return queryset.filter(pk__in=matched_ids)
 
 
 @admin_required
@@ -406,11 +545,7 @@ def produk_manager(request):
     # Apply search query
     filtered_qs = all_products
     if search_query:
-        filtered_qs = filtered_qs.filter(
-            Q(nama__icontains=search_query)
-            | Q(merek__icontains=search_query)
-            | Q(deskripsi__icontains=search_query)
-        )
+        filtered_qs = filter_products_by_search(filtered_qs, search_query)
 
     # Apply status filter
     if status_filter == "aktif":
@@ -754,6 +889,47 @@ def pesanan_manager(request):
             orders = orders.filter(status="dibatalkan")
 
     orders = orders.all()
+
+    # Sinkronisasi otomatis data transaksi Midtrans (Payment Type & Channel) untuk pesanan terbaru
+    if getattr(settings, "MIDTRANS_SERVER_KEY", None):
+        try:
+            import midtransclient
+            core = midtransclient.CoreApi(
+                is_production=getattr(settings, "MIDTRANS_IS_PRODUCTION", False),
+                server_key=settings.MIDTRANS_SERVER_KEY,
+            )
+            orders_to_check = [
+                o for o in orders[:15]
+                if not o.midtrans_payment_type or o.status == "menunggu"
+            ]
+            for o in orders_to_check:
+                try:
+                    res = core.transactions.status(str(o.nomor))
+                    if res and res.get("status_code") in ["200", "201"]:
+                        p_type = res.get("payment_type", "")
+                        t_status = res.get("transaction_status", "")
+                        tx_id = res.get("transaction_id", "")
+                        fraud_st = res.get("fraud_status", "")
+                        updated_fields = []
+                        if p_type and o.midtrans_payment_type != p_type:
+                            o.midtrans_payment_type = p_type
+                            updated_fields.append("midtrans_payment_type")
+                        if tx_id and o.midtrans_transaction_id != tx_id:
+                            o.midtrans_transaction_id = tx_id
+                            updated_fields.append("midtrans_transaction_id")
+                        if fraud_st and o.midtrans_fraud_status != fraud_st:
+                            o.midtrans_fraud_status = fraud_st
+                            updated_fields.append("midtrans_fraud_status")
+                        if t_status in {"capture", "settlement"} and o.status == "menunggu":
+                            o.status = "dibayar"
+                            updated_fields.append("status")
+                        if updated_fields:
+                            o.save(update_fields=updated_fields)
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
     tracking_data = get_pesanan_tracking_data(days=days)
 
     return render(
@@ -1176,15 +1352,7 @@ def home(request):
         )
         products = products.filter(kategori=selected_category)
     if query:
-        search_terms = query.split()
-        for term in search_terms:
-            products = products.filter(
-                Q(nama__icontains=term)
-                | Q(merek__icontains=term)
-                | Q(deskripsi__icontains=term)
-                | Q(kategori__nama__icontains=term)
-                | Q(slug__icontains=term)
-            )
+        products = filter_products_by_search(products, query)
     return render(
         request,
         "storefront/home.html",
@@ -1430,15 +1598,7 @@ def shop(request):
         )
         products = products.filter(kategori=selected_category)
     if query:
-        search_terms = query.split()
-        for term in search_terms:
-            products = products.filter(
-                Q(nama__icontains=term)
-                | Q(merek__icontains=term)
-                | Q(deskripsi__icontains=term)
-                | Q(kategori__nama__icontains=term)
-                | Q(slug__icontains=term)
-            )
+        products = filter_products_by_search(products, query)
     budget_ranges = {
         "under-5": (None, 5_000_000),
         "5-10": (5_000_000, 10_000_000),
@@ -1536,8 +1696,12 @@ def checkout(request, slug):
                 status=503,
             )
         if snap_transaction is not None:
+            token = snap_transaction.get("token")
+            if token and order:
+                order.snap_token = token
+                order.save(update_fields=["snap_token"])
             if hasattr(request, "session"):
-                request.session[f"snap_{order.nomor}"] = snap_transaction.get("token")
+                request.session[f"snap_{order.nomor}"] = token
             return redirect("app:payment_status", nomor=order.nomor)
     return render(
         request,
@@ -1583,7 +1747,12 @@ def payment_status(request, nomor):
             messages.info(request, "Status pesanan dikembalikan ke 'Menunggu Pembayaran'.")
             return redirect("app:payment_status", nomor=order.nomor)
 
-    # 2. Cek status otomatis langsung ke API Midtrans jika masih menunggu
+    # 2. Cek apakah pesanan telah kadaluarsa (24 jam dari waktu pemesanan)
+    if order.status == "menunggu" and order.is_expired:
+        order.status = "dibatalkan"
+        order.save(update_fields=["status", "diperbarui_pada"])
+
+    # 3. Cek status otomatis langsung ke API Midtrans jika masih menunggu
     if order.status == "menunggu" and settings.MIDTRANS_SERVER_KEY:
         try:
             import midtransclient
@@ -1606,13 +1775,18 @@ def payment_status(request, nomor):
                                 item.produk.save(update_fields=["stok"])
                         order.stok_dikurangi = True
                     order.save()
+            elif t_status in {"expire", "cancel", "deny", "failure"}:
+                order.status = "dibatalkan"
+                order.midtrans_transaction_id = status_res.get("transaction_id", "")
+                order.midtrans_payment_type = status_res.get("payment_type", "")
+                order.save(update_fields=["status", "midtrans_transaction_id", "midtrans_payment_type", "diperbarui_pada"])
         except Exception:
             pass
 
     profile = UserPengguna.objects.filter(user=request.user).first()
-    # 3. Siapkan Snap Token jika pesanan masih dalam status menunggu pembayaran
-    snap_token = request.session.get(f"snap_{order.nomor}")
-    if not snap_token and order.status == "menunggu":
+    # 4. Siapkan Snap Token jika pesanan masih dalam status menunggu pembayaran dan belum kedaluwarsa
+    snap_token = order.snap_token or request.session.get(f"snap_{order.nomor}")
+    if not snap_token and order.status == "menunggu" and not order.is_expired:
         try:
             customer = {
                 "name": order.pengguna.get_full_name() or order.pengguna.username,
@@ -1621,7 +1795,10 @@ def payment_status(request, nomor):
             }
             snap_res = create_snap_transaction(order, customer, list(order.item.all()))
             snap_token = snap_res.get("token")
-            request.session[f"snap_{order.nomor}"] = snap_token
+            if snap_token:
+                order.snap_token = snap_token
+                order.save(update_fields=["snap_token"])
+                request.session[f"snap_{order.nomor}"] = snap_token
         except Exception:
             pass
 

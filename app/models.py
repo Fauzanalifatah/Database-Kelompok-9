@@ -828,6 +828,7 @@ class Pesanan(models.Model):
     midtrans_transaction_id = models.CharField(max_length=100, blank=True, default="")
     midtrans_payment_type = models.CharField(max_length=50, blank=True, default="")
     midtrans_fraud_status = models.CharField(max_length=30, blank=True, default="")
+    snap_token = models.CharField(max_length=255, blank=True, default="", verbose_name="Snap Token Midtrans")
     stok_dikurangi = models.BooleanField(default=False)
     dibuat_pada = models.DateTimeField(auto_now_add=True)
     diperbarui_pada = models.DateTimeField(auto_now=True)
@@ -844,8 +845,89 @@ class Pesanan(models.Model):
         )
 
     @property
+    def batas_pembayaran(self):
+        """Batas waktu pembayaran pesanan (standar Midtrans: 24 jam dari waktu pemesanan)."""
+        from datetime import timedelta
+        return self.dibuat_pada + timedelta(hours=24)
+
+    @property
+    def is_expired(self):
+        """Mengecek apakah pesanan sudah kedaluwarsa melewati batas 24 jam."""
+        from django.utils import timezone
+        if self.status in ["dibayar", "diproses", "dikirim", "selesai"]:
+            return False
+        if self.status == "dibatalkan":
+            return True
+        return timezone.now() >= self.batas_pembayaran
+
+    def periksa_kadaluarsa(self):
+        """Jika status masih menunggu dan sudah melewati batas waktu, ubah otomatis menjadi dibatalkan."""
+        if self.status == "menunggu" and self.is_expired:
+            self.status = "dibatalkan"
+            self.save(update_fields=["status", "diperbarui_pada"])
+            return True
+        return False
+
+    @property
     def total_rupiah(self):
         return f"Rp{self.total:,.0f}".replace(",", ".")
+
+    @property
+    def transaction_type(self):
+        """
+        Menghasilkan tipe transaksi (standar Midtrans: 'Payment').
+        """
+        return "Payment"
+
+    @property
+    def channel(self):
+        """
+        Menghasilkan nama kanal pembayaran (Channel) sesuai standar Midtrans
+        (misalnya: DANA, Bank Transfer, QRIS, GoPay, ShopeePay, dll).
+        """
+        raw_type = (self.midtrans_payment_type or "").strip().lower()
+        if not raw_type:
+            if self.status in ["dibayar", "selesai", "diproses", "dikirim"]:
+                return "QRIS"
+            return "-"
+
+        if "dana" in raw_type:
+            return "DANA"
+        if "bank_transfer" in raw_type or "echannel" in raw_type or "va" in raw_type:
+            return "Bank Transfer"
+        if "qris" in raw_type:
+            return "QRIS"
+        if "gopay" in raw_type:
+            return "GoPay"
+        if "shopeepay" in raw_type:
+            return "ShopeePay"
+        if "credit_card" in raw_type or "card" in raw_type:
+            return "Credit Card"
+        if "cstore" in raw_type or "indomaret" in raw_type or "alfamart" in raw_type:
+            return "Convenience Store"
+        if "akulaku" in raw_type:
+            return "Akulaku"
+        if "kredivo" in raw_type:
+            return "Kredivo"
+        if "demo" in raw_type:
+            return "QRIS / GoPay (Demo)"
+
+        return self.midtrans_payment_type.upper()
+
+    @property
+    def channel_badge_class(self):
+        ch = self.channel.lower()
+        if "dana" in ch:
+            return "channel-dana"
+        if "bank" in ch:
+            return "channel-bank"
+        if "qris" in ch:
+            return "channel-qris"
+        if "gopay" in ch:
+            return "channel-gopay"
+        if "shopee" in ch:
+            return "channel-shopee"
+        return "channel-default"
 
 
 class ItemPesanan(models.Model):
