@@ -15,3 +15,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = get_wsgi_application()
 app = application
+
+# Automatic migration to Supabase when running in cloud with DATABASE_URL
+if os.getenv("DATABASE_URL") and os.getenv("AUTO_MIGRATE", "true").lower() == "true":
+    try:
+        from django.core.management import call_command
+        call_command("migrate", interactive=False)
+    except Exception as exc:
+        print("Auto migration info:", exc)
