@@ -2,1252 +2,1256 @@
 {% load humanize %}
 {% block content %}
 <style>
-    /* ═══════════════════════════════════════════════════════════
-   MODERN ORDER DETAIL DASHBOARD (EXECUTIVE SAAS / CLEAN / RESPONSIVE)
-═══════════════════════════════════════════════════════════ */
-    @media (min-width: 769px) {
-        .topbar {
-            display: none !important;
-        }
-    }
+/* ═══════════════════════════════════════════════════════════════
+   LOSARI COMPUTER - EXECUTIVE ORDER DETAIL WORKSPACE
+   High-Precision SaaS UI / Fully Responsive (Desktop, Tablet, Mobile)
+═══════════════════════════════════════════════════════════════ */
 
-    .order-detail-container {
-        max-width: 1280px;
-        margin: 0 auto;
+/* Global Overrides for Content Manager Layout */
+@media (min-width: 769px) {
+    .topbar {
+        display: none !important;
     }
+}
 
-    /* ─── Top Command Toolbar (Clean & Aligned) ─── */
+@media (max-width: 768px) {
+    .topbar {
+        padding: 12px 16px !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+    .topbar-copy h1 {
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        line-height: 1.2 !important;
+    }
+    .topbar-copy p {
+        display: none !important;
+    }
+    .content {
+        padding: 16px 14px 48px !important;
+    }
+}
+
+/* Container */
+.order-detail-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* ─── 1. TOP COMMAND BAR & HEADER ─── */
+.order-command-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.order-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.order-breadcrumb a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.order-breadcrumb a:hover {
+    color: #0f172a;
+}
+
+.order-breadcrumb span.sep {
+    color: #cbd5e1;
+}
+
+.order-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.order-page-title {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+/* Status Badges */
+.order-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.order-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-pill-dibayar,
+.status-pill-selesai {
+    background: #ecfdf5;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.status-pill-menunggu {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.status-pill-diproses {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.status-pill-dikirim {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border: 1px solid #ddd6fe;
+}
+
+.status-pill-dibatalkan {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+/* Metadata Strip */
+.order-meta-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: #64748b;
+    flex-wrap: wrap;
+}
+
+.order-meta-info strong {
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.order-uuid-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 2.5px 8px;
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11.5px;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.order-uuid-chip:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+/* Header Action Buttons */
+.order-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-header-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.btn-action-receipt {
+    background: #0f172a;
+    color: #ffffff;
+    border: 1px solid #0f172a;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+}
+
+.btn-action-receipt:hover {
+    background: #1e293b;
+    border-color: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+.btn-action-wa {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.btn-action-wa:hover {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #86efac;
+    transform: translateY(-1px);
+}
+
+.btn-action-back {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-action-back:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
+
+/* ─── 2. METRIC CARDS GRID (4 TILES) ─── */
+.order-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.order-metric-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.order-metric-card:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.metric-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-wrap-total {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
+}
+
+.icon-wrap-status {
+    background: #ecfdf5;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.icon-wrap-method {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+.icon-wrap-items {
+    background: #fdf2f8;
+    color: #db2777;
+    border: 1px solid #fbcfe8;
+}
+
+.metric-text-group {
+    min-width: 0;
+    flex: 1;
+}
+
+.metric-subtitle {
+    margin: 0 0 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-headline {
+    margin: 0 0 3px;
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.metric-hint {
+    margin: 0;
+    font-size: 11.5px;
+    color: #94a3b8;
+    line-height: 1.35;
+}
+
+/* ─── 3. ORDER TRACKING STEPPER CARD ─── */
+.order-stepper-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.stepper-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.stepper-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stepper-subtitle {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.stepper-relative-wrap {
+    position: relative;
+    padding: 0 16px;
+}
+
+.stepper-connecting-line {
+    position: absolute;
+    top: 18px;
+    left: 45px;
+    right: 45px;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    z-index: 1;
+}
+
+.stepper-progress-fill {
+    height: 100%;
+    background: #16a34a;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.order-stepper-track {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.order-step-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    margin-bottom: 9px;
+    background: #ffffff;
+    border: 2.5px solid #cbd5e1;
+    color: #64748b;
+    box-shadow: 0 0 0 4px #ffffff;
+    transition: all 0.2s ease;
+}
+
+.step-circle.done {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+    box-shadow: 0 0 0 4px #dcfce7;
+}
+
+.step-circle.active {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 0 0 4px #f1f5f9;
+}
+
+.step-circle.pending {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #94a3b8;
+}
+
+.step-text-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.step-text-desc {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 3px;
+    line-height: 1.35;
+}
+
+/* ─── 4. MAIN TWO-COLUMN WORKSPACE GRID ─── */
+.order-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.order-main-grid > div {
+    min-width: 0;
+}
+
+/* ─── PANEL CARDS ─── */
+.order-panel-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    box-sizing: border-box;
+}
+
+.order-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.panel-header-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.panel-header-title svg {
+    color: #dc2626;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ─── 5. PRODUCT ITEMS (DESKTOP TABLE) ─── */
+.order-items-wrapper {
+    width: 100%;
+    min-width: 0;
+}
+
+table.desktop-only-items {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    margin: 0 0 16px 0 !important;
+}
+
+table.desktop-only-items th {
+    background: #f8fafc !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 11px 12px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    white-space: nowrap !important;
+}
+
+table.desktop-only-items th:first-child {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    border-left: 1px solid #e2e8f0 !important;
+}
+
+table.desktop-only-items th:last-child {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+
+table.desktop-only-items td {
+    padding: 14px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+table.desktop-only-items tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+table.desktop-only-items tbody tr:hover td {
+    background: #fafafa !important;
+}
+
+.col-th-prod {
+    width: 50% !important;
+}
+
+.col-th-price {
+    width: 20% !important;
+    text-align: right !important;
+}
+
+.col-th-qty {
+    width: 12% !important;
+    text-align: center !important;
+}
+
+.col-th-subtotal {
+    width: 18% !important;
+    text-align: right !important;
+}
+
+.item-product-flex {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.item-thumb-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.item-thumb-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.item-thumb-box:hover img {
+    transform: scale(1.08);
+}
+
+.item-meta-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.item-title-name {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 5px;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.item-pill-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.spec-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3.5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2.5px 7.5px;
+    border-radius: 6px;
+    white-space: nowrap;
+    line-height: 1.25;
+}
+
+.spec-pill.pill-category {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+    font-weight: 700;
+}
+
+.spec-pill.pill-neutral {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.spec-pill.pill-success {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.spec-pill.pill-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.item-qty-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 12px;
+    color: #0f172a;
+}
+
+/* Mobile & Tablet Items View */
+.mobile-only-items {
+    display: none;
+}
+
+/* Summary Totals Strip */
+.order-totals-strip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 13px;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #64748b;
+}
+
+.totals-row strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.totals-free-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #15803d;
+    background: #dcfce7;
+    padding: 2.5px 8.5px;
+    border-radius: 6px;
+    border: 1px solid #bbf7d0;
+}
+
+.totals-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 4px 0;
+}
+
+.totals-row.grand-total {
+    color: #0f172a;
+    font-size: 14.5px;
+    font-weight: 800;
+}
+
+.totals-row.grand-total strong {
+    font-size: 19px;
+    font-weight: 900;
+    color: #dc2626;
+    letter-spacing: -0.02em;
+}
+
+/* ─── 6. CUSTOMER & SHIPPING SPLIT ─── */
+.customer-shipping-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.info-sub-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sub-panel-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-field-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.info-field-unit .k {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.info-field-unit .v {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.link-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #15803d;
+    font-weight: 700;
+    background: #ecfdf5;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #bbf7d0;
+    text-decoration: none;
+    font-size: 12px;
+    transition: all 0.15s ease;
+    width: fit-content;
+    margin-top: 2px;
+}
+
+.link-wa:hover {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #86efac;
+}
+
+/* ─── 7. MIDTRANS VERIFICATION GRID ─── */
+.midtrans-details-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.midtrans-metric-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 13px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.midtrans-metric-box span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.midtrans-metric-box strong {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    word-break: break-all;
+    line-height: 1.35;
+}
+
+/* ─── 8. RIGHT COLUMN: STATUS EDITOR & TOOLS ─── */
+.status-editor-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.status-editor-card select {
+    width: 100% !important;
+    padding: 11px 14px !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    background-color: #f8fafc !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    box-sizing: border-box !important;
+}
+
+.status-editor-card select:focus {
+    border-color: #dc2626 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+
+.btn-update-status {
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 800;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.btn-update-status:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+}
+
+.btn-update-status:active {
+    transform: translateY(0);
+}
+
+/* Inventory Card */
+.inventory-stock-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.inventory-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.inventory-desc {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+/* Quick Tools Card */
+.quick-tools-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.quick-tools-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.quick-action-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: #334155;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 9px;
+    transition: all 0.15s ease;
+}
+
+.quick-action-link-btn:last-child {
+    margin-bottom: 0;
+}
+
+.quick-action-link-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    transform: translateX(3px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN BREAKPOINTS: TABLET & MOBILE
+═══════════════════════════════════════════════════════════════ */
+
+/* Tablet (769px to 1024px) */
+@media (max-width: 1024px) {
+    .order-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .order-main-grid {
+        grid-template-columns: 1fr;
+    }
+    .midtrans-details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile & Small Tablet (<= 768px) */
+@media (max-width: 768px) {
     .order-command-bar {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 24px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #e2e8f0;
-        flex-wrap: wrap;
-    }
-
-    .order-breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12.5px;
-        color: #64748b;
-        margin-bottom: 6px;
-        font-weight: 600;
-    }
-
-    .order-breadcrumb a {
-        color: #64748b;
-        text-decoration: none;
-        transition: color 0.15s ease;
-    }
-
-    .order-breadcrumb a:hover {
-        color: #0f172a;
-    }
-
-    .order-breadcrumb span.sep {
-        color: #cbd5e1;
-    }
-
-    .order-title-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        margin-bottom: 18px;
+        padding-bottom: 16px;
     }
 
     .order-page-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 900;
-        color: #0f172a;
-        letter-spacing: -0.02em;
-        line-height: 1.15;
+        font-size: 20px;
     }
 
-    /* Status Badges */
-    .order-status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 5px 14px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-    }
-
-    .status-pill-dibayar,
-    .status-pill-selesai {
-        background: #ecfdf5;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-    }
-
-    .status-pill-menunggu,
-    .status-pill-diproses,
-    .status-pill-dikirim {
-        background: #fffbeb;
-        color: #b45309;
-        border: 1px solid #fde68a;
-    }
-
-    .status-pill-dibatalkan {
-        background: #fef2f2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
-    }
-
-    .order-main-grid>div {
-        min-width: 0;
-    }
-
-    /* ─── Panel Cards ─── */
-    .order-panel-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-        box-sizing: border-box;
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .order-panel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding-bottom: 16px;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .panel-header-title {
-        font-size: 15.5px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-    }
-
-    .panel-header-title svg {
-        color: #dc2626;
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-
-    /* ─── Product Items Table (Strictly Contained Within Borders) ─── */
-    .order-items-wrapper {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    table.desktop-only-items {
-        display: table !important;
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: 100% !important;
-        table-layout: fixed !important;
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-        box-sizing: border-box !important;
-        margin: 0 0 16px 0 !important;
-    }
-
-    table.desktop-only-items th {
-        background: #f8fafc !important;
-        color: #64748b !important;
-        font-weight: 700 !important;
-        font-size: 11px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        padding: 11px 12px !important;
-        border-top: 1px solid #e2e8f0 !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        white-space: nowrap !important;
-        box-sizing: border-box !important;
-    }
-
-    table.desktop-only-items th:first-child {
-        border-top-left-radius: 8px !important;
-        border-bottom-left-radius: 8px !important;
-        border-left: 1px solid #e2e8f0 !important;
-    }
-
-    table.desktop-only-items th:last-child {
-        border-top-right-radius: 8px !important;
-        border-bottom-right-radius: 8px !important;
-        border-right: 1px solid #e2e8f0 !important;
-    }
-
-    table.desktop-only-items td {
-        padding: 14px 12px !important;
-        border-bottom: 1px solid #f1f5f9 !important;
-        vertical-align: middle !important;
-        box-sizing: border-box !important;
-    }
-
-    table.desktop-only-items tbody tr:last-child td {
-        border-bottom: none !important;
-    }
-
-    table.desktop-only-items tbody tr:hover td {
-        background: #fafafa !important;
-    }
-
-    .col-th-prod {
-        width: 50% !important;
-    }
-
-    .col-th-price {
-        width: 20% !important;
-        text-align: right !important;
-    }
-
-    .col-th-qty {
-        width: 12% !important;
-        text-align: center !important;
-    }
-
-    .col-th-subtotal {
-        width: 18% !important;
-        text-align: right !important;
-    }
-
-    .item-product-flex {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 0;
-        max-width: 100%;
-    }
-
-    .item-thumb-box {
-        width: 58px;
-        height: 58px;
-        border-radius: 10px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 4px;
-        flex-shrink: 0;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-        overflow: hidden;
-    }
-
-    .item-thumb-box img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        display: block;
-        transition: transform 0.2s ease;
-    }
-
-    .item-thumb-box:hover img {
-        transform: scale(1.08);
-    }
-
-    .item-meta-copy {
-        min-width: 0;
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .item-title-name {
-        font-size: 14px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 5px;
-        line-height: 1.35;
-        word-break: break-word;
-    }
-
-    .item-pill-row {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        flex-wrap: wrap;
-    }
-
-    .spec-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 3.5px;
-        font-size: 11px;
-        font-weight: 600;
-        padding: 2.5px 7.5px;
-        border-radius: 6px;
-        white-space: nowrap;
-        line-height: 1.25;
-    }
-
-    .spec-pill.pill-category {
-        background: #eff6ff;
-        color: #1d4ed8;
-        border: 1px solid #dbeafe;
-        font-weight: 700;
-    }
-
-    .spec-pill.pill-neutral {
-        background: #f1f5f9;
-        color: #475569;
-        border: 1px solid #e2e8f0;
-    }
-
-    .spec-pill.pill-success {
-        background: #ecfdf5;
-        color: #059669;
-        border: 1px solid #a7f3d0;
-    }
-
-    .spec-pill.pill-warning {
-        background: #fffbeb;
-        color: #92400e;
-        border: 1px solid #fde68a;
-    }
-
-    .item-qty-pill {
-        display: inline-block;
-        padding: 4px 10px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 7px;
-        font-weight: 700;
-        font-size: 12px;
-        color: #0f172a;
-    }
-
-    .status-pill-menunggu .order-status-dot,
-    .status-pill-diproses .order-status-dot,
-    .status-pill-dikirim .order-status-dot {
-        background: #d97706;
-        box-shadow: 0 0 0 2px #fde68a;
-    }
-
-    /* Order Totals Clean Strip */
-    .order-totals-strip {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin-top: 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 9px;
-        font-size: 13px;
-        box-sizing: border-box;
-        width: 100%;
-    }
-
-    .totals-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #64748b;
-        gap: 12px;
-    }
-
-    .totals-row strong {
-        color: #0f172a;
-        font-weight: 700;
-    }
-
-    .totals-row.grand-total {
-        padding-top: 12px;
-        margin-top: 4px;
-        border-top: 1px solid #e2e8f0;
-        font-size: 13.5px;
-        font-weight: 800;
-        color: #0f172a;
-    }
-
-    .totals-row.grand-total strong {
-        font-size: 18px;
-        font-weight: 900;
-        color: #0f172a;
-    }
-
-    .totals-free-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        background: #ecfdf5;
-        color: #059669;
-        border: 1px solid #a7f3d0;
-        border-radius: 6px;
-        padding: 2px 7px;
-        font-size: 11px;
-        font-weight: 700;
-    }
-
-    .order-meta-info {
-        margin: 6px 0 0;
-        font-size: 12.5px;
-        color: #64748b;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .order-uuid-chip {
-        font-family: ui-monospace, monospace;
-        font-size: 11.5px;
-        background: #f8fafc;
-        color: #475569;
-        padding: 3px 9px;
-        border-radius: 6px;
-        border: 1px solid #e2e8f0;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-
-    .order-uuid-chip:hover {
-        background: #f1f5f9;
-        color: #0f172a;
-        border-color: #cbd5e1;
-    }
-
-    /* Header Actions */
     .order-header-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .btn-header-action {
-        display: inline-flex;
-        align-items: center;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 8px;
-        padding: 9px 16px;
-        border-radius: 9px;
-        font-size: 13px;
-        font-weight: 700;
-        text-decoration: none;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-        transition: all 0.15s ease;
-        white-space: nowrap;
-    }
-
-    .btn-action-receipt {
-        background: #0f172a;
-        color: #ffffff;
-        border: 1px solid #0f172a;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
-    }
-
-    .btn-action-receipt:hover {
-        background: #1e293b;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);
-    }
-
-    .btn-action-wa {
-        background: #f0fdf4;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-    }
-
-    .btn-action-wa:hover {
-        background: #dcfce7;
-        color: #166534;
-        border-color: #86efac;
-        transform: translateY(-1px);
     }
 
     .btn-action-back {
-        background: #ffffff;
-        color: #475569;
-        border: 1px solid #cbd5e1;
+        grid-column: 1 / -1;
     }
 
-    .btn-action-back:hover {
-        background: #f8fafc;
-        color: #0f172a;
-        border-color: #94a3b8;
-        transform: translateY(-1px);
+    .btn-header-action {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        font-size: 12.5px;
     }
 
-    /* ─── Metric Cards Grid (4 Cards, Clean & Non-truncated) ─── */
+    /* 2x2 Metric Grid on Mobile */
     .order-metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 16px;
-        margin-bottom: 24px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
     }
 
     .order-metric-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 18px 20px;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        transition: all 0.2s ease;
-    }
-
-    .order-metric-card:hover {
-        border-color: #cbd5e1;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+        padding: 12px;
+        gap: 10px;
+        border-radius: 12px;
     }
 
     .metric-icon-wrap {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
     }
 
-    .icon-wrap-total {
-        background: #eff6ff;
-        color: #2563eb;
-    }
-
-    .icon-wrap-status {
-        background: #ecfdf5;
-        color: #16a34a;
-    }
-
-    .icon-wrap-method {
-        background: #f8fafc;
-        color: #0f172a;
-        border: 1px solid #e2e8f0;
-    }
-
-    .icon-wrap-items {
-        background: #fef2f2;
-        color: #dc2626;
-    }
-
-    .metric-text-group {
-        min-width: 0;
-        flex: 1;
+    .metric-icon-wrap svg {
+        width: 18px;
+        height: 18px;
     }
 
     .metric-subtitle {
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: #64748b;
-        letter-spacing: 0.05em;
-        margin: 0 0 3px;
+        font-size: 10px;
+        margin-bottom: 2px;
     }
 
     .metric-headline {
-        font-size: 18px;
-        font-weight: 900;
-        color: #0f172a;
-        line-height: 1.2;
-        margin: 0 0 2px;
+        font-size: 15px;
     }
 
     .metric-hint {
-        font-size: 11.5px;
-        color: #64748b;
-        margin: 0;
-        line-height: 1.25;
+        font-size: 10.5px;
     }
 
-    /* ─── Professional Connected Progress Stepper ─── */
+    /* Vertical Stepper Timeline on Mobile */
     .order-stepper-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 24px 28px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+        padding: 16px 14px;
+        margin-bottom: 18px;
     }
 
     .stepper-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 22px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        margin-bottom: 14px;
     }
 
-    .stepper-title {
-        font-size: 14px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .stepper-subtitle {
-        font-size: 12px;
-        color: #64748b;
-    }
-
-    /* Connected Track Line */
     .stepper-relative-wrap {
-        position: relative;
-        padding: 0 20px;
+        padding: 0;
     }
 
     .stepper-connecting-line {
+        display: none;
+    }
+
+    .order-stepper-track {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        position: relative;
+    }
+
+    .order-stepper-track::before {
+        content: "";
         position: absolute;
         top: 18px;
-        left: 45px;
-        right: 45px;
-        height: 3px;
+        bottom: 18px;
+        left: 17px;
+        width: 2px;
         background: #e2e8f0;
         z-index: 1;
     }
 
-    .stepper-progress-fill {
-        height: 100%;
-        background: #16a34a;
-        transition: width 0.3s ease;
-    }
-
-    .order-stepper-track {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
+    .order-step-node {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        gap: 12px;
+        padding: 8px 0;
         position: relative;
         z-index: 2;
     }
 
-    .order-step-node {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
     .step-circle {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 13px;
-        margin-bottom: 10px;
-        background: #ffffff;
-        border: 2.5px solid #cbd5e1;
-        color: #64748b;
-        box-shadow: 0 0 0 4px #ffffff;
-        transition: all 0.2s ease;
-    }
-
-    .step-circle.done {
-        background: #16a34a;
-        border-color: #16a34a;
-        color: #ffffff;
-        box-shadow: 0 0 0 4px #dcfce7;
-    }
-
-    .step-circle.active {
-        background: #0f172a;
-        border-color: #0f172a;
-        color: #ffffff;
-        box-shadow: 0 0 0 4px #f1f5f9;
-    }
-
-    .step-circle.pending {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-        color: #94a3b8;
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+        margin-bottom: 0;
+        flex-shrink: 0;
     }
 
     .step-text-title {
-        font-size: 12.5px;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1.3;
+        font-size: 12px;
     }
 
     .step-text-desc {
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 2px;
+        font-size: 10.5px;
     }
 
-    /* ─── Two-Column Main Layout ─── */
-    .order-main-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
-        gap: 24px;
-        align-items: start;
-    }
-
-    /* ─── Panel Cards ─── */
+    /* Cards & Tables */
     .order-panel-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-    }
-
-    .order-panel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding-bottom: 16px;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .panel-header-title {
-        font-size: 15.5px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-    }
-
-    .panel-header-title svg {
-        color: #dc2626;
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-
-    /* ─── Product Items Table (Modern Executive SaaS Styling) ─── */
-    .desktop-only-items {
-        display: table;
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13.5px;
-        text-align: left;
-    }
-
-    .desktop-only-items th {
-        background: #f8fafc;
-        color: #475569;
-        font-weight: 800;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        padding: 12px 14px;
-        border-bottom: 1.5px solid #e2e8f0;
-        white-space: nowrap;
-    }
-
-    .desktop-only-items td {
         padding: 16px 14px;
-        border-bottom: 1px solid #f1f5f9;
-        vertical-align: middle;
-    }
-
-    .item-product-flex {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        min-width: 0;
-    }
-
-    .item-thumb-box {
-        width: 68px;
-        height: 68px;
-        border-radius: 12px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 6px;
-        flex-shrink: 0;
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-        overflow: hidden;
-    }
-
-    .item-thumb-box img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        display: block;
-        transition: transform 0.2s ease;
-    }
-
-    .item-thumb-box:hover img {
-        transform: scale(1.06);
-    }
-
-    .item-meta-copy {
-        min-width: 0;
-    }
-
-    .item-title-name {
-        font-size: 14.5px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 6px;
-        line-height: 1.35;
-    }
-
-    .item-pill-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    .item-badge-pill {
-        font-size: 11px;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 6px;
-        background: #f8fafc;
-        color: #475569;
-        border: 1px solid #e2e8f0;
-        white-space: nowrap;
-    }
-
-    /* Mobile & Tablet Items View */
-    .mobile-only-items {
-        display: none;
-    }
-
-    /* Order Totals Clean Strip */
-    .order-totals-strip {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        margin-bottom: 18px;
         border-radius: 14px;
-        padding: 18px 22px;
-        margin-top: 20px;
-        display: flex;
+    }
+
+    .desktop-only-items {
+        display: none !important;
+    }
+
+    .mobile-only-items {
+        display: flex !important;
         flex-direction: column;
         gap: 10px;
+    }
+
+    .mobile-item-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    }
+
+    .mobile-item-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .mobile-item-top .item-thumb-box {
+        width: 52px;
+        height: 52px;
+    }
+
+    .mobile-item-top .item-title-name {
         font-size: 13px;
     }
 
-    .totals-row {
+    .mobile-item-pricing {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color: #64748b;
-        gap: 12px;
+        margin-top: 10px;
+        padding-top: 9px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 12px;
+        color: #475569;
+        flex-wrap: wrap;
+        gap: 6px;
     }
 
-    .totals-row strong {
+    .mobile-price-calc {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .mobile-qty-pill {
+        display: inline-block;
+        padding: 2px 6px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        font-weight: 800;
         color: #0f172a;
-        font-weight: 700;
     }
 
-    .totals-row.grand-total {
-        padding-top: 14px;
-        margin-top: 4px;
-        border-top: 1.5px dashed #cbd5e1;
+    .mobile-price-total strong {
         font-size: 14px;
         font-weight: 900;
         color: #0f172a;
     }
 
-    .totals-row.grand-total strong {
-        font-size: 19px;
-        color: #0f172a;
+    .order-totals-strip {
+        padding: 14px;
     }
 
-    /* ─── Customer & Shipping Address Cards ─── */
     .customer-shipping-split {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-    }
-
-    .info-sub-panel {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .sub-panel-title {
-        font-size: 12px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #64748b;
-        margin: 0 0 2px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .info-field-unit {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-    }
-
-    .info-field-unit span.k {
-        font-size: 11px;
-        color: #64748b;
-        font-weight: 650;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-
-    .info-field-unit strong.v {
-        font-size: 13.5px;
-        color: #0f172a;
-        font-weight: 700;
-        word-break: break-word;
-    }
-
-    .info-field-unit a.link-wa {
-        color: #15803d;
-        text-decoration: none;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 2px;
-    }
-
-    .info-field-unit a.link-wa:hover {
-        text-decoration: underline;
-    }
-
-    /* ─── Gateway Midtrans Strip ─── */
-    .midtrans-details-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: 1fr;
         gap: 14px;
     }
 
-    .midtrans-metric-box {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 14px 16px;
+    .midtrans-details-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
     }
 
-    .midtrans-metric-box span {
-        display: block;
-        font-size: 11px;
-        font-weight: 700;
-        color: #64748b;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-    }
-
-    .midtrans-metric-box strong {
-        display: block;
-        font-size: 13px;
-        font-weight: 800;
-        color: #0f172a;
-        font-family: ui-monospace, monospace;
-    }
-
-    /* ─── Right Column: Management Sidebar ─── */
-    .status-editor-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 22px;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-    }
-
-    .form-select-modern {
-        width: 100%;
-        padding: 12px 14px;
-        background: #ffffff;
-        border: 1.5px solid #cbd5e1;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 700;
-        color: #0f172a;
-        cursor: pointer;
-        box-sizing: border-box;
-        transition: all 0.15s ease;
-    }
-
-    .form-select-modern:focus {
-        outline: none;
-        border-color: #dc2626;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
-    }
-
-    .btn-update-status {
-        width: 100%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 13px 20px;
-        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        color: #ffffff;
-        border: 0;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 800;
-        cursor: pointer;
-        box-shadow: 0 3px 12px rgba(220, 38, 38, 0.28);
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        margin-top: 14px;
-    }
-
-    .btn-update-status:hover {
-        background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.38);
-    }
-
-    /* Inventory Badge Card */
-    .inventory-stock-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 18px 20px;
-        margin-bottom: 22px;
-    }
-
-    .inventory-title-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        font-weight: 800;
-        color: #0f172a;
-        margin-bottom: 6px;
-    }
-
-    .inventory-desc {
-        font-size: 12px;
-        color: #64748b;
-        line-height: 1.45;
-        margin: 0;
-    }
-
-    /* Quick Tools Card */
+    .status-editor-card,
+    .inventory-stock-card,
     .quick-tools-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 22px;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+        padding: 16px 14px;
+        border-radius: 14px;
+    }
+}
+
+/* Small Screen Phones (<= 480px) */
+@media (max-width: 480px) {
+    .order-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
     }
 
-    .quick-tools-title {
-        font-size: 13.5px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 14px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #f1f5f9;
+    .order-header-actions {
+        grid-template-columns: 1fr;
     }
 
-    .quick-action-link-btn {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 11px 14px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        color: #334155;
-        font-size: 13px;
-        font-weight: 700;
-        text-decoration: none;
-        margin-bottom: 10px;
-        transition: all 0.15s ease;
+    .midtrans-details-grid {
+        grid-template-columns: 1fr;
     }
-
-    .quick-action-link-btn:last-child {
-        margin-bottom: 0;
-    }
-
-    .quick-action-link-btn:hover {
-        background: #0f172a;
-        color: #ffffff;
-        border-color: #0f172a;
-        transform: translateX(2px);
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-   TABLET & MOBILE RESPONSIVE
-═══════════════════════════════════════════════════════════ */
-    @media (max-width: 1024px) {
-        .order-metrics-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .order-main-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .order-command-bar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .order-header-actions {
-            width: 100%;
-        }
-
-        .btn-header-action {
-            flex: 1;
-            justify-content: center;
-            text-align: center;
-            box-sizing: border-box;
-        }
-
-        .order-metrics-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .stepper-relative-wrap {
-            padding: 0;
-        }
-
-        .stepper-connecting-line {
-            display: none;
-        }
-
-        .order-stepper-track {
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        .order-step-node {
-            flex-direction: row;
-            align-items: center;
-            text-align: left;
-            gap: 12px;
-        }
-
-        .step-circle {
-            margin-bottom: 0;
-            flex-shrink: 0;
-        }
-
-        .customer-shipping-split {
-            grid-template-columns: 1fr;
-        }
-
-        .midtrans-details-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .order-panel-card {
-            padding: 18px 14px;
-        }
-
-        .desktop-only-items {
-            display: none !important;
-        }
-
-        .mobile-only-items {
-            display: flex !important;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .mobile-item-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 14px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
-        }
-
-        .mobile-item-top {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .mobile-item-pricing {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 13px;
-            color: #475569;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .mobile-price-calc {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12.5px;
-        }
-
-        .mobile-qty-pill {
-            display: inline-block;
-            padding: 2px 7px;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .mobile-price-total strong {
-            font-size: 14.5px;
-            font-weight: 900;
-            color: #0f172a;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .order-title-row {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .order-page-title {
-            font-size: 20px;
-        }
-
-        .order-header-actions {
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .btn-header-action {
-            width: 100%;
-        }
-
-        .totals-row.grand-total strong {
-            font-size: 17px;
-        }
-    }
+}
 </style>
 
 <div class="order-detail-container">
@@ -1271,23 +1275,19 @@
             <div class="order-meta-info">
                 <span>Waktu Dibuat: <strong>{{ order.dibuat_pada|date:"d M Y, H:i" }} WIB</strong></span>
                 <span>&middot;</span>
-                <span>Pembeli: <strong>{{ order.pengguna.get_full_name|default:order.pengguna.username
-                        }}</strong></span>
+                <span>Pembeli: <strong>{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong></span>
                 <span>&middot;</span>
-                <span>UUID: <button type="button" class="order-uuid-chip" onclick="copyUUID('{{ order.nomor }}', this)"
-                        title="Klik untuk menyalin UUID pesanan"><span>{{ order.nomor|stringformat:".16s" }}...</span>
-                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg></button></span>
+                <span>UUID: <button type="button" class="order-uuid-chip" onclick="copyUUID('{{ order.nomor }}', this)" title="Klik untuk menyalin UUID pesanan"><span>{{ order.nomor|stringformat:".16s" }}...</span>
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg></button></span>
             </div>
         </div>
 
         <div class="order-header-actions">
             {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
-            <a class="btn-header-action btn-action-receipt" href="{% url 'app:order_receipt' order.nomor %}"
-                target="_blank" title="Buka cetak struk kasir &amp; faktur A4">
+            <a class="btn-header-action btn-action-receipt" href="{% url 'app:order_receipt' order.nomor %}" target="_blank" title="Buka cetak struk kasir & faktur A4">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3">
                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -1298,12 +1298,9 @@
             {% endif %}
 
             {% if clean_phone %}
-            <a class="btn-header-action btn-action-wa"
-                href="https://api.whatsapp.com/send?phone={{ clean_phone }}&text=Halo%20{{ order.pengguna.get_full_name|default:order.pengguna.username|urlencode }},%20kami%20dari%20Losari%20Computer%20Makassar%20terkait%20pesanan%20nomor%20%23INV-LC-{{ order.nomor|stringformat:'.8s'|upper }}."
-                target="_blank" rel="noopener" title="Kirim pesan WhatsApp ke pembeli">
+            <a class="btn-header-action btn-action-wa" href="https://api.whatsapp.com/send?phone={{ clean_phone }}&text=Halo%20{{ order.pengguna.get_full_name|default:order.pengguna.username|urlencode }},%20kami%20dari%20Losari%20Computer%20Makassar%20terkait%20pesanan%20nomor%20%23INV-LC-{{ order.nomor|stringformat:'.8s'|upper }}." target="_blank" rel="noopener" title="Kirim pesan WhatsApp ke pembeli">
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
-                    <path
-                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
                 </svg>
                 <span>WhatsApp Pembeli</span>
             </a>
@@ -1330,7 +1327,7 @@
             <div class="metric-text-group">
                 <p class="metric-subtitle">Total Transaksi</p>
                 <h3 class="metric-headline">{{ order.total_rupiah|default:order.total }}</h3>
-                <p class="metric-hint">Sudah termasuk PPN &amp; garansi</p>
+                <p class="metric-hint">Termasuk PPN &amp; garansi</p>
             </div>
         </div>
 
@@ -1342,8 +1339,8 @@
             </div>
             <div class="metric-text-group">
                 <p class="metric-subtitle">Status Pembayaran</p>
-                <h3 class="metric-headline" style="color:#15803d;">{{ order.get_status_display }}</h3>
-                <p class="metric-hint">Terverifikasi otomatis lunas</p>
+                <h3 class="metric-headline" style="{% if order.status == 'dibayar' or order.status == 'selesai' %}color:#15803d;{% elif order.status == 'dibatalkan' %}color:#dc2626;{% else %}color:#d97706;{% endif %}">{{ order.get_status_display }}</h3>
+                <p class="metric-hint">{% if order.status == 'dibayar' or order.status == 'selesai' %}Terverifikasi otomatis lunas{% elif order.status == 'dibatalkan' %}Pesanan dibatalkan{% else %}Menunggu konfirmasi lunas{% endif %}</p>
             </div>
         </div>
 
@@ -1355,8 +1352,7 @@
             </div>
             <div class="metric-text-group">
                 <p class="metric-subtitle">Metode Pembayaran</p>
-                <h3 class="metric-headline" style="font-size:16px;">{{ order.midtrans_payment_type|default:"QRIS /
-                    GoPay"|upper }}</h3>
+                <h3 class="metric-headline" style="font-size:15px;">{{ order.midtrans_payment_type|default:"QRIS / GoPay"|upper }}</h3>
                 <p class="metric-hint">Gateway Midtrans Official</p>
             </div>
         </div>
@@ -1389,7 +1385,7 @@
         </div>
 
         <div class="stepper-relative-wrap">
-            <!-- Progress Line Bar -->
+            <!-- Progress Line Bar (Desktop/Tablet) -->
             <div class="stepper-connecting-line">
                 {% if order.status == 'selesai' %}
                 <div class="stepper-progress-fill" style="width: 100%;"></div>
@@ -1415,14 +1411,12 @@
 
                 <!-- Tahap 2 -->
                 <div class="order-step-node">
-                    {% if order.status == 'dibayar' or order.status == 'diproses' or order.status == 'dikirim' or
-                    order.status == 'selesai' %}
+                    {% if order.status == 'dibayar' or order.status == 'diproses' or order.status == 'dikirim' or order.status == 'selesai' %}
                     <div class="step-circle done">&check;</div>
                     <span class="step-text-title">2. Pembayaran Lunas</span>
                     <span class="step-text-desc">QRIS / Lunas Terverifikasi</span>
                     {% elif order.status == 'dibatalkan' %}
-                    <div class="step-circle" style="background:#fee2e2; border-color:#f87171; color:#dc2626;">&times;
-                    </div>
+                    <div class="step-circle" style="background:#fee2e2; border-color:#f87171; color:#dc2626;">&times;</div>
                     <span class="step-text-title" style="color:#dc2626;">2. Dibatalkan</span>
                     <span class="step-text-desc">Transaksi Batal</span>
                     {% else %}
@@ -1483,13 +1477,11 @@
                         </svg>
                         <span>Daftar Unit Produk Dipesan</span>
                     </h3>
-                    <span
-                        style="font-size:12px; font-weight: 700; color:#475569; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; padding:3px 11px;">{{
-                        order.item.count }} Unit Terdaftar</span>
+                    <span style="font-size:12px; font-weight: 700; color:#475569; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; padding:3px 11px;">{{ order.item.count }} Unit Terdaftar</span>
                 </div>
 
                 <div class="order-items-wrapper">
-                    <!-- Desktop Table View (Strictly Contained Within Borders) -->
+                    <!-- Desktop Table View -->
                     <table class="desktop-only-items">
                         <thead>
                             <tr>
@@ -1508,31 +1500,25 @@
                                             {% if item.produk and item.produk.gambar %}
                                             <img src="{{ item.produk.gambar.url }}" alt="{{ item.nama_produk }}">
                                             {% elif item.produk and item.produk.galeri.first %}
-                                            <img src="{{ item.produk.galeri.first.gambar.url }}"
-                                                alt="{{ item.nama_produk }}">
+                                            <img src="{{ item.produk.galeri.first.gambar.url }}" alt="{{ item.nama_produk }}">
                                             {% else %}
-                                            <img src="/media/produk/ec702708-38f3-4f8b-87dc-a90c28405dd2_removalai_preview.png"
-                                                alt="{{ item.nama_produk }}">
+                                            <img src="/media/produk/ec702708-38f3-4f8b-87dc-a90c28405dd2_removalai_preview.png" alt="{{ item.nama_produk }}">
                                             {% endif %}
                                         </div>
                                         <div class="item-meta-copy">
                                             <h4 class="item-title-name">{{ item.nama_produk }}</h4>
                                             <div class="item-pill-row">
                                                 {% if item.produk.kategori %}
-                                                <span class="spec-pill pill-category">{{ item.produk.kategori.nama
-                                                    }}</span>
+                                                <span class="spec-pill pill-category">{{ item.produk.kategori.nama }}</span>
                                                 {% endif %}
-                                                <span class="spec-pill pill-neutral">Kondisi {{
-                                                    item.produk.get_kondisi_display|default:"Grade A+" }}</span>
+                                                <span class="spec-pill pill-neutral">Kondisi {{ item.produk.get_kondisi_display|default:"Grade A+" }}</span>
                                                 <span class="spec-pill pill-success">&check; QC Lulus 25 Titik</span>
-                                                <span class="spec-pill pill-warning">&#128737; Garansi Toko 1
-                                                    Bulan</span>
+                                                <span class="spec-pill pill-warning">&#128737; Garansi Toko 1 Bulan</span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="col-th-price"
-                                    style="font-weight: 600; color: #475569; font-size: 13.5px; white-space: nowrap;">
+                                <td class="col-th-price" style="font-weight: 600; color: #475569; font-size: 13.5px; white-space: nowrap;">
                                     {{ item.harga_satuan_rupiah|default:item.harga_satuan }}
                                 </td>
                                 <td class="col-th-qty" style="white-space: nowrap;">
@@ -1540,21 +1526,19 @@
                                         {{ item.jumlah }} Unit
                                     </span>
                                 </td>
-                                <td class="col-th-subtotal"
-                                    style="font-weight: 800; color: #0f172a; font-size: 14.5px; white-space: nowrap;">
+                                <td class="col-th-subtotal" style="font-weight: 800; color: #0f172a; font-size: 14px; white-space: nowrap;">
                                     {{ item.subtotal_rupiah|default:item.subtotal }}
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" style="text-align: center; padding: 24px; color: #64748b;">Tidak ada
-                                    item terdaftar dalam pesanan ini.</td>
+                                <td colspan="4" style="text-align: center; padding: 24px; color: #64748b;">Tidak ada item terdaftar dalam pesanan ini.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
 
-                    <!-- Mobile & Tablet Responsive Cards (Fluid across all brands) -->
+                    <!-- Mobile & Tablet Responsive Cards -->
                     <div class="mobile-only-items">
                         {% for item in order.item.all %}
                         <div class="mobile-item-card">
@@ -1565,8 +1549,7 @@
                                     {% elif item.produk and item.produk.galeri.first %}
                                     <img src="{{ item.produk.galeri.first.gambar.url }}" alt="{{ item.nama_produk }}">
                                     {% else %}
-                                    <img src="/media/produk/ec702708-38f3-4f8b-87dc-a90c28405dd2_removalai_preview.png"
-                                        alt="{{ item.nama_produk }}">
+                                    <img src="/media/produk/ec702708-38f3-4f8b-87dc-a90c28405dd2_removalai_preview.png" alt="{{ item.nama_produk }}">
                                     {% endif %}
                                 </div>
                                 <div class="item-meta-copy">
@@ -1575,8 +1558,7 @@
                                         {% if item.produk.kategori %}
                                         <span class="spec-pill pill-category">{{ item.produk.kategori.nama }}</span>
                                         {% endif %}
-                                        <span class="spec-pill pill-neutral">Kondisi {{
-                                            item.produk.get_kondisi_display|default:"Grade A+" }}</span>
+                                        <span class="spec-pill pill-neutral">Kondisi {{ item.produk.get_kondisi_display|default:"Grade A+" }}</span>
                                         <span class="spec-pill pill-success">&check; QC 25 Titik</span>
                                     </div>
                                 </div>
@@ -1607,8 +1589,7 @@
                     <div class="totals-row">
                         <span>Biaya Pengiriman (Ekspedisi Makassar):</span>
                         <span class="totals-free-pill">
-                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                             Rp0 (FREE ONGKIR)
@@ -1617,15 +1598,15 @@
                     <div class="totals-row">
                         <span>Proteksi Packing Kayu &amp; Bubble Wrap Ekstra:</span>
                         <span class="totals-free-pill">
-                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            Rp0 (FREE SAFETY QC)
+                            Rp0 (GRATIS TOKO)
                         </span>
                     </div>
+                    <div class="totals-divider"></div>
                     <div class="totals-row grand-total">
-                        <span>TOTAL PEMBAYARAN:</span>
+                        <span>Total Pembayaran Akhir:</span>
                         <strong>{{ order.total_rupiah|default:order.total }}</strong>
                     </div>
                 </div>
@@ -1646,11 +1627,16 @@
                 <div class="customer-shipping-split">
                     <!-- Data Profil Pelanggan -->
                     <div class="info-sub-panel">
-                        <h5 class="sub-panel-title">Profil Pelanggan</h5>
+                        <h5 class="sub-panel-title">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#2563eb" stroke-width="2.2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Profil Pelanggan</span>
+                        </h5>
                         <div class="info-field-unit">
                             <span class="k">Nama Lengkap</span>
-                            <strong class="v">{{ order.pengguna.get_full_name|default:order.pengguna.username
-                                }}</strong>
+                            <strong class="v">{{ order.pengguna.get_full_name|default:order.pengguna.username }}</strong>
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Username Akun</span>
@@ -1658,21 +1644,17 @@
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Alamat Email</span>
-                            <strong class="v"><a href="mailto:{{ order.pengguna.email }}"
-                                    style="color:#2563eb; text-decoration:none;">{{ order.pengguna.email|default:"—"
-                                    }}</a></strong>
+                            <strong class="v"><a href="mailto:{{ order.pengguna.email }}" style="color:#2563eb; text-decoration:none;">{{ order.pengguna.email|default:"—" }}</a></strong>
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Nomor Telepon / WhatsApp</span>
                             <strong class="v">
                                 {% if clean_phone %}
-                                <a class="link-wa" href="https://wa.me/{{ clean_phone }}" target="_blank"
-                                    rel="noopener">
+                                <a class="link-wa" href="https://wa.me/{{ clean_phone }}" target="_blank" rel="noopener">
                                     <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                                        <path
-                                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
                                     </svg>
-                                    {{ customer_phone|default:order.pengguna.pengguna.telp }} &rarr; Chat Langsung
+                                    {{ customer_phone|default:order.pengguna.pengguna.telp }} &rarr; Chat WhatsApp
                                 </a>
                                 {% else %}
                                 &mdash;
@@ -1683,7 +1665,13 @@
 
                     <!-- Alamat Pengiriman -->
                     <div class="info-sub-panel">
-                        <h5 class="sub-panel-title">Tujuan Pengiriman</h5>
+                        <h5 class="sub-panel-title">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#dc2626" stroke-width="2.2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>Tujuan Pengiriman</span>
+                        </h5>
                         <div class="info-field-unit">
                             <span class="k">Alamat Lengkap</span>
                             <strong class="v">{{ order.alamat_pengiriman|default:"—" }}</strong>
@@ -1694,13 +1682,11 @@
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Kecamatan &amp; Provinsi</span>
-                            <strong class="v">{{ order.kecamatan|default:"—" }}, {{ order.provinsi|default:"Sulawesi
-                                Selatan" }}</strong>
+                            <strong class="v">{{ order.kecamatan|default:"—" }}, {{ order.provinsi|default:"Sulawesi Selatan" }}</strong>
                         </div>
                         <div class="info-field-unit">
                             <span class="k">Metode Ekspedisi</span>
-                            <strong class="v" style="color:#0f172a;">Pengiriman Langsung Aman (Packing Kayu
-                                Ekstra)</strong>
+                            <strong class="v" style="color:#0f172a;">Pengiriman Langsung Aman (Packing Kayu Ekstra)</strong>
                         </div>
                     </div>
                 </div>
@@ -1716,8 +1702,7 @@
                         </svg>
                         <span>Verifikasi Gateway Midtrans</span>
                     </h3>
-                    <span
-                        style="font-size:11.5px; font-weight:800; color:#15803d; background:#ecfdf5; padding:3px 9px; border-radius:6px; border:1px solid #bbf7d0;">
+                    <span style="font-size:11.5px; font-weight:800; color:#15803d; background:#ecfdf5; padding:3px 9px; border-radius:6px; border:1px solid #bbf7d0;">
                         &check; Terverifikasi Otomatis
                     </span>
                 </div>
@@ -1725,16 +1710,15 @@
                 <div class="midtrans-details-grid">
                     <div class="midtrans-metric-box">
                         <span>Transaction ID</span>
-                        <strong title="{{ order.midtrans_transaction_id }}">{{
-                            order.midtrans_transaction_id|default:"LC-AUTO-VERIFIED" }}</strong>
+                        <strong title="{{ order.midtrans_transaction_id }}">{{ order.midtrans_transaction_id|default:"LC-AUTO-VERIFIED" }}</strong>
                     </div>
                     <div class="midtrans-metric-box">
                         <span>Transaction Type</span>
-                        <strong>{{ order.transaction_type }}</strong>
+                        <strong>{{ order.transaction_type|default:"Payment" }}</strong>
                     </div>
                     <div class="midtrans-metric-box">
                         <span>Channel</span>
-                        <strong>{{ order.channel }}</strong>
+                        <strong>{{ order.channel|default:order.midtrans_payment_type|default:"—" }}</strong>
                     </div>
                     <div class="midtrans-metric-box">
                         <span>Fraud Status</span>
@@ -1760,8 +1744,7 @@
 
                 <form method="post" id="status-update-form">
                     {% csrf_token %}
-                    <label for="{{ form.status.id_for_label }}"
-                        style="display:block; font-size:12px; font-weight: 700; color:#475569; text-transform:uppercase; margin-bottom:8px;">
+                    <label for="{{ form.status.id_for_label }}" style="display:block; font-size:12px; font-weight: 700; color:#475569; text-transform:uppercase; margin-bottom:8px;">
                         Pilih Status Baru:
                     </label>
                     {{ form.status }}
@@ -1771,8 +1754,7 @@
                     </p>
 
                     <button type="submit" class="btn-update-status">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                             <polyline points="17 21 17 13 7 13 7 21"></polyline>
                             <polyline points="7 3 7 8 15 8"></polyline>
@@ -1789,13 +1771,11 @@
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                     </svg>
-                    <span>Stok Inventori: {% if order.stok_dikurangi %}Terkurang Otomatis{% else %}Belum Terkurang{%
-                        endif %}</span>
+                    <span>Stok Inventori: {% if order.stok_dikurangi %}Terkurang Otomatis{% else %}Belum Terkurang{% endif %}</span>
                 </div>
                 <p class="inventory-desc">
                     {% if order.stok_dikurangi %}
-                    Sistem telah memotong stok unit laptop di database toko secara otomatis saat pembayaran dinyatakan
-                    lunas.
+                    Sistem telah memotong stok unit laptop di database toko secara otomatis saat pembayaran dinyatakan lunas.
                     {% else %}
                     Stok belum dipotong karena status pesanan masih menunggu pembayaran lunas.
                     {% endif %}
@@ -1809,8 +1789,7 @@
                 {% if order.status != 'menunggu' and order.status != 'dibatalkan' %}
                 <a class="quick-action-link-btn" href="{% url 'app:order_receipt' order.nomor %}" target="_blank">
                     <span>
-                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
-                            stroke-width="2.2" style="vertical-align:middle; margin-right:6px;">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle; margin-right:6px;">
                             <polyline points="6 9 6 2 18 2 18 9"></polyline>
                             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                             <rect x="6" y="14" width="12" height="8"></rect>
@@ -1823,8 +1802,7 @@
 
                 <a class="quick-action-link-btn" href="{% url 'app:payment_status' order.nomor %}" target="_blank">
                     <span>
-                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
-                            stroke-width="2.2" style="vertical-align:middle; margin-right:6px;">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle; margin-right:6px;">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
@@ -1834,14 +1812,10 @@
                 </a>
 
                 {% if clean_phone %}
-                <a class="quick-action-link-btn"
-                    href="https://api.whatsapp.com/send?phone={{ clean_phone }}&text=Halo%20{{ order.pengguna.get_full_name|default:order.pengguna.username|urlencode }},%20pesanan%20nomor%20%23INV-LC-{{ order.nomor|stringformat:'.8s'|upper }}%20di%20Losari%20Computer%20saat%20ini%20berstatus%20*{{ order.get_status_display }}*."
-                    target="_blank" rel="noopener">
+                <a class="quick-action-link-btn" href="https://api.whatsapp.com/send?phone={{ clean_phone }}&text=Halo%20{{ order.pengguna.get_full_name|default:order.pengguna.username|urlencode }},%20pesanan%20nomor%20%23INV-LC-{{ order.nomor|stringformat:'.8s'|upper }}%20di%20Losari%20Computer%20saat%20ini%20berstatus%20*{{ order.get_status_display }}*." target="_blank" rel="noopener">
                     <span>
-                        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"
-                            style="vertical-align:middle; margin-right:6px;">
-                            <path
-                                d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="vertical-align:middle; margin-right:6px;">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
                         </svg>
                         Kirim Update Status WhatsApp
                     </span>
@@ -1854,16 +1828,16 @@
 </div>
 
 <script>
-    function copyUUID(text, btn) {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(function () {
-                var originalHtml = btn.innerHTML;
-                btn.innerHTML = '<span style="color:#16a34a; font-weight:800;">✓ Tersalin!</span>';
-                setTimeout(function () {
-                    btn.innerHTML = originalHtml;
-                }, 2000);
-            });
-        }
+function copyUUID(text, btn) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () {
+            var originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span style="color:#16a34a; font-weight:800;">✓ Tersalin!</span>';
+            setTimeout(function () {
+                btn.innerHTML = originalHtml;
+            }, 2000);
+        });
     }
+}
 </script>
 {% endblock %}

@@ -44,9 +44,17 @@ DEBUG = True
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
-        "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver"
+        "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver,.vercel.app"
     ).split(",")
     if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS", "https://*.vercel.app,http://127.0.0.1:8000,http://localhost:8000"
+    ).split(",")
+    if origin.strip()
 ]
 
 
@@ -66,6 +74,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,7 +107,22 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-if os.getenv("DB_ENGINE", "mysql").lower() == "mysql":
+try:
+    import dj_database_url
+except ImportError:
+    dj_database_url = None
+
+database_url = os.getenv("DATABASE_URL")
+if database_url and dj_database_url:
+    # Supabase PostgreSQL (Cloud / Production)
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+elif os.getenv("DB_ENGINE", "mysql").lower() == "mysql":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
@@ -157,6 +181,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
