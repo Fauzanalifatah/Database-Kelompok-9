@@ -21,6 +21,7 @@ from django.utils.text import slugify
 
 from .decorators_admin import admin_required
 from .form_admin import (
+    BannerBerandaForm,
     FooterPaymentForm,
     FooterPaymentAddForm,
     FooterSettingForm,
@@ -40,6 +41,7 @@ from .form_admin import (
 from .forms import RegistrationForm
 from .models import (
     Artikel,
+    BannerBeranda,
     BlogPengguna,
     KategoriArtikel,
     MitraDeepublish,
@@ -418,6 +420,75 @@ def mitra_manager_delete(request, pk):
         mitra.delete()
         messages.success(request, "Mitra Losari Computer berhasil dihapus.")
     return redirect("app:mitra_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def banner_manager(request):
+    objects = BannerBeranda.objects.all().order_by("urutan", "-created_at")
+    total_count = objects.count()
+    active_count = objects.filter(aktif=True).count()
+    inactive_count = total_count - active_count
+    return render(
+        request,
+        "app/banner_manager.html",
+        {
+            "title": "Kelola Banner Beranda",
+            "heading": "Banner Beranda",
+            "objects": objects,
+            "total_count": total_count,
+            "active_count": active_count,
+            "inactive_count": inactive_count,
+            "add_url": reverse("app:banner_manager_add"),
+            "public_url": reverse("home"),
+            "section": "banner",
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def banner_manager_form(request, pk=None):
+    instance = BannerBeranda.objects.filter(pk=pk).first() if pk else None
+    if pk and instance is None:
+        raise Http404
+    form = BannerBerandaForm(
+        request.POST or None, request.FILES or None, instance=instance
+    )
+    if request.method == "POST" and form.is_valid():
+        banner = form.save(commit=False)
+        if not banner.pk and banner.urutan == 0:
+            banner.urutan = BannerBeranda.objects.count()
+        banner.save()
+        messages.success(
+            request, f"Banner '{banner.judul}' berhasil disimpan."
+        )
+        return redirect("app:banner_manager")
+    return render(
+        request,
+        "app/banner_manager_form.html",
+        {
+            "title": "Edit Banner Beranda" if instance else "Tambah Banner Baru",
+            "heading": "Edit Banner Beranda" if instance else "Tambah Banner Baru",
+            "instance": instance,
+            "section": "banner",
+            "form": form,
+            "item_label": "banner",
+            "cancel_url": reverse("app:banner_manager"),
+            "public_url": reverse("home"),
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def banner_manager_delete(request, pk):
+    banner = get_object_or_404(BannerBeranda, pk=pk)
+    if request.method == "POST":
+        judul = banner.judul
+        banner.delete()
+        messages.success(request, f"Banner '{judul}' berhasil dihapus.")
+    return redirect("app:banner_manager")
 
 
 @admin_required
@@ -1365,6 +1436,7 @@ def home(request):
             "products": products,
             "selected_category": selected_category,
             "query": query,
+            "banners": BannerBeranda.objects.filter(aktif=True).order_by("urutan", "-created_at"),
         },
     )
 

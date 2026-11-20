@@ -1,0 +1,399 @@
+{% extends "app/content_manager.html" %}
+{% block content %}
+<style>
+@media (min-width: 769px) {
+    .topbar {
+        display: none !important;
+    }
+}
+
+.banner-form-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ─── Command Bar / Breadcrumb ─── */
+.banner-command-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.banner-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.banner-breadcrumb a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.banner-breadcrumb a:hover {
+    color: #0f172a;
+}
+.banner-breadcrumb span.sep {
+    color: #cbd5e1;
+}
+
+.banner-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.banner-page-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 850;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+/* ─── Form Card ─── */
+.banner-form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+    padding: 32px;
+}
+
+.form-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+}
+
+.form-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.form-field-group label {
+    font-size: 13.5px;
+    font-weight: 750;
+    color: #1e293b;
+}
+.form-field-group .help-text {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.form-control-modern {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    outline: none;
+    transition: all 0.15s ease;
+    background: #ffffff;
+    color: #0f172a;
+    box-sizing: border-box;
+}
+.form-control-modern:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+/* ─── Modern Image Upload Zone ─── */
+.upload-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 24px;
+    background: #f8fafc;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.upload-dropzone:hover {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+.upload-preview-wrap {
+    width: 100%;
+    max-height: 280px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background: #0f141a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.upload-preview-wrap img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+.upload-instructions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+}
+.upload-instructions svg {
+    color: #dc2626;
+    margin-bottom: 4px;
+}
+.upload-instructions strong {
+    font-size: 14px;
+    color: #0f172a;
+}
+.upload-instructions span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* ─── Toggle Switch Field ─── */
+.switch-control-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    gap: 16px;
+}
+.switch-copy strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 750;
+    color: #0f172a;
+}
+.switch-copy small {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.switch-label-wrap {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+}
+.switch-label-wrap input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #cbd5e1;
+    transition: 0.25s;
+    border-radius: 34px;
+}
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.25s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch-label-wrap input:checked + .switch-slider {
+    background-color: #16a34a;
+}
+.switch-label-wrap input:checked + .switch-slider:before {
+    transform: translateX(22px);
+}
+
+/* ─── Action Buttons Footer ─── */
+.form-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+}
+.btn-submit-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(220, 38, 38, 0.28);
+    transition: all 0.2s ease;
+}
+.btn-submit-save:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    transform: translateY(-2px);
+}
+.btn-cancel-return {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.btn-cancel-return:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+</style>
+
+<div class="banner-form-wrapper">
+    <!-- ══════════ TOP COMMAND BAR ══════════ -->
+    <div class="banner-command-bar">
+        <div>
+            <div class="banner-breadcrumb">
+                <a href="{% url 'app:dashboard' %}">Dashboard</a>
+                <span class="sep">/</span>
+                <a href="{{ cancel_url }}">Banner Beranda</a>
+                <span class="sep">/</span>
+                <span>{% if instance %}Edit Banner{% else %}Tambah Baru{% endif %}</span>
+            </div>
+            <div class="banner-title-row">
+                <h2 class="banner-page-title">{{ heading }}</h2>
+            </div>
+        </div>
+        <div>
+            <a class="btn-cancel-return" href="{{ cancel_url }}">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>Kembali ke Daftar</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ══════════ FORM CARD ══════════ -->
+    <div class="banner-form-card">
+        <form method="post" enctype="multipart/form-data" id="bannerForm">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="editor-error-box" style="margin-bottom:20px;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#b91c1c;">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-grid-layout">
+                <!-- Judul Banner -->
+                <div class="form-field-group">
+                    <label for="{{ form.judul.id_for_label }}">Judul Banner <span style="color:#dc2626;">*</span></label>
+                    {{ form.judul }}
+                    <p class="help-text">Nama atau pengenal banner (tampil sebagai judul/alt gambar).</p>
+                    {% if form.judul.errors %}<div style="color:#dc2626;font-size:12px;">{{ form.judul.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Gambar Banner Dropzone -->
+                <div class="form-field-group">
+                    <label>Gambar Banner <span style="color:#dc2626;">*</span></label>
+                    <div class="upload-dropzone" onclick="document.getElementById('{{ form.gambar.id_for_label }}').click();">
+                        <div class="upload-preview-wrap" id="previewContainer" {% if not instance or not instance.gambar %}style="display:none;"{% endif %}>
+                            <img id="imagePreview" src="{% if instance and instance.gambar %}{{ instance.gambar.url }}{% endif %}" alt="Pratinjau Banner">
+                        </div>
+                        <div class="upload-instructions" id="uploadPlaceholder" {% if instance and instance.gambar %}style="display:none;"{% endif %}>
+                            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                            <strong>Klik atau seret file gambar banner ke sini</strong>
+                            <span>Disarankan gambar rasio lebar / landscape (JPG, PNG, atau WEBP)</span>
+                        </div>
+                        <div style="display:none;">
+                            {{ form.gambar }}
+                        </div>
+                    </div>
+                    {% if form.gambar.errors %}<div style="color:#dc2626;font-size:12px;margin-top:4px;">{{ form.gambar.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Link URL -->
+                <div class="form-field-group">
+                    <label for="{{ form.link_url.id_for_label }}">Tautan Link URL (Opsional)</label>
+                    {{ form.link_url }}
+                    <p class="help-text">Saat pengunjung mengklik banner di beranda, mereka akan diarahkan ke link ini (contoh: <code>/shop/</code> atau link eksternal).</p>
+                    {% if form.link_url.errors %}<div style="color:#dc2626;font-size:12px;">{{ form.link_url.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Urutan -->
+                <div class="form-field-group" style="max-width: 240px;">
+                    <label for="{{ form.urutan.id_for_label }}">Urutan Penempatan</label>
+                    {{ form.urutan }}
+                    <p class="help-text">Angka lebih kecil tampil lebih awal (0, 1, 2, ...).</p>
+                    {% if form.urutan.errors %}<div style="color:#dc2626;font-size:12px;">{{ form.urutan.errors }}</div>{% endif %}
+                </div>
+
+                <!-- Status Aktif Toggle -->
+                <div class="switch-control-card">
+                    <div class="switch-copy">
+                        <strong>Tampilkan Banner di Beranda</strong>
+                        <small>Aktifkan agar banner langsung muncul di bagian atas halaman beranda Losari Computer.</small>
+                    </div>
+                    <label class="switch-label-wrap">
+                        {{ form.aktif }}
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-footer-actions">
+                <a class="btn-cancel-return" href="{{ cancel_url }}">Batal</a>
+                <button class="btn-submit-save" type="submit">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <span>Simpan Banner</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById("{{ form.gambar.id_for_label }}");
+    const previewContainer = document.getElementById("previewContainer");
+    const imagePreview = document.getElementById("imagePreview");
+    const placeholder = document.getElementById("uploadPlaceholder");
+
+    if (fileInput) {
+        fileInput.addEventListener("change", function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    imagePreview.src = evt.target.result;
+                    previewContainer.style.display = "flex";
+                    if (placeholder) placeholder.style.display = "none";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

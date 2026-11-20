@@ -6,6 +6,7 @@ from django.contrib.auth.password_validation import validate_password
 
 from .models import (
     AboutSetting,
+    BannerBeranda,
     FooterPayment,
     FooterSetting,
     FooterSocial,
@@ -299,6 +300,60 @@ class MitraDeepublishForm(forms.ModelForm):
             "gambar": "Disarankan menggunakan format PNG transparan atau SVG beresolusi tajam.",
             "aktif": "Aktifkan agar logo mitra ini langsung tampil di carousel beranda website.",
             "urutan": "Nomor urut penempatan di slider beranda (angka lebih kecil tampil lebih awal).",
+        }
+
+
+class BannerBerandaForm(forms.ModelForm):
+    class Meta:
+        model = BannerBeranda
+        fields = ["judul", "gambar", "link_url", "aktif", "urutan"]
+        widgets = {
+            "judul": forms.TextInput(
+                attrs={
+                    "class": "form-control-modern",
+                    "placeholder": "Contoh: Banner Promo Toko Losari Computer",
+                    "autocomplete": "off",
+                }
+            ),
+            "gambar": forms.FileInput(
+                attrs={
+                    "accept": "image/png,image/jpeg,image/webp,image/jpg",
+                    "class": "hidden-file-input",
+                }
+            ),
+            "link_url": forms.TextInput(
+                attrs={
+                    "class": "form-control-modern",
+                    "placeholder": "Contoh: /shop/ atau https://... (opsional)",
+                    "autocomplete": "off",
+                }
+            ),
+            "urutan": forms.NumberInput(
+                attrs={
+                    "class": "form-control-modern",
+                    "min": 0,
+                    "placeholder": "0",
+                }
+            ),
+            "aktif": forms.CheckboxInput(
+                attrs={
+                    "class": "modern-switch-checkbox",
+                }
+            ),
+        }
+        labels = {
+            "judul": "Judul Banner",
+            "gambar": "Gambar Banner Hero",
+            "link_url": "Tautan Link (Opsional)",
+            "aktif": "Status Publikasi",
+            "urutan": "Urutan Tampil",
+        }
+        help_texts = {
+            "judul": "Judul atau keterangan singkat untuk banner.",
+            "gambar": "Disarankan gambar landscape berkualitas tinggi (format JPG, PNG, atau WEBP).",
+            "link_url": "URL tujuan ketika banner diklik di beranda (misal: /shop/). Kosongkan jika tidak perlu.",
+            "aktif": "Aktifkan agar banner ini tampil di bagian atas beranda website.",
+            "urutan": "Nomor urut penempatan banner (angka lebih kecil tampil lebih awal).",
         }
 
 

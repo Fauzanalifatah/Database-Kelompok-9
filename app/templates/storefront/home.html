@@ -1,10 +1,136 @@
 {% extends "storefront/base.html" %}
 {% load static %}
 {% block title %}Home - Losari Computer{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/home.css' %}?v=15"><link rel="stylesheet" href="{% static 'css/shop.css' %}">{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=15">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}">
+<style>
+.hero-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.hero-slides-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+.hero-slide {
+    min-width: 100%;
+    flex: 0 0 100%;
+}
+.hero-banner-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+}
+.hero-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+.hero-nav-btn:hover {
+    background: rgba(220, 38, 38, 0.9);
+    border-color: #dc2626;
+    transform: translateY(-50%) scale(1.08);
+}
+.hero-nav-btn.prev { left: 16px; }
+.hero-nav-btn.next { right: 16px; }
+.hero-indicators {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+}
+.hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+}
+.hero-dot.is-active {
+    background: #dc2626;
+    width: 26px;
+    border-radius: 5px;
+}
+@media (max-width: 768px) {
+    .hero-nav-btn {
+        width: 34px;
+        height: 34px;
+    }
+    .hero-nav-btn.prev { left: 8px; }
+    .hero-nav-btn.next { right: 8px; }
+}
+</style>
+{% endblock %}
 {% block content %}
 <section class="hero" aria-label="Losari Computer">
-    <img src="{% static 'images/Toko UMKM Losari Computer.jpeg' %}" alt="Toko Losari Computer">
+    {% if banners %}
+        {% if banners|length == 1 %}
+            {% with banner=banners.0 %}
+                {% if banner.link_url %}
+                <a href="{{ banner.link_url }}" class="hero-banner-link" aria-label="{{ banner.judul }}">
+                    <img src="{{ banner.gambar.url }}" alt="{{ banner.judul }}" loading="eager">
+                </a>
+                {% else %}
+                <img src="{{ banner.gambar.url }}" alt="{{ banner.judul }}" loading="eager">
+                {% endif %}
+            {% endwith %}
+        {% else %}
+            <div class="hero-slider" id="heroSlider">
+                <div class="hero-slides-wrapper" id="heroSlidesWrapper">
+                    {% for banner in banners %}
+                    <div class="hero-slide">
+                        {% if banner.link_url %}
+                        <a href="{{ banner.link_url }}" class="hero-banner-link" aria-label="{{ banner.judul }}">
+                            <img src="{{ banner.gambar.url }}" alt="{{ banner.judul }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+                        </a>
+                        {% else %}
+                        <img src="{{ banner.gambar.url }}" alt="{{ banner.judul }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="hero-nav-btn prev" type="button" aria-label="Banner Sebelumnya" id="heroPrevBtn">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="hero-nav-btn next" type="button" aria-label="Banner Berikutnya" id="heroNextBtn">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <div class="hero-indicators" id="heroDots">
+                    {% for banner in banners %}
+                    <button class="hero-dot {% if forloop.first %}is-active{% endif %}" type="button" aria-label="Pindah ke banner {{ forloop.counter }}" data-index="{{ forloop.counter0 }}"></button>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <img src="{% static 'images/toko-umkm-losari-computer.jpeg' %}" alt="Toko Losari Computer" loading="eager">
+    {% endif %}
 </section>
 <div class="container">
     <div class="section-head category-heading" id="categories">
@@ -302,6 +428,58 @@
         });
         window.addEventListener('resize', render);
         render();
+    }());
+
+    (function () {
+        const slider = document.getElementById('heroSlider');
+        if (!slider) return;
+        const wrapper = document.getElementById('heroSlidesWrapper');
+        const slides = wrapper ? wrapper.querySelectorAll('.hero-slide') : [];
+        const dots = document.querySelectorAll('.hero-dot');
+        const prevBtn = document.getElementById('heroPrevBtn');
+        const nextBtn = document.getElementById('heroNextBtn');
+        if (!wrapper || slides.length <= 1) return;
+
+        let currentIndex = 0;
+        const total = slides.length;
+        let timer = null;
+
+        function goTo(index) {
+            currentIndex = (index + total) % total;
+            wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+            dots.forEach(function (dot, idx) {
+                dot.classList.toggle('is-active', idx === currentIndex);
+            });
+        }
+
+        function next() { goTo(currentIndex + 1); }
+        function prev() { goTo(currentIndex - 1); }
+
+        function startAuto() {
+            stopAuto();
+            timer = setInterval(next, 5000);
+        }
+
+        function stopAuto() {
+            if (timer) clearInterval(timer);
+        }
+
+        if (nextBtn) nextBtn.addEventListener('click', function () { next(); startAuto(); });
+        if (prevBtn) prevBtn.addEventListener('click', function () { prev(); startAuto(); });
+
+        dots.forEach(function (dot) {
+            dot.addEventListener('click', function () {
+                const idx = parseInt(dot.dataset.index, 10);
+                if (!isNaN(idx)) {
+                    goTo(idx);
+                    startAuto();
+                }
+            });
+        });
+
+        slider.addEventListener('mouseenter', stopAuto);
+        slider.addEventListener('mouseleave', startAuto);
+        startAuto();
     }());
 </script>
 {% endblock %}

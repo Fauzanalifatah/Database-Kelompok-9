@@ -133,6 +133,14 @@ def rename_mitra_deepublish_image(instance, filename):
     return os.path.join("mitra-deepublish", filename)
 
 
+def rename_banner_image(instance, filename):
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else "jpg"
+    safe_name = slugify(instance.judul or "banner")[:30]
+    unique_suffix = uuid.uuid4().hex[:10]
+    filename = f"banner-{safe_name}-{unique_suffix}.{extension}"
+    return os.path.join("banners", filename)
+
+
 def rename_article_image(instance, filename):
     extension = filename.rsplit(".", 1)[-1] if "." in filename else ""
     filename = f"{instance.slug or 'artikel'}-{uuid.uuid4().hex[:8]}"
@@ -405,6 +413,34 @@ class MitraDeepublish(models.Model):
 
     def __str__(self):
         return self.nama
+
+
+class BannerBeranda(models.Model):
+    judul = models.CharField(max_length=150, verbose_name="Judul banner")
+    gambar = models.ImageField(
+        upload_to=rename_banner_image,
+        verbose_name="Gambar banner",
+        help_text="Format: JPG, PNG, atau WEBP. Disarankan gambar banner landscape.",
+    )
+    link_url = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+        verbose_name="Tautan / Link URL",
+        help_text="Opsional, tujuan saat banner diklik (misal: /shop/ atau URL promo).",
+    )
+    aktif = models.BooleanField(default=True, verbose_name="Tampilkan")
+    urutan = models.PositiveIntegerField(default=0, verbose_name="Urutan")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
+
+    class Meta:
+        ordering = ["urutan", "-created_at"]
+        verbose_name = "Banner Beranda"
+        verbose_name_plural = "Banner Beranda"
+
+    def __str__(self):
+        return self.judul
 
 
 class Artikel(models.Model):
