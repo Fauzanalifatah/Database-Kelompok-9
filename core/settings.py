@@ -109,10 +109,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 from urllib.parse import urlparse, unquote
 
-SUPABASE_DEFAULT_URL = "postgresql://postgres:Losaricomputer2013@db.txdefshgcjyrrrnseiij.supabase.co:5432/postgres"
+SUPABASE_DEFAULT_URL = "postgresql://postgres.txdefshgcjyrrrnseiij:Losaricomputer2013@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres"
 database_url = os.getenv("DATABASE_URL") or (SUPABASE_DEFAULT_URL if os.getenv("VERCEL") else None)
 
 if database_url:
+    # Auto-convert direct Supabase IPv6 domain to IPv4 Pooler domain for Vercel/Lambda compatibility
+    if "db.txdefshgcjyrrrnseiij.supabase.co" in database_url:
+        database_url = database_url.replace("db.txdefshgcjyrrrnseiij.supabase.co:5432", "aws-1-ap-southeast-1.pooler.supabase.com:6543")
+        database_url = database_url.replace("//postgres:", "//postgres.txdefshgcjyrrrnseiij:")
     # Supabase PostgreSQL (Cloud / Production)
     parsed_db = urlparse(database_url)
     DATABASES = {
