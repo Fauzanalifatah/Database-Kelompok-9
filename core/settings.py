@@ -107,22 +107,25 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-try:
-    import dj_database_url
-except ImportError:
-    dj_database_url = None
+from urllib.parse import urlparse, unquote
 
-database_url = os.getenv("DATABASE_URL")
-if database_url and dj_database_url:
+SUPABASE_DEFAULT_URL = "postgresql://postgres:Losaricomputer2013@db.txdefshgcjyrrrnseiij.supabase.co:5432/postgres"
+database_url = os.getenv("DATABASE_URL") or (SUPABASE_DEFAULT_URL if os.getenv("VERCEL") else None)
+
+if database_url:
     # Supabase PostgreSQL (Cloud / Production)
+    parsed_db = urlparse(database_url)
     DATABASES = {
-        "default": dj_database_url.config(
-            default=database_url,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(parsed_db.path.lstrip("/")),
+            "USER": unquote(parsed_db.username or ""),
+            "PASSWORD": unquote(parsed_db.password or ""),
+            "HOST": parsed_db.hostname,
+            "PORT": parsed_db.port or 5432,
+        }
     }
-elif os.getenv("DB_ENGINE", "mysql").lower() == "mysql":
+elif os.getenv("DB_ENGINE", "mysql").lower() == "mysql" and not os.getenv("VERCEL"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
