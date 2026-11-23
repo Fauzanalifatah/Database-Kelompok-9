@@ -548,30 +548,32 @@
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 16px rgba(15, 23, 42, 0.04);
-        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 6px 20px rgba(15, 23, 42, 0.04);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .pelanggan-table {
         width: 100%;
+        min-width: 1080px;
         border-collapse: collapse;
-        table-layout: fixed;
     }
 
     .pelanggan-table th {
         background: #f8fafc;
-        padding: 16px 20px;
-        font-size: 11.5px;
+        padding: 14px 18px;
+        font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
         color: #64748b;
         border-bottom: 1px solid #e2e8f0;
         text-align: left;
+        white-space: nowrap;
     }
 
     .pelanggan-table td {
-        padding: 18px 20px;
+        padding: 15px 18px;
         border-bottom: 1px solid #f1f5f9;
         vertical-align: middle;
         font-size: 13.5px;
@@ -586,66 +588,116 @@
     }
 
     .pelanggan-table tbody tr:hover {
-        background: #f8fafc;
+        background: #fbfcfe;
     }
 
-    /* Column Widths */
-    .col-customer { width: 28%; }
-    .col-email { width: 19%; }
-    .col-method { width: 13%; }
-    .col-activity { width: 18%; }
-    .col-status { width: 9%; }
-    .col-action { width: 13%; text-align: right; }
+    /* Column Widths (Spacious, Clean & NEVER truncated) */
+    .col-customer { width: 25%; min-width: 250px; }
+    .col-email { width: 21%; min-width: 210px; }
+    .col-method { width: 14%; min-width: 140px; white-space: nowrap; }
+    .col-activity { width: 18%; min-width: 195px; white-space: nowrap; }
+    .col-status { width: 9%; min-width: 105px; white-space: nowrap; }
+    .col-action { width: 13%; min-width: 180px; text-align: right; white-space: nowrap; }
 
     /* Activity Cell */
     .activity-cell-wrap {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        font-size: 11.5px;
+        gap: 5px;
+        font-size: 12px;
     }
     .activity-row {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
         white-space: nowrap;
     }
     .activity-tag {
-        color: #64748b;
-        font-weight: 600;
-        min-width: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 7px;
+        border-radius: 5px;
+        font-size: 10.5px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        min-width: 48px;
+        line-height: 1.25;
+    }
+    .tag-reg {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+    .tag-login {
+        background: #ecfeff;
+        color: #0e7490;
+        border: 1px solid #cffafe;
     }
     .activity-val {
         color: #0f172a;
-        font-weight: 750;
+        font-weight: 650;
+        font-size: 12px;
     }
     .activity-val-login {
         color: #0d9488;
+        font-weight: 700;
     }
     .activity-never {
         color: #94a3b8;
         font-style: italic;
+        font-size: 11.5px;
     }
 
     /* Actions Flex */
     .actions-flex {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
         justify-content: flex-end;
+        white-space: nowrap;
+    }
+    .btn-edit-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .btn-edit-action:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+    .btn-edit-action svg {
+        width: 13px;
+        height: 13px;
+        stroke: currentColor;
     }
     .btn-toggle-status {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
-        padding: 6px 10px;
+        gap: 5px;
+        padding: 6px 11px;
         border-radius: 8px;
-        font-size: 11px;
-        font-weight: 750;
+        font-size: 11.5px;
+        font-weight: 700;
         cursor: pointer;
         border: 1px solid;
         transition: all 0.15s ease;
         white-space: nowrap;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
     .btn-toggle-deactivate {
         color: #dc2626;
@@ -654,10 +706,21 @@
     }
     .btn-toggle-deactivate:hover {
         background: #fee2e2;
-        border-color: #f87171;
+        border-color: #fca5a5;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
     }
     .btn-toggle-activate {
         color: #16a34a;
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+    }
+    .btn-toggle-activate:hover {
+        background: #dcfce7;
+        border-color: #86efac;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.1);
+    }
         border-color: #bbf7d0;
         background: #f0fdf4;
     }
@@ -758,13 +821,12 @@
         color: #64748b;
     }
 
-    /* Email Cell with Icon & Ellipsis */
+    /* Email Cell */
     .email-wrapper {
         display: inline-flex;
         align-items: center;
-        gap: 7px;
+        gap: 8px;
         max-width: 100%;
-        overflow: hidden;
     }
 
     .email-icon {
@@ -776,7 +838,7 @@
 
     .email-text {
         color: #334155;
-        font-weight: 600;
+        font-weight: 550;
         font-size: 13px;
         white-space: nowrap;
         overflow: hidden;
@@ -788,10 +850,10 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 5px 12px;
-        border-radius: 999px;
+        padding: 5px 11px;
+        border-radius: 8px;
         font-size: 12px;
-        font-weight: 800;
+        font-weight: 750;
         letter-spacing: 0.01em;
         white-space: nowrap;
     }
@@ -800,14 +862,14 @@
         background: #eff6ff;
         color: #1d4ed8;
         border: 1px solid #bfdbfe;
-        box-shadow: 0 1px 2px rgba(37, 99, 235, 0.05);
+        box-shadow: 0 1px 2px rgba(37, 99, 235, 0.04);
     }
 
     .auth-pill-manual {
-        background: #ecfdf5;
-        color: #047857;
-        border: 1px solid #a7f3d0;
-        box-shadow: 0 1px 2px rgba(5, 150, 105, 0.05);
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        box-shadow: 0 1px 2px rgba(22, 128, 61, 0.04);
     }
 
     .auth-pill svg {
@@ -816,36 +878,60 @@
         flex-shrink: 0;
     }
 
-    /* Status Pill */
+    /* Status Pill (Sleek, Never truncated) */
     .status-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 5px 11px;
-        border-radius: 999px;
-        font-size: 11.5px;
-        font-weight: 800;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 750;
         white-space: nowrap;
     }
 
     .status-pill-active {
-        background: #f0fdf4;
-        color: #166534;
-        border: 1px solid #bbf7d0;
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
     }
 
     .status-pill-inactive {
         background: #fef2f2;
-        color: #991b1b;
+        color: #b91c1c;
         border: 1px solid #fecaca;
     }
 
     .status-dot-active {
-        width: 6px;
-        height: 6px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-dot-inactive {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Filter Indicator Dots */
+    .filter-indicator-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+    .filter-indicator-dot.dot-green {
         background: #16a34a;
         box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+    }
+    .filter-indicator-dot.dot-gray {
+        background: #94a3b8;
     }
 
     /* Action Edit Button */
@@ -915,11 +1001,6 @@
         .kpi-feasibility-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-        .col-customer { width: 34%; }
-        .col-email { width: 26%; }
-        .col-method { width: 18%; }
-        .col-status { width: 11%; }
-        .col-action { width: 11%; }
     }
 
     @media (max-width: 768px) {
@@ -1194,11 +1275,11 @@
                 <span class="tab-badge">{{ total_pelanggan }}</span>
             </a>
             <a href="?status=aktif{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if metode_filter %}&amp;metode={{ metode_filter }}{% endif %}" class="filter-tab {% if status_filter == 'aktif' %}active{% endif %}">
-                &bull; Aktif
+                <span class="filter-indicator-dot dot-green"></span> Aktif
                 <span class="tab-badge">{{ total_aktif }}</span>
             </a>
             <a href="?status=nonaktif{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if metode_filter %}&amp;metode={{ metode_filter }}{% endif %}" class="filter-tab {% if status_filter == 'nonaktif' %}active{% endif %}">
-                &bull; Nonaktif
+                <span class="filter-indicator-dot dot-gray"></span> Nonaktif
                 <span class="tab-badge">{{ total_nonaktif }}</span>
             </a>
             <a href="?metode=google{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if status_filter %}&amp;status={{ status_filter }}{% endif %}" class="filter-tab {% if metode_filter == 'google' %}active{% endif %}">
@@ -1225,9 +1306,21 @@
                 </svg>
                 <input type="text" name="q" class="search-input" value="{{ search_query }}" placeholder="Cari nama, email, username, no. telepon...">
             </div>
-            <button type="submit" class="btn-search">Cari</button>
+            <button type="submit" class="btn-search">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                Cari
+            </button>
             {% if search_query or metode_filter or status_filter %}
-            <a href="{% url 'app:pelanggan_manager' %}" class="btn-reset" title="Hapus filter pencarian">Reset</a>
+            <a href="{% url 'app:pelanggan_manager' %}" class="btn-reset" title="Hapus filter pencarian">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Reset
+            </a>
             {% endif %}
         </form>
     </div>
@@ -1312,15 +1405,15 @@
                     <td class="col-activity">
                         <div class="activity-cell-wrap">
                             <div class="activity-row" title="Waktu registrasi akun: {{ record.user.date_joined|date:'d M Y, H:i' }}">
-                                <span class="activity-tag">Daftar:</span>
+                                <span class="activity-tag tag-reg">Daftar</span>
                                 <span class="activity-val">{{ record.user.date_joined|date:"d M Y, H:i" }}</span>
                             </div>
                             <div class="activity-row" title="Terakhir kali login ke website: {% if record.user.last_login %}{{ record.user.last_login|date:'d M Y, H:i' }}{% else %}Belum pernah login{% endif %}">
-                                <span class="activity-tag">Login:</span>
+                                <span class="activity-tag tag-login">Login</span>
                                 {% if record.user.last_login %}
                                 <span class="activity-val activity-val-login">{{ record.user.last_login|date:"d M Y, H:i" }}</span>
                                 {% else %}
-                                <span class="activity-never">Belum login</span>
+                                <span class="activity-never">Belum pernah login</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -1334,7 +1427,7 @@
                         </span>
                         {% else %}
                         <span class="status-pill status-pill-inactive">
-                            Nonaktif
+                            <span class="status-dot-inactive"></span> Nonaktif
                         </span>
                         {% endif %}
                     </td>
@@ -1347,18 +1440,25 @@
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
-                                Edit
+                                <span>Edit</span>
                             </a>
                             {% if not record.user.is_superuser %}
                             <form method="post" action="{% url 'app:pelanggan_toggle_status' record.user.username %}" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin {% if record.user.is_active %}menonaktifkan{% else %}mengaktifkan{% endif %} akun {{ record.user.username }}?');">
                                 {% csrf_token %}
                                 {% if record.user.is_active %}
                                 <button type="submit" class="btn-toggle-status btn-toggle-deactivate" title="Nonaktifkan akun pelanggan ini">
-                                    Nonaktifkan
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                                    </svg>
+                                    <span>Nonaktifkan</span>
                                 </button>
                                 {% else %}
                                 <button type="submit" class="btn-toggle-status btn-toggle-activate" title="Aktifkan kembali akun pelanggan ini">
-                                    Aktifkan
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 6 9 17l-5-5"></path>
+                                    </svg>
+                                    <span>Aktifkan</span>
                                 </button>
                                 {% endif %}
                             </form>
