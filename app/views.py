@@ -474,11 +474,10 @@ def banner_manager_form(request, pk=None):
         current_urutan = total_banners + 1
         max_slots = total_banners + 1
 
+    initial_data = {"urutan": current_urutan} if not instance else None
     form = BannerBerandaForm(
-        request.POST or None, request.FILES or None, instance=instance
+        request.POST or None, request.FILES or None, instance=instance, initial=initial_data
     )
-    if request.method == "GET" and not instance:
-        form.initial["urutan"] = current_urutan
 
     if request.method == "POST" and form.is_valid():
         banner = form.save(commit=False)

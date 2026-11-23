@@ -407,7 +407,7 @@ class MitraDeepublish(models.Model):
         verbose_name="Logo mitra",
     )
     aktif = models.BooleanField(default=True, verbose_name="Tampilkan")
-    urutan = models.PositiveIntegerField(default=0, verbose_name="Urutan")
+    urutan = models.PositiveIntegerField(default=1, verbose_name="Urutan")
 
     class Meta:
         ordering = ["urutan", "nama"]
@@ -433,7 +433,7 @@ class BannerBeranda(models.Model):
         help_text="Opsional, tujuan saat banner diklik (misal: /shop/ atau URL promo).",
     )
     aktif = models.BooleanField(default=True, verbose_name="Tampilkan")
-    urutan = models.PositiveIntegerField(default=0, verbose_name="Urutan")
+    urutan = models.PositiveIntegerField(default=1, verbose_name="Urutan")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
 

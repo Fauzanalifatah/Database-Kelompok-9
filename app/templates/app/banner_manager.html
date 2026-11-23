@@ -1,356 +1,394 @@
 {% extends "app/content_manager.html" %}
 {% block content %}
 <style>
-@media (min-width: 769px) {
-    .topbar {
-        display: none !important;
+    @media (min-width: 769px) {
+        .topbar {
+            display: none !important;
+        }
     }
-}
 
-.banner-list-container {
-    max-width: 1240px;
-    margin: 0 auto;
-}
+    .banner-list-container {
+        max-width: 1240px;
+        margin: 0 auto;
+    }
 
-/* ─── Top Command Toolbar ─── */
-.banner-top-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-}
-.banner-toolbar-copy h2 {
-    margin: 0 0 4px;
-    font-size: 22px;
-    font-weight: 850;
-    color: #0f172a;
-    letter-spacing: -0.02em;
-}
-.banner-toolbar-copy p {
-    margin: 0;
-    font-size: 13px;
-    color: #64748b;
-    line-height: 1.45;
-}
+    /* ─── Top Command Toolbar ─── */
+    .banner-top-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
 
-.banner-toolbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.btn-primary-add {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: #ffffff;
-    border: 0;
-    border-radius: 10px;
-    font-size: 13.5px;
-    font-weight: 800;
-    text-decoration: none;
-    box-shadow: 0 3px 12px rgba(220, 38, 38, 0.28);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-primary-add:hover {
-    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.38);
-}
-.btn-secondary-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 15px;
-    background: #ffffff;
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    transition: all 0.15s ease;
-}
-.btn-secondary-link:hover {
-    background: #f8fafc;
-    color: #0f172a;
-    border-color: #94a3b8;
-    transform: translateY(-1px);
-}
+    .banner-toolbar-copy h2 {
+        margin: 0 0 4px;
+        font-size: 22px;
+        font-weight: 850;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+    }
 
-/* ─── KPI Metric Cards ─── */
-.banner-metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-}
-.banner-metric-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
-}
-.metric-icon-bubble {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-.bubble-total {
-    background: #eff6ff;
-    color: #2563eb;
-}
-.bubble-active {
-    background: #f0fdf4;
-    color: #16a34a;
-}
-.bubble-inactive {
-    background: #f8fafc;
-    color: #64748b;
-    border: 1px solid #e2e8f0;
-}
-.metric-data-wrap {
-    min-width: 0;
-}
-.metric-val {
-    font-size: 24px;
-    font-weight: 900;
-    color: #0f172a;
-    line-height: 1.1;
-}
-.metric-label {
-    font-size: 12.5px;
-    color: #64748b;
-    font-weight: 600;
-    margin-top: 3px;
-}
+    .banner-toolbar-copy p {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.45;
+    }
 
-/* ─── Table Card ─── */
-.banner-table-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
-    overflow: hidden;
-}
-.banner-data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-}
-.banner-data-table th {
-    background: #f8fafc;
-    color: #475569;
-    font-size: 12px;
-    font-weight: 750;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 14px 20px;
-    border-bottom: 1px solid #e2e8f0;
-    text-align: left;
-}
-.banner-data-table td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: middle;
-}
-.banner-data-table tr:last-child td {
-    border-bottom: 0;
-}
-.banner-data-table tr:hover {
-    background: #fcfdfe;
-}
+    .banner-toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
 
-/* ─── Banner Image Preview Cell ─── */
-.banner-thumb-box {
-    width: 160px;
-    height: 65px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #0f141a;
-    border: 1px solid #e2e8f0;
-    position: relative;
-    flex-shrink: 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-.banner-thumb-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-}
-.banner-meta-cell {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.banner-info-copy strong {
-    display: block;
-    font-size: 14px;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 4px;
-}
-.banner-info-copy small {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #64748b;
-    font-size: 12px;
-}
-.banner-info-copy a {
-    color: #2563eb;
-    text-decoration: underline;
-}
+    .btn-primary-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: #ffffff;
+        border: 0;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 800;
+        text-decoration: none;
+        box-shadow: 0 3px 12px rgba(220, 38, 38, 0.28);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-/* ─── Badges & Order ─── */
-.badge-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 750;
-}
-.badge-status.is-active {
-    background: #f0fdf4;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
-}
-.badge-status.is-inactive {
-    background: #f1f5f9;
-    color: #64748b;
-    border: 1px solid #cbd5e1;
-}
-.status-indicator-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-.badge-status.is-active .status-indicator-dot {
-    background: #16a34a;
-}
-.badge-status.is-inactive .status-indicator-dot {
-    background: #94a3b8;
-}
+    .btn-primary-add:hover {
+        background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.38);
+    }
 
-.order-pill {
-    display: inline-flex;
-    padding: 3px 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-weight: 800;
-    color: #1e293b;
-    font-size: 13px;
-}
+    .btn-secondary-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 15px;
+        background: #ffffff;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        transition: all 0.15s ease;
+    }
 
-/* ─── Action Buttons ─── */
-.table-actions-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-}
-.btn-table-edit {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    background: #f8fafc;
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    border-radius: 7px;
-    font-size: 12.5px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.15s ease;
-}
-.btn-table-edit:hover {
-    background: #f1f5f9;
-    color: #0f172a;
-    border-color: #94a3b8;
-}
-.btn-table-delete {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-    border-radius: 7px;
-    font-size: 12.5px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-.btn-table-delete:hover {
-    background: #fee2e2;
-    color: #b91c1c;
-    border-color: #fca5a5;
-}
+    .btn-secondary-link:hover {
+        background: #f8fafc;
+        color: #0f172a;
+        border-color: #94a3b8;
+        transform: translateY(-1px);
+    }
 
-/* ─── Empty State ─── */
-.banner-empty-state {
-    padding: 60px 24px;
-    text-align: center;
-    background: #ffffff;
-}
-.empty-icon-circle {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 16px;
-    background: #fef2f2;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #dc2626;
-}
-.banner-empty-state h3 {
-    margin: 0 0 6px;
-    font-size: 18px;
-    font-weight: 800;
-    color: #0f172a;
-}
-.banner-empty-state p {
-    margin: 0 auto 20px;
-    max-width: 420px;
-    font-size: 13.5px;
-    color: #64748b;
-    line-height: 1.5;
-}
-
-@media (max-width: 768px) {
+    /* ─── KPI Metric Cards ─── */
     .banner-metrics-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
     }
+
+    .banner-metric-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    }
+
+    .metric-icon-bubble {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .bubble-total {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .bubble-active {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .bubble-inactive {
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+    }
+
+    .metric-data-wrap {
+        min-width: 0;
+    }
+
+    .metric-val {
+        font-size: 24px;
+        font-weight: 900;
+        color: #0f172a;
+        line-height: 1.1;
+    }
+
+    .metric-label {
+        font-size: 12.5px;
+        color: #64748b;
+        font-weight: 600;
+        margin-top: 3px;
+    }
+
+    /* ─── Table Card ─── */
+    .banner-table-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+        overflow: hidden;
+    }
+
+    .banner-data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+    }
+
+    .banner-data-table th {
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 14px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+    }
+
+    .banner-data-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .banner-data-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .banner-data-table tr:hover {
+        background: #fcfdfe;
+    }
+
+    /* ─── Banner Image Preview Cell ─── */
     .banner-thumb-box {
-        width: 100px;
-        height: 50px;
+        width: 160px;
+        height: 65px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #0f141a;
+        border: 1px solid #e2e8f0;
+        position: relative;
+        flex-shrink: 0;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     }
-    .banner-data-table th:nth-child(3),
-    .banner-data-table td:nth-child(3) {
-        display: none;
+
+    .banner-thumb-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
     }
-}
+
+    .banner-meta-cell {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .banner-info-copy strong {
+        display: block;
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .banner-info-copy small {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .banner-info-copy a {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    /* ─── Badges & Order ─── */
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .badge-status.is-active {
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge-status.is-inactive {
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid #cbd5e1;
+    }
+
+    .status-indicator-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .badge-status.is-active .status-indicator-dot {
+        background: #16a34a;
+    }
+
+    .badge-status.is-inactive .status-indicator-dot {
+        background: #94a3b8;
+    }
+
+    .order-pill {
+        display: inline-flex;
+        padding: 3px 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-weight: 800;
+        color: #1e293b;
+        font-size: 13px;
+    }
+
+    /* ─── Action Buttons ─── */
+    .table-actions-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-table-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        background: #f8fafc;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .btn-table-edit:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-color: #94a3b8;
+    }
+
+    .btn-table-delete {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        border-radius: 7px;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .btn-table-delete:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: #fca5a5;
+    }
+
+    /* ─── Empty State ─── */
+    .banner-empty-state {
+        padding: 60px 24px;
+        text-align: center;
+        background: #ffffff;
+    }
+
+    .empty-icon-circle {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        background: #fef2f2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #dc2626;
+    }
+
+    .banner-empty-state h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .banner-empty-state p {
+        margin: 0 auto 20px;
+        max-width: 420px;
+        font-size: 13.5px;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .banner-metrics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .banner-thumb-box {
+            width: 100px;
+            height: 50px;
+        }
+
+        .banner-data-table th:nth-child(3),
+        .banner-data-table td:nth-child(3) {
+            display: none;
+        }
+    }
 </style>
 
 <div class="banner-list-container">
@@ -362,11 +400,20 @@
         </div>
         <div class="banner-toolbar-actions">
             <a class="btn-secondary-link" href="{{ public_url }}" target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
                 <span>Lihat Beranda</span>
             </a>
             <a class="btn-primary-add" href="{{ add_url }}">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
                 <span>Tambah Banner Baru</span>
             </a>
         </div>
@@ -376,7 +423,12 @@
     <div class="banner-metrics-grid">
         <div class="banner-metric-card">
             <div class="metric-icon-bubble bubble-total">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <path d="M21 15l-5-5L5 21"></path>
+                </svg>
             </div>
             <div class="metric-data-wrap">
                 <div class="metric-val">{{ total_count }}</div>
@@ -386,7 +438,11 @@
 
         <div class="banner-metric-card">
             <div class="metric-icon-bubble bubble-active">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
             </div>
             <div class="metric-data-wrap">
                 <div class="metric-val" style="color:#15803d;">{{ active_count }}</div>
@@ -396,7 +452,11 @@
 
         <div class="banner-metric-card">
             <div class="metric-icon-bubble bubble-inactive">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                </svg>
             </div>
             <div class="metric-data-wrap">
                 <div class="metric-val" style="color:#64748b;">{{ inactive_count }}</div>
@@ -428,7 +488,12 @@
                                 <img src="{{ object.gambar.url }}" alt="{{ object.judul }}" loading="lazy">
                                 {% else %}
                                 <div style="display:grid;place-items:center;height:100%;color:#94a3b8;">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                        stroke-width="1.8">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <path d="M21 15l-5-5L5 21"></path>
+                                    </svg>
                                 </div>
                                 {% endif %}
                             </div>
@@ -436,8 +501,13 @@
                                 <strong>{{ object.judul }}</strong>
                                 <small>
                                     {% if object.link_url %}
-                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                                    <a href="{{ object.link_url }}" target="_blank" rel="noopener">{{ object.link_url }}</a>
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    <a href="{{ object.link_url }}" target="_blank" rel="noopener">{{ object.link_url
+                                        }}</a>
                                     {% else %}
                                     <span>Tanpa tautan</span>
                                     {% endif %}
@@ -470,13 +540,25 @@
                     <td>
                         <div class="table-actions-group">
                             <a class="btn-table-edit" href="{% url 'app:banner_manager_edit' object.pk %}">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                                    stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
                                 <span>Edit</span>
                             </a>
-                            <form method="post" action="{% url 'app:banner_manager_delete' object.pk %}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus banner \'{{ object.judul|escapejs }}\'?');">
+                            <form method="post" action="{% url 'app:banner_manager_delete' object.pk %}"
+                                style="display:inline;"
+                                onsubmit="return confirm('Yakin ingin menghapus banner \'{{ object.judul|escapejs }}\'?');">
                                 {% csrf_token %}
                                 <button class="btn-table-delete" type="submit" title="Hapus banner">
-                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                                        stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path
+                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                        </path>
+                                    </svg>
                                     <span>Hapus</span>
                                 </button>
                             </form>
@@ -489,12 +571,22 @@
         {% else %}
         <div class="banner-empty-state">
             <div class="empty-icon-circle">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <path d="M21 15l-5-5L5 21"></path>
+                </svg>
             </div>
             <h3>Belum Ada Banner Beranda</h3>
-            <p>Unggah banner pertama untuk menampilkan gambar promo atau foto toko di bagian paling atas halaman beranda.</p>
+            <p>Unggah banner pertama untuk menampilkan gambar promo atau foto toko di bagian paling atas halaman
+                beranda.</p>
             <a class="btn-primary-add" href="{{ add_url }}">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
                 <span>Unggah Banner Pertama</span>
             </a>
         </div>

@@ -279,8 +279,9 @@ class MitraDeepublishForm(forms.ModelForm):
             "urutan": forms.NumberInput(
                 attrs={
                     "class": "form-control-modern",
-                    "min": 0,
-                    "placeholder": "0",
+                    "min": 1,
+                    "id": "id_urutan",
+                    "placeholder": "1",
                 }
             ),
             "aktif": forms.CheckboxInput(
@@ -331,8 +332,9 @@ class BannerBerandaForm(forms.ModelForm):
             "urutan": forms.NumberInput(
                 attrs={
                     "class": "form-control-modern",
-                    "min": 0,
-                    "placeholder": "0",
+                    "min": 1,
+                    "id": "id_urutan",
+                    "placeholder": "1",
                 }
             ),
             "aktif": forms.CheckboxInput(
