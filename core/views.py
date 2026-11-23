@@ -30,18 +30,31 @@ def _google_configuration_error(request):
     return redirect("app:login")
 
 
+def _get_google_redirect_uri(request):
+    env_uri = getattr(settings, "GOOGLE_REDIRECT_URI", "").strip()
+    host = request.get_host().lower()
+    # Jika diakses dari domain Vercel atau domain publik selain localhost/127.0.0.1
+    if "127.0.0.1" not in host and "localhost" not in host:
+        if env_uri and "127.0.0.1" not in env_uri and "localhost" not in env_uri:
+            return env_uri
+        proto = "https" if request.is_secure() or not settings.DEBUG or "vercel.app" in host else "http"
+        return f"{proto}://{request.get_host()}/app/login/google/callback/"
+    return env_uri or f"http://{request.get_host()}/app/login/google/callback/"
+
+
 def google_login(request):
     if request.user.is_authenticated:
         return redirect("home")
     if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
         return _google_configuration_error(request)
 
+    redirect_uri = _get_google_redirect_uri(request)
     state = secrets.token_urlsafe(32)
     request.session["google_oauth_state"] = state
     query = urlencode(
         {
             "client_id": settings.GOOGLE_CLIENT_ID,
-            "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+            "redirect_uri": redirect_uri,
             "response_type": "code",
             "scope": "openid email profile",
             "state": state,
@@ -65,6 +78,8 @@ def _google_request(url, data=None, access_token=None):
 def google_callback(request):
     if request.user.is_authenticated:
         return redirect("home")
+    if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
+        return _google_configuration_error(request)
     if request.GET.get("error"):
         messages.error(request, "Login Google dibatalkan.")
         return redirect("app:login")
@@ -82,13 +97,14 @@ def google_callback(request):
         return redirect("app:login")
 
     try:
+        redirect_uri = _get_google_redirect_uri(request)
         token_data = _google_request(
             GOOGLE_TOKEN_URL,
             {
                 "code": code,
                 "client_id": settings.GOOGLE_CLIENT_ID,
                 "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                "redirect_uri": redirect_uri,
                 "grant_type": "authorization_code",
             },
         )

@@ -57,6 +57,9 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 
 # Application definition
 
@@ -223,12 +226,9 @@ LOGIN_URL = "app:login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "app:login"
 
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
-GOOGLE_REDIRECT_URI = os.getenv(
-    "GOOGLE_REDIRECT_URI",
-    "http://127.0.0.1:8000/app/login/google/callback/",
-)
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "").strip()
 
 MIDTRANS_SERVER_KEY = os.getenv("MIDTRANS_SERVER_KEY", "")
 MIDTRANS_CLIENT_KEY = os.getenv("MIDTRANS_CLIENT_KEY", "")
