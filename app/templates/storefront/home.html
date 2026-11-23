@@ -56,9 +56,10 @@
     transform: translateX(-50%);
     z-index: 2;
     display: flex;
+    align-items: center;
     gap: 8px;
-    padding: 6px 12px;
-    background: rgba(15, 23, 42, 0.5);
+    padding: 6px 14px;
+    background: rgba(15, 23, 42, 0.55);
     border-radius: 999px;
     backdrop-filter: blur(4px);
 }
@@ -76,6 +77,25 @@
     background: #dc2626;
     width: 26px;
     border-radius: 5px;
+}
+.hero-play-pause-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 6px;
+    transition: all 0.2s ease;
+}
+.hero-play-pause-btn:hover {
+    background: rgba(220, 38, 38, 0.95);
+    transform: scale(1.1);
 }
 @media (max-width: 768px) {
     .hero-nav-btn {
@@ -125,6 +145,10 @@
                     {% for banner in banners %}
                     <button class="hero-dot {% if forloop.first %}is-active{% endif %}" type="button" aria-label="Pindah ke banner {{ forloop.counter }}" data-index="{{ forloop.counter0 }}"></button>
                     {% endfor %}
+                    <button class="hero-play-pause-btn" type="button" id="heroPlayPauseBtn" aria-label="Jeda Otomatis" title="Jeda / Putar Otomatis">
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><rect x="5" y="4" width="4" height="16"></rect><rect x="15" y="4" width="4" height="16"></rect></svg>
+                        <svg class="icon-play" style="display:none;" viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+                    </button>
                 </div>
             </div>
         {% endif %}
@@ -438,11 +462,13 @@
         const dots = document.querySelectorAll('.hero-dot');
         const prevBtn = document.getElementById('heroPrevBtn');
         const nextBtn = document.getElementById('heroNextBtn');
+        const playPauseBtn = document.getElementById('heroPlayPauseBtn');
         if (!wrapper || slides.length <= 1) return;
 
         let currentIndex = 0;
         const total = slides.length;
         let timer = null;
+        let isPausedByUser = false;
 
         function goTo(index) {
             currentIndex = (index + total) % total;
@@ -456,29 +482,55 @@
         function prev() { goTo(currentIndex - 1); }
 
         function startAuto() {
+            if (isPausedByUser) return;
             stopAuto();
-            timer = setInterval(next, 5000);
+            timer = setInterval(next, 7000);
         }
 
         function stopAuto() {
-            if (timer) clearInterval(timer);
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
         }
 
-        if (nextBtn) nextBtn.addEventListener('click', function () { next(); startAuto(); });
-        if (prevBtn) prevBtn.addEventListener('click', function () { prev(); startAuto(); });
+        function togglePlayPause() {
+            isPausedByUser = !isPausedByUser;
+            if (isPausedByUser) {
+                stopAuto();
+                if (playPauseBtn) {
+                    playPauseBtn.querySelector('.icon-pause').style.display = 'none';
+                    playPauseBtn.querySelector('.icon-play').style.display = 'block';
+                    playPauseBtn.setAttribute('title', 'Putar Otomatis Banner');
+                }
+            } else {
+                startAuto();
+                if (playPauseBtn) {
+                    playPauseBtn.querySelector('.icon-pause').style.display = 'block';
+                    playPauseBtn.querySelector('.icon-play').style.display = 'none';
+                    playPauseBtn.setAttribute('title', 'Jeda Otomatis Banner');
+                }
+            }
+        }
+
+        if (playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
+        if (nextBtn) nextBtn.addEventListener('click', function () { next(); if (!isPausedByUser) startAuto(); });
+        if (prevBtn) prevBtn.addEventListener('click', function () { prev(); if (!isPausedByUser) startAuto(); });
 
         dots.forEach(function (dot) {
             dot.addEventListener('click', function () {
                 const idx = parseInt(dot.dataset.index, 10);
                 if (!isNaN(idx)) {
                     goTo(idx);
-                    startAuto();
+                    if (!isPausedByUser) startAuto();
                 }
             });
         });
 
-        slider.addEventListener('mouseenter', stopAuto);
-        slider.addEventListener('mouseleave', startAuto);
+        slider.addEventListener('mouseenter', function() { if (!isPausedByUser) stopAuto(); });
+        slider.addEventListener('mouseleave', function() { if (!isPausedByUser) startAuto(); });
+        slider.addEventListener('touchstart', function() { if (!isPausedByUser) stopAuto(); }, { passive: true });
+        slider.addEventListener('touchend', function() { if (!isPausedByUser) startAuto(); });
         startAuto();
     }());
 </script>

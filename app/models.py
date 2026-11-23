@@ -11,6 +11,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 from django.utils.html import strip_tags
+from django.utils.text import slugify
 
 
 User.add_to_class(
@@ -135,7 +136,9 @@ def rename_mitra_deepublish_image(instance, filename):
 
 def rename_banner_image(instance, filename):
     extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else "jpg"
-    safe_name = slugify(instance.judul or "banner")[:30]
+    safe_name = slugify(instance.judul or "banner")[:30] if instance.judul else "banner"
+    if not safe_name:
+        safe_name = "banner"
     unique_suffix = uuid.uuid4().hex[:10]
     filename = f"banner-{safe_name}-{unique_suffix}.{extension}"
     return os.path.join("banners", filename)

@@ -220,6 +220,14 @@
     transform: translateX(22px);
 }
 
+@keyframes spinSlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.spinner-animate {
+    animation: spinSlow 0.9s linear infinite;
+}
+
 /* ─── Action Buttons Footer ─── */
 .form-footer-actions {
     display: flex;
@@ -364,7 +372,7 @@
             <!-- Action Buttons -->
             <div class="form-footer-actions">
                 <a class="btn-cancel-return" href="{{ cancel_url }}">Batal</a>
-                <button class="btn-submit-save" type="submit">
+                <button class="btn-submit-save" id="btnSubmitBanner" type="submit">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                     <span>Simpan Banner</span>
                 </button>
@@ -379,6 +387,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const previewContainer = document.getElementById("previewContainer");
     const imagePreview = document.getElementById("imagePreview");
     const placeholder = document.getElementById("uploadPlaceholder");
+    const bannerForm = document.getElementById("bannerForm");
+    const submitBtn = document.getElementById("btnSubmitBanner");
 
     if (fileInput) {
         fileInput.addEventListener("change", function(e) {
@@ -392,6 +402,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 };
                 reader.readAsDataURL(file);
             }
+        });
+    }
+
+    if (bannerForm && submitBtn) {
+        bannerForm.addEventListener("submit", function() {
+            submitBtn.style.opacity = "0.75";
+            submitBtn.style.pointerEvents = "none";
+            submitBtn.innerHTML = `
+                <svg class="spinner-animate" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                    <path d="M12 2a10 10 0 0 1 10 10"></path>
+                </svg>
+                <span>Menyimpan & Mengunggah...</span>
+            `;
         });
     }
 });
