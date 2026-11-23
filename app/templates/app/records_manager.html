@@ -590,11 +590,81 @@
     }
 
     /* Column Widths */
-    .col-customer { width: 38%; }
-    .col-email { width: 25%; }
-    .col-method { width: 17%; }
-    .col-status { width: 10%; }
-    .col-action { width: 10%; text-align: right; }
+    .col-customer { width: 28%; }
+    .col-email { width: 19%; }
+    .col-method { width: 13%; }
+    .col-activity { width: 18%; }
+    .col-status { width: 9%; }
+    .col-action { width: 13%; text-align: right; }
+
+    /* Activity Cell */
+    .activity-cell-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11.5px;
+    }
+    .activity-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+    .activity-tag {
+        color: #64748b;
+        font-weight: 600;
+        min-width: 50px;
+    }
+    .activity-val {
+        color: #0f172a;
+        font-weight: 750;
+    }
+    .activity-val-login {
+        color: #0d9488;
+    }
+    .activity-never {
+        color: #94a3b8;
+        font-style: italic;
+    }
+
+    /* Actions Flex */
+    .actions-flex {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: flex-end;
+    }
+    .btn-toggle-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 750;
+        cursor: pointer;
+        border: 1px solid;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+    }
+    .btn-toggle-deactivate {
+        color: #dc2626;
+        border-color: #fecaca;
+        background: #fef2f2;
+    }
+    .btn-toggle-deactivate:hover {
+        background: #fee2e2;
+        border-color: #f87171;
+    }
+    .btn-toggle-activate {
+        color: #16a34a;
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+    }
+    .btn-toggle-activate:hover {
+        background: #dcfce7;
+        border-color: #86efac;
+    }
 
     /* Customer Profile Cell */
     .customer-flex {
@@ -1119,15 +1189,23 @@
     <!-- ══════════ FILTER & SEARCH CONTROLS ══════════ -->
     <div class="controls-panel">
         <div class="filter-tabs">
-            <a href="?{% if search_query %}q={{ search_query }}&amp;{% endif %}" class="filter-tab {% if not metode_filter %}active{% endif %}">
+            <a href="?{% if search_query %}q={{ search_query }}{% endif %}" class="filter-tab {% if not metode_filter and not status_filter %}active{% endif %}">
                 Semua Pelanggan
                 <span class="tab-badge">{{ total_pelanggan }}</span>
             </a>
-            <a href="?metode=google{% if search_query %}&amp;q={{ search_query }}{% endif %}" class="filter-tab {% if metode_filter == 'google' %}active{% endif %}">
+            <a href="?status=aktif{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if metode_filter %}&amp;metode={{ metode_filter }}{% endif %}" class="filter-tab {% if status_filter == 'aktif' %}active{% endif %}">
+                &bull; Aktif
+                <span class="tab-badge">{{ total_aktif }}</span>
+            </a>
+            <a href="?status=nonaktif{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if metode_filter %}&amp;metode={{ metode_filter }}{% endif %}" class="filter-tab {% if status_filter == 'nonaktif' %}active{% endif %}">
+                &bull; Nonaktif
+                <span class="tab-badge">{{ total_nonaktif }}</span>
+            </a>
+            <a href="?metode=google{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if status_filter %}&amp;status={{ status_filter }}{% endif %}" class="filter-tab {% if metode_filter == 'google' %}active{% endif %}">
                 Google OAuth
                 <span class="tab-badge">{{ total_google }}</span>
             </a>
-            <a href="?metode=registrasi{% if search_query %}&amp;q={{ search_query }}{% endif %}" class="filter-tab {% if metode_filter == 'registrasi' or metode_filter == 'manual' %}active{% endif %}">
+            <a href="?metode=registrasi{% if search_query %}&amp;q={{ search_query }}{% endif %}{% if status_filter %}&amp;status={{ status_filter }}{% endif %}" class="filter-tab {% if metode_filter == 'registrasi' or metode_filter == 'manual' %}active{% endif %}">
                 Registrasi Form
                 <span class="tab-badge">{{ total_manual }}</span>
             </a>
@@ -1148,7 +1226,7 @@
                 <input type="text" name="q" class="search-input" value="{{ search_query }}" placeholder="Cari nama, email, username, no. telepon...">
             </div>
             <button type="submit" class="btn-search">Cari</button>
-            {% if search_query or metode_filter %}
+            {% if search_query or metode_filter or status_filter %}
             <a href="{% url 'app:pelanggan_manager' %}" class="btn-reset" title="Hapus filter pencarian">Reset</a>
             {% endif %}
         </form>
@@ -1163,6 +1241,7 @@
                     <th class="col-customer">Pelanggan</th>
                     <th class="col-email">Email</th>
                     <th class="col-method">Metode Daftar</th>
+                    <th class="col-activity">Aktivitas (Daftar &amp; Login)</th>
                     <th class="col-status">Status</th>
                     <th class="col-action">Aksi</th>
                 </tr>
@@ -1229,6 +1308,24 @@
                         {% endif %}
                     </td>
 
+                    <!-- Aktivitas (Daftar & Login) -->
+                    <td class="col-activity">
+                        <div class="activity-cell-wrap">
+                            <div class="activity-row" title="Waktu registrasi akun: {{ record.user.date_joined|date:'d M Y, H:i' }}">
+                                <span class="activity-tag">Daftar:</span>
+                                <span class="activity-val">{{ record.user.date_joined|date:"d M Y, H:i" }}</span>
+                            </div>
+                            <div class="activity-row" title="Terakhir kali login ke website: {% if record.user.last_login %}{{ record.user.last_login|date:'d M Y, H:i' }}{% else %}Belum pernah login{% endif %}">
+                                <span class="activity-tag">Login:</span>
+                                {% if record.user.last_login %}
+                                <span class="activity-val activity-val-login">{{ record.user.last_login|date:"d M Y, H:i" }}</span>
+                                {% else %}
+                                <span class="activity-never">Belum login</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+
                     <!-- Status -->
                     <td class="col-status">
                         {% if record.user.is_active %}
@@ -1244,18 +1341,34 @@
 
                     <!-- Aksi -->
                     <td class="col-action">
-                        <a class="btn-edit-action" href="{% url 'app:pelanggan_manager_edit' record.user.username %}" title="Edit data pelanggan">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            Edit
-                        </a>
+                        <div class="actions-flex">
+                            <a class="btn-edit-action" href="{% url 'app:pelanggan_manager_edit' record.user.username %}" title="Edit data profil pelanggan">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit
+                            </a>
+                            {% if not record.user.is_superuser %}
+                            <form method="post" action="{% url 'app:pelanggan_toggle_status' record.user.username %}" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin {% if record.user.is_active %}menonaktifkan{% else %}mengaktifkan{% endif %} akun {{ record.user.username }}?');">
+                                {% csrf_token %}
+                                {% if record.user.is_active %}
+                                <button type="submit" class="btn-toggle-status btn-toggle-deactivate" title="Nonaktifkan akun pelanggan ini">
+                                    Nonaktifkan
+                                </button>
+                                {% else %}
+                                <button type="submit" class="btn-toggle-status btn-toggle-activate" title="Aktifkan kembali akun pelanggan ini">
+                                    Aktifkan
+                                </button>
+                                {% endif %}
+                            </form>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <div class="empty-state">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                                 <circle cx="12" cy="12" r="10"></circle>

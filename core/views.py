@@ -120,10 +120,12 @@ def google_callback(request):
             first_name=profile.get("given_name", "")[:150],
             last_name=profile.get("family_name", "Pengguna")[:150],
         )
-        UserPengguna.objects.create(user=user, telp="")
+        UserPengguna.objects.get_or_create(user=user, defaults={"telp": ""})
     elif not user.is_active:
         messages.error(request, "Akun ini tidak aktif.")
         return redirect("app:login")
+    else:
+        UserPengguna.objects.get_or_create(user=user, defaults={"telp": ""})
 
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
     messages.success(request, "Login Google berhasil. Selamat datang.")
@@ -182,6 +184,7 @@ def registerView(request):
         user = form.save(commit=False)
         user.last_name = "Pengguna"
         user.save()
+        UserPengguna.objects.get_or_create(user=user, defaults={"telp": ""})
         login(request, user)
         messages.success(
             request,

@@ -857,6 +857,11 @@ def produk_manager_delete(request, pk):
 @admin_required
 @login_required(login_url="app:login")
 def pelanggan_manager(request):
+    # Pastikan setiap User terdaftar memiliki profil UserPengguna
+    for u in User.objects.all():
+        if not hasattr(u, "pengguna"):
+            UserPengguna.objects.get_or_create(user=u, defaults={"telp": ""})
+
     metode_filter = request.GET.get("metode", "").strip().lower()
     status_filter = request.GET.get("status", "").strip().lower()
     search_query = request.GET.get("q", "").strip()
@@ -958,6 +963,22 @@ def pelanggan_manager_form(request, username):
             "member": member,
         },
     )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def pelanggan_toggle_status(request, username):
+    user = get_object_or_404(User, username=username)
+    if user.is_superuser:
+        messages.error(request, "Akun Superuser tidak dapat dinonaktifkan dari sini.")
+        return redirect("app:pelanggan_manager")
+
+    if request.method == "POST":
+        user.is_active = not user.is_active
+        user.save(update_fields=["is_active"])
+        status_text = "diaktifkan" if user.is_active else "dinonaktifkan"
+        messages.success(request, f"Status akun '{user.username}' berhasil {status_text}.")
+    return redirect("app:pelanggan_manager")
 
 
 def get_pesanan_tracking_data(days="7"):
