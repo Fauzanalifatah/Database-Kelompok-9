@@ -276,6 +276,124 @@
     color: #0f172a;
     border-color: #94a3b8;
 }
+
+/* ─── Modern Order Selector UI ─── */
+.order-selector-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.order-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.order-header-row label {
+    font-size: 13.5px;
+    font-weight: 750;
+    color: #1e293b;
+    margin: 0;
+}
+.order-badge-live {
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 3px 12px;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.order-preset-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+@media (max-width: 768px) {
+    .order-preset-cards {
+        grid-template-columns: 1fr;
+    }
+}
+.order-preset-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    user-select: none;
+}
+.order-preset-card:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+.order-preset-card.is-selected {
+    border-color: #dc2626;
+    background: #fef2f2;
+    box-shadow: 0 0 0 1px #dc2626;
+}
+.order-preset-card .preset-icon {
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+.order-preset-card .preset-info strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 3px;
+}
+.order-preset-card.is-selected .preset-info strong {
+    color: #dc2626;
+}
+.order-preset-card .preset-info small {
+    display: block;
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.4;
+}
+.order-preset-card .preset-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+.order-preset-card.is-selected .preset-check {
+    display: flex;
+}
+.order-dropdown-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.order-dropdown-panel label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #334155;
+}
 </style>
 
 <div class="banner-form-wrapper">
@@ -348,11 +466,66 @@
                     {% if form.link_url.errors %}<div style="color:#dc2626;font-size:12px;">{{ form.link_url.errors }}</div>{% endif %}
                 </div>
 
-                <!-- Urutan -->
-                <div class="form-field-group" style="max-width: 240px;">
-                    <label for="{{ form.urutan.id_for_label }}">Urutan Penempatan</label>
-                    {{ form.urutan }}
-                    <p class="help-text">Angka lebih kecil tampil lebih awal (0, 1, 2, ...).</p>
+                <!-- Urutan Penempatan Banner (Modern & Easy Selector) -->
+                <div class="form-field-group order-selector-box">
+                    <div class="order-header-row">
+                        <label>Urutan Penempatan Slide</label>
+                        <span class="order-badge-live" id="liveOrderBadge">Slide #{{ current_order_val }}</span>
+                    </div>
+
+                    <!-- Preset Cepat (Paling Awal, Paling Akhir, atau Spesifik) -->
+                    <div class="order-preset-cards">
+                        <!-- Paling Awal -->
+                        <div class="order-preset-card" id="presetFirst" onclick="selectOrderPreset('first');">
+                            <div class="preset-icon">🌟</div>
+                            <div class="preset-info">
+                                <strong>Paling Awal (Slide #1)</strong>
+                                <small>Tampil pertama kali saat pengunjung membuka website.</small>
+                            </div>
+                            <div class="preset-check">✓</div>
+                        </div>
+
+                        <!-- Paling Akhir -->
+                        <div class="order-preset-card" id="presetLast" onclick="selectOrderPreset('last');">
+                            <div class="preset-icon">📌</div>
+                            <div class="preset-info">
+                                <strong>Paling Akhir (Slide #{{ last_position_num }})</strong>
+                                <small>Tampil di urutan terakhir setelah slide banner lainnya.</small>
+                            </div>
+                            <div class="preset-check">✓</div>
+                        </div>
+
+                        <!-- Pilih Posisi Spesifik -->
+                        <div class="order-preset-card" id="presetCustom" onclick="selectOrderPreset('custom');">
+                            <div class="preset-icon">🔢</div>
+                            <div class="preset-info">
+                                <strong>Pilih Nomor Slide Tertentu</strong>
+                                <small>Pilih nomor urutan posisi spesifik dari daftar.</small>
+                            </div>
+                            <div class="preset-check">✓</div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Pilihan Nomor Slide -->
+                    <div class="order-dropdown-panel" id="customOrderWrap" style="display:none;">
+                        <label for="slidePositionSelect">Tentukan Nomor Slide:</label>
+                        <select id="slidePositionSelect" class="form-control-modern" onchange="onSelectSlidePosition(this.value);">
+                            {% for opt in position_options %}
+                            <option value="{{ opt.num }}" {% if opt.is_selected %}selected{% endif %}>
+                                {{ opt.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Form Input Tersembunyi (Disinkronkan Otomatis) -->
+                    <div style="display:none;">
+                        {{ form.urutan }}
+                    </div>
+
+                    <p class="help-text">
+                        💡 <strong>Sistem Otomatis:</strong> Anda tidak perlu menghitung angka manual. Posisi banner lain akan otomatis bergeser secara rapi tanpa tertimpa. Urutan banner juga bisa dinaikkan atau diturunkan kapan saja di halaman daftar banner.
+                    </p>
                     {% if form.urutan.errors %}<div style="color:#dc2626;font-size:12px;">{{ form.urutan.errors }}</div>{% endif %}
                 </div>
 
@@ -418,6 +591,67 @@ document.addEventListener("DOMContentLoaded", function() {
             `;
         });
     }
+
+    // ─── Order Selector Interactive Controller ───
+    const urutanInput = document.getElementById("id_urutan") || document.getElementById("{{ form.urutan.id_for_label }}");
+    const liveOrderBadge = document.getElementById("liveOrderBadge");
+    const slideSelect = document.getElementById("slidePositionSelect");
+    const presetFirst = document.getElementById("presetFirst");
+    const presetLast = document.getElementById("presetLast");
+    const presetCustom = document.getElementById("presetCustom");
+    const customDropdownWrap = document.getElementById("customOrderWrap");
+
+    const totalSlots = parseInt("{{ last_position_num|default:1 }}", 10);
+
+    function updateOrderUI(val, source) {
+        val = parseInt(val, 10);
+        if (isNaN(val) || val < 1) val = 1;
+        if (urutanInput) urutanInput.value = val;
+        if (liveOrderBadge) liveOrderBadge.textContent = "Slide #" + val;
+        if (slideSelect) slideSelect.value = val;
+
+        if (presetFirst) presetFirst.classList.remove("is-selected");
+        if (presetLast) presetLast.classList.remove("is-selected");
+        if (presetCustom) presetCustom.classList.remove("is-selected");
+
+        if (source === "first" || (val === 1 && totalSlots > 1)) {
+            if (presetFirst) presetFirst.classList.add("is-selected");
+            if (customDropdownWrap) customDropdownWrap.style.display = "none";
+        } else if (source === "last" || (val >= totalSlots && totalSlots > 1)) {
+            if (presetLast) presetLast.classList.add("is-selected");
+            if (customDropdownWrap) customDropdownWrap.style.display = "none";
+        } else if (totalSlots <= 1) {
+            if (presetFirst) presetFirst.classList.add("is-selected");
+            if (customDropdownWrap) customDropdownWrap.style.display = "none";
+        } else {
+            if (presetCustom) presetCustom.classList.add("is-selected");
+            if (customDropdownWrap) customDropdownWrap.style.display = "flex";
+        }
+    }
+
+    window.selectOrderPreset = function(mode) {
+        if (mode === "first") {
+            updateOrderUI(1, "first");
+        } else if (mode === "last") {
+            updateOrderUI(totalSlots, "last");
+        } else {
+            if (presetFirst) presetFirst.classList.remove("is-selected");
+            if (presetLast) presetLast.classList.remove("is-selected");
+            if (presetCustom) presetCustom.classList.add("is-selected");
+            if (customDropdownWrap) customDropdownWrap.style.display = "flex";
+        }
+    };
+
+    window.onSelectSlidePosition = function(val) {
+        updateOrderUI(val, "custom");
+        if (presetFirst) presetFirst.classList.remove("is-selected");
+        if (presetLast) presetLast.classList.remove("is-selected");
+        if (presetCustom) presetCustom.classList.add("is-selected");
+        if (customDropdownWrap) customDropdownWrap.style.display = "flex";
+    };
+
+    const initialVal = urutanInput ? parseInt(urutanInput.value, 10) : parseInt("{{ current_order_val|default:1 }}", 10);
+    updateOrderUI(initialVal);
 });
 </script>
 {% endblock %}

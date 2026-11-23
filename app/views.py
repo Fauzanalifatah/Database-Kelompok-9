@@ -422,9 +422,19 @@ def mitra_manager_delete(request, pk):
     return redirect("app:mitra_manager")
 
 
+def normalize_banner_orders():
+    """Memastikan nomor urutan banner sekuensial (1, 2, 3, ...) tanpa duplikasi atau nomor negatif/0."""
+    banners = list(BannerBeranda.objects.all().order_by("urutan", "-created_at"))
+    for idx, b in enumerate(banners, start=1):
+        if b.urutan != idx:
+            b.urutan = idx
+            b.save(update_fields=["urutan"])
+
+
 @admin_required
 @login_required(login_url="app:login")
 def banner_manager(request):
+    normalize_banner_orders()
     objects = BannerBeranda.objects.all().order_by("urutan", "-created_at")
     total_count = objects.count()
     active_count = objects.filter(aktif=True).count()
@@ -449,21 +459,82 @@ def banner_manager(request):
 @admin_required
 @login_required(login_url="app:login")
 def banner_manager_form(request, pk=None):
+    normalize_banner_orders()
     instance = BannerBeranda.objects.filter(pk=pk).first() if pk else None
     if pk and instance is None:
         raise Http404
+
+    all_banners = list(BannerBeranda.objects.all().order_by("urutan", "-created_at"))
+    total_banners = len(all_banners)
+
+    if instance:
+        current_urutan = instance.urutan
+        max_slots = total_banners
+    else:
+        current_urutan = total_banners + 1
+        max_slots = total_banners + 1
+
     form = BannerBerandaForm(
         request.POST or None, request.FILES or None, instance=instance
     )
+    if request.method == "GET" and not instance:
+        form.initial["urutan"] = current_urutan
+
     if request.method == "POST" and form.is_valid():
         banner = form.save(commit=False)
-        if not banner.pk and banner.urutan == 0:
-            banner.urutan = BannerBeranda.objects.count()
-        banner.save()
+        target_urutan = form.cleaned_data.get("urutan") or current_urutan
+
+        if not banner.pk:
+            # Banner baru ditambahkan
+            if target_urutan < total_banners + 1:
+                # Sisipkan di posisi target_urutan: geser banner yang posisinya >= target_urutan
+                for b in BannerBeranda.objects.filter(urutan__gte=target_urutan):
+                    b.urutan += 1
+                    b.save(update_fields=["urutan"])
+                banner.urutan = target_urutan
+            else:
+                banner.urutan = total_banners + 1
+            banner.save()
+            normalize_banner_orders()
+        else:
+            # Edit banner yang sudah ada
+            old_urutan = instance.urutan
+            if target_urutan != old_urutan:
+                if target_urutan < old_urutan:
+                    for b in BannerBeranda.objects.filter(urutan__gte=target_urutan, urutan__lt=old_urutan).exclude(pk=instance.pk):
+                        b.urutan += 1
+                        b.save(update_fields=["urutan"])
+                else:
+                    for b in BannerBeranda.objects.filter(urutan__gt=old_urutan, urutan__lte=target_urutan).exclude(pk=instance.pk):
+                        b.urutan -= 1
+                        b.save(update_fields=["urutan"])
+                banner.urutan = target_urutan
+            banner.save()
+            normalize_banner_orders()
+
         messages.success(
-            request, f"Banner '{banner.judul}' berhasil disimpan."
+            request, f"Banner '{banner.judul}' berhasil disimpan pada Slide #{banner.urutan}."
         )
         return redirect("app:banner_manager")
+
+    # Siapkan daftar pilihan posisi slide yang ramah pengguna
+    position_options = []
+    for i in range(1, max_slots + 1):
+        if i == 1:
+            lbl = "Slide 1 (Paling Pertama / Utama)"
+        elif i == max_slots and not instance:
+            lbl = f"Slide {i} (Paling Akhir - Otomatis)"
+        elif i == max_slots:
+            lbl = f"Slide {i} (Paling Akhir)"
+        else:
+            lbl = f"Slide {i}"
+
+        position_options.append({
+            "num": i,
+            "label": lbl,
+            "is_selected": (i == current_urutan),
+        })
+
     return render(
         request,
         "app/banner_manager_form.html",
@@ -476,6 +547,10 @@ def banner_manager_form(request, pk=None):
             "item_label": "banner",
             "cancel_url": reverse("app:banner_manager"),
             "public_url": reverse("home"),
+            "current_order_val": current_urutan,
+            "last_position_num": max_slots,
+            "position_options": position_options,
+            "total_banners": total_banners,
         },
     )
 
@@ -487,7 +562,41 @@ def banner_manager_delete(request, pk):
     if request.method == "POST":
         judul = banner.judul
         banner.delete()
+        normalize_banner_orders()
         messages.success(request, f"Banner '{judul}' berhasil dihapus.")
+    return redirect("app:banner_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def banner_manager_reorder(request, pk, direction):
+    banner = get_object_or_404(BannerBeranda, pk=pk)
+    if request.method == "POST":
+        normalize_banner_orders()
+        banners = list(BannerBeranda.objects.all().order_by("urutan", "-created_at"))
+        try:
+            current_idx = [b.pk for b in banners].index(banner.pk)
+        except ValueError:
+            return redirect("app:banner_manager")
+
+        if direction == "up" and current_idx > 0:
+            target_banner = banners[current_idx - 1]
+            banner.urutan, target_banner.urutan = target_banner.urutan, banner.urutan
+            banner.save(update_fields=["urutan"])
+            target_banner.save(update_fields=["urutan"])
+            normalize_banner_orders()
+            messages.success(
+                request, f"Urutan banner '{banner.judul}' berhasil dinaikkan ke Slide #{banner.urutan}."
+            )
+        elif direction == "down" and current_idx < len(banners) - 1:
+            target_banner = banners[current_idx + 1]
+            banner.urutan, target_banner.urutan = target_banner.urutan, banner.urutan
+            banner.save(update_fields=["urutan"])
+            target_banner.save(update_fields=["urutan"])
+            normalize_banner_orders()
+            messages.success(
+                request, f"Urutan banner '{banner.judul}' berhasil diturunkan ke Slide #{banner.urutan}."
+            )
     return redirect("app:banner_manager")
 
 
