@@ -44,5 +44,5 @@ urlpatterns = [
     ),
     path("tentang-kami/", views.about, name="about"),
     path("testimoni/", views.testimonials, name="testimonials"),
-    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+    re_path(r"^media/(?P<path>.*)$", views.serve_media, name="serve_media"),
 ]

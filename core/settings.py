@@ -204,6 +204,15 @@ except ImportError:
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+DEFAULT_FILE_STORAGE = 'app.storage.DatabaseMediaStorage'
+STORAGES = {
+    'default': {
+        'BACKEND': 'app.storage.DatabaseMediaStorage',
+    },
+    'staticfiles': {
+        'BACKEND': STATICFILES_STORAGE,
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -446,6 +446,23 @@ class BannerBeranda(models.Model):
         return self.judul
 
 
+class MediaFile(models.Model):
+    name = models.CharField(max_length=255, unique=True, db_index=True, verbose_name="Nama path file")
+    data = models.BinaryField(verbose_name="Konten biner file")
+    content_type = models.CharField(max_length=100, default="application/octet-stream", verbose_name="MIME type")
+    size = models.PositiveIntegerField(default=0, verbose_name="Ukuran file (bytes)")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
+
+    class Meta:
+        db_table = "app_mediafile"
+        verbose_name = "Media File"
+        verbose_name_plural = "Media Files"
+
+    def __str__(self):
+        return self.name
+
+
 class Artikel(models.Model):
     title_articles = models.CharField(
         max_length=200,

@@ -25,7 +25,6 @@ urlpatterns = [
     path("dashboard/banner/tambah/", views.banner_manager_form, name="banner_manager_add"),
     path("dashboard/banner/<int:pk>/edit/", views.banner_manager_form, name="banner_manager_edit"),
     path("dashboard/banner/<int:pk>/hapus/", views.banner_manager_delete, name="banner_manager_delete"),
-    path("dashboard/banner/<int:pk>/reorder/<str:direction>/", views.banner_manager_reorder, name="banner_manager_reorder"),
     path("dashboard/pelanggan/", views.pelanggan_manager, name="pelanggan_manager"),
     path("dashboard/pelanggan/<str:username>/edit/", views.pelanggan_manager_form, name="pelanggan_manager_edit"),
     path("dashboard/pesanan/", views.pesanan_manager, name="pesanan_manager"),

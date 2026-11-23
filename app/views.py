@@ -9,7 +9,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import F, Q, Sum, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -598,6 +598,38 @@ def banner_manager_reorder(request, pk, direction):
                 request, f"Urutan banner '{banner.judul}' berhasil diturunkan ke Slide #{banner.urutan}."
             )
     return redirect("app:banner_manager")
+
+
+def serve_media(request, path):
+    """
+    Menyajikan file media:
+    1. Cek disk lokal terlebih dahulu (MEDIA_ROOT / path).
+    2. Jika tidak ada di disk (seperti di Vercel yang read-only), cari di tabel MediaFile.
+    """
+    import os
+    from django.views.static import serve as static_serve
+
+    clean_path = str(path).replace("\\", "/").lstrip("/")
+    local_file = os.path.join(settings.MEDIA_ROOT, clean_path)
+    if os.path.isfile(local_file):
+        return static_serve(request, clean_path, document_root=settings.MEDIA_ROOT)
+
+    try:
+        from app.models import MediaFile
+
+        media_file = MediaFile.objects.filter(name=clean_path).first()
+        if media_file:
+            response = HttpResponse(
+                bytes(media_file.data), content_type=media_file.content_type
+            )
+            response[
+                "Cache-Control"
+            ] = "public, max-age=86400, stale-while-revalidate=604800"
+            return response
+    except Exception:
+        pass
+
+    raise Http404("Media file not found")
 
 
 @admin_required
