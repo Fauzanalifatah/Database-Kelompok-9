@@ -51,7 +51,7 @@
 .article-detail-label { margin: 0 0 12px; color: #1455d9; font-size: 13px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
 .article-list-body h2 { margin: 0 0 15px; color: #0b1f3a; font-size: clamp(24px, 3vw, 35px); line-height: 1.12; letter-spacing: -.035em; }
 .article-list-body h2 a:hover { color: #1455d9; }
-.article-list-summary { display: -webkit-box; max-width: 720px; margin: 0 0 12px; overflow: hidden; color: #344054; font-size: 15px; line-height: 1.6; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.article-list-summary { display: -webkit-box; max-width: 720px; margin: 0 0 12px; overflow: hidden; color: #344054; font-size: 15px; line-height: 1.6; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
 .article-list-meta { margin: 0; color: #667085; font-size: 13px; }
 .article-list-meta strong { color: #1455d9; }
 .article-list-meta span { margin: 0 5px; color: #98a2b3; }
@@ -348,6 +348,7 @@
     line-height: 1.35;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
 }
 .related-copy p {
     margin: 0;
