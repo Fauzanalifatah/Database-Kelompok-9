@@ -2,71 +2,9 @@
 {% load static %}
 {% block title %}Home - Losari Computer{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=17">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=18">
 <link rel="stylesheet" href="{% static 'css/shop.css' %}">
 <style>
-/* ─── Hero Banner: Tampilkan Gambar Full Tanpa Terpotong & Tidak Terlalu Tinggi ─── */
-.hero {
-    position: relative;
-    overflow: hidden;
-    margin: 0 0 38px;
-    background: radial-gradient(circle at center, #1e293b 0%, #0f141a 75%, #080b0f 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.hero::after {
-    display: none !important;
-}
-.hero-slider {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
-.hero-slides-wrapper {
-    display: flex;
-    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-    width: 100%;
-}
-.hero-slide {
-    min-width: 100%;
-    flex: 0 0 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.hero-banner-link {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    text-decoration: none;
-}
-.hero img,
-.hero-slide img,
-.hero-banner-link img {
-    display: block;
-    width: 100%;
-    max-width: 1220px;
-    height: auto;
-    max-height: 460px;
-    object-fit: contain;
-    margin: 0 auto;
-}
-@media (max-width: 768px) {
-    .hero img,
-    .hero-slide img,
-    .hero-banner-link img {
-        max-height: 320px;
-    }
-}
-@media (max-width: 560px) {
-    .hero img,
-    .hero-slide img,
-    .hero-banner-link img {
-        max-height: 260px;
-    }
-}
 /* ─── Modern Sleek Hero Slider (Clean & Professional) ─── */
 .hero-slider {
     position: relative;
