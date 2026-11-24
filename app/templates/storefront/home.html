@@ -2,9 +2,26 @@
 {% load static %}
 {% block title %}Home - Losari Computer{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=15">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=16">
 <link rel="stylesheet" href="{% static 'css/shop.css' %}">
 <style>
+/* ─── Hero Banner Compact Height ─── */
+.hero {
+    position: relative;
+    overflow: hidden;
+    margin: 0 0 38px;
+    background: #0f141a;
+}
+.hero img,
+.hero-slide img,
+.hero-banner-link img {
+    display: block;
+    width: 100%;
+    height: clamp(200px, 26vw, 370px);
+    max-height: 370px;
+    object-fit: cover;
+    object-position: center 40%;
+}
 /* ─── Modern Sleek Hero Slider (Clean & Professional) ─── */
 .hero-slider {
     position: relative;

@@ -1,6 +1,6 @@
-.hero { position:relative; overflow:hidden; min-height:0; margin:0 0 46px; background:#0f141a; box-shadow:0 18px 40px rgba(0,0,0,0.22); }
+.hero { position:relative; overflow:hidden; min-height:0; margin:0 0 38px; background:#0f141a; box-shadow:0 18px 40px rgba(0,0,0,0.22); }
 .hero::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(15, 20, 26, 0.20) 0%, rgba(15, 20, 26, 0.48) 100%); pointer-events:none; }
-.hero img { display:block; width:100%; height:auto; max-height:610px; object-fit:cover; object-position:center; }
+.hero img { display:block; width:100%; height:clamp(200px, 26vw, 370px); max-height:370px; object-fit:cover; object-position:center 40%; }
 /* ═══════════════════════════════════════════════════════════
    MODERN EDITORIAL ARTICLES SHOWCASE (CLEAN, PRO, MAGAZINE)
 ═══════════════════════════════════════════════════════════ */
@@ -763,13 +763,13 @@
     .category { padding:22px 20px; min-height:auto; }
     .category-content h3 { font-size:18px; }
     .category-content p { font-size:13px; }
-    .hero img { min-height:280px; object-fit:cover; }
+    .hero img { height:clamp(180px, 32vw, 270px); max-height:270px; min-height:0; object-fit:cover; }
     .featured-editorial-card { grid-template-columns: 1fr; }
     .featured-editorial-media { min-height: 260px; }
 }
 @media (max-width:560px) {
-    .hero { margin-bottom:30px; }
-    .hero img { min-height:220px; object-fit:cover; object-position:center; }
+    .hero { margin-bottom:24px; }
+    .hero img { height:clamp(150px, 44vw, 220px); max-height:220px; min-height:0; object-fit:cover; object-position:center; }
     .categories,.trust { grid-template-columns:1fr; gap:14px; }
     .deepublish-partners { padding-right:18px; padding-left:18px; }
     .deepublish-partners h2 { margin-bottom:28px; }

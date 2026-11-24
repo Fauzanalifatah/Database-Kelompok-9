@@ -8,16 +8,18 @@
     position: relative;
     overflow: hidden;
     width: 100%;
+    max-height: 320px;
     color: #fff;
-    background: #8fd9ff;
+    background: #0f172a;
 }
 
 .shop-hero-image,
 .shop-hero img {
     display: block;
     width: 100%;
-    height: auto;
-    min-height: 360px;
+    height: clamp(160px, 22vw, 320px);
+    max-height: 320px;
+    min-height: 0;
     object-fit: cover;
     object-position: center;
 }
@@ -595,9 +597,14 @@
 
 /* Mobile - max 760px */
 @media (max-width: 760px) {
+    .shop-hero {
+        max-height: 220px;
+    }
     .shop-hero-image,
     .shop-hero img {
-        min-height: 230px;
+        height: clamp(140px, 36vw, 220px);
+        max-height: 220px;
+        min-height: 0;
         object-fit: cover;
         object-position: center;
     }
