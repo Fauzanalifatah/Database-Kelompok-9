@@ -6,7 +6,8 @@
 .user-blog-heading-row > a:hover { color:#1455d9; }
 .user-blog-heading-actions { display:flex; align-items:center; gap:20px; }
 .user-blog-write { padding:10px 15px; color:#fff !important; background:#1455d9; border-radius:6px; font-style:normal !important; }
-.user-blog-home-link { display:inline-flex; align-items:center; gap:8px; padding:10px 15px; color:#344054 !important; background:#fff; border:1px solid #d0d5dd; border-radius:7px; font-size:14px !important; font-style:normal !important; font-weight:700 !important; box-shadow:0 2px 6px #1018280d; }
+.user-blog-home-link { display:inline-flex; align-items:center; gap:8px; padding:10px 15px; color:#344054 !important; background:#fff; border:1px solid #d0d5dd; border-radius:7px; font-size:14px !important; font-style:normal !important; font-weight:700 !important; box-shadow:0 2px 6px #1018280d; white-space:nowrap !important; flex-shrink:0 !important; }
+.user-blog-home-link span { white-space:nowrap !important; }
 .user-blog-home-link svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.9; }
 .user-blog-home-link:hover { color:#1455d9 !important; background:#f5f8ff; border-color:#9bbff3; box-shadow:0 5px 12px #1455d91a; transform:translateY(-1px); }
 .user-blog-container { padding:12px 0 55px; }
