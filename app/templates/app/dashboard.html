@@ -329,6 +329,9 @@
             <a class="nav-link" href="{% url 'app:banner_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg></span>Banner Beranda
             </a>
+            <a class="nav-link" href="{% url 'app:running_text_manager' %}">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M4 6h16M4 18h10"></path></svg></span>Running Text
+            </a>
         </nav>
         <div class="sidebar-footer"><strong>Butuh bantuan?</strong>Kelola katalog dan pesanan langsung melalui dashboard Losari Computer.</div>
         <form class="sidebar-logout-form" method="post" action="{% url 'app:logout' %}">
@@ -380,6 +383,70 @@
                         </div>
                         <div class="profile-actions"><button class="save-profile" type="submit">Simpan profil</button></div>
                     </form>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if is_admin %}
+            <!-- Panel Input & Kelola Cepat Running Text -->
+            <section class="panel" style="margin-bottom: 24px; border: 1.5px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;">
+                <div class="panel-title" style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #f1f5f9; background: #fafbfc; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12h16M4 6h16M4 18h10"></path>
+                            </svg>
+                            Input Running Text (Teks Berjalan)
+                        </h2>
+                        <p style="margin: 4px 0 0; color: #64748b; font-size: 13px;">Tambahkan teks promo atau pengumuman yang akan berjalan di pita atas website.</p>
+                    </div>
+                    <a href="{% url 'app:running_text_manager' %}" style="padding: 8px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #dc2626; font-size: 12.5px; font-weight: 750; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                        Kelola Selengkapnya &rarr;
+                    </a>
+                </div>
+                <div class="panel-body" style="padding: 24px;">
+                    <!-- Formulir Tambah Teks Cepat -->
+                    <form method="post" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 20px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="running_text_add">
+                        <div style="flex: 1 1 320px; min-width: 250px;">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 750; color: #1e293b;">Teks Pengumuman Baru <span style="color:#dc2626;">*</span></label>
+                            <input type="text" name="teks" required placeholder="Contoh: Promo Gajian Diskon 10% Semua Laptop" style="width: 100%; padding: 11px 14px; font-size: 13.5px; border: 1.5px solid #cbd5e1; border-radius: 9px; box-sizing: border-box; outline: none;">
+                        </div>
+                        <div style="flex: 0 0 130px;">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 750; color: #1e293b;">Urutan Tampil</label>
+                            <input type="number" name="urutan" min="1" value="{{ running_text_next_urutan|default:1 }}" style="width: 100%; padding: 11px 14px; font-size: 13.5px; border: 1.5px solid #cbd5e1; border-radius: 9px; box-sizing: border-box; outline: none;">
+                        </div>
+                        <div style="display: flex; align-items: center; height: 42px; padding: 0 10px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 700; color: #334155;">
+                                <input type="checkbox" name="aktif" value="1" checked style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer;">
+                                <span>Langsung Tayang</span>
+                            </label>
+                        </div>
+                        <div style="flex: 0 0 auto;">
+                            <button type="submit" style="padding: 11px 22px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff; border: 0; border-radius: 9px; font-size: 13.5px; font-weight: 800; cursor: pointer; height: 44px; display: inline-flex; align-items: center; gap: 7px; box-shadow: 0 3px 10px rgba(220, 38, 38, 0.25);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                Simpan Teks
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Daftar Teks yang Sedang Aktif Saat Ini -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px;">
+                        <span style="display: block; font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">
+                            Daftar Teks Berjalan Saat Ini:
+                        </span>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            {% for rt in running_texts_list %}
+                                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ffffff; border: 1px solid {% if rt.aktif %}#bbf7d0{% else %}#e2e8f0{% endif %}; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: {% if rt.aktif %}#166534{% else %}#94a3b8{% endif %};">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: {% if rt.aktif %}#22c55e{% else %}#cbd5e1{% endif %};"></span>
+                                    #{{ rt.urutan }} {{ rt.teks }}
+                                </span>
+                            {% empty %}
+                                <span style="font-size: 12.5px; color: #64748b;">Belum ada teks pengumuman.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </section>
             {% endif %}

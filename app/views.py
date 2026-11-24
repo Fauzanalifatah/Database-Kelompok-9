@@ -1457,6 +1457,19 @@ def index(request):
             )
             return redirect("app:dashboard")
         messages.error(request, "Gagal memperbarui ikon. Periksa isian form.")
+    elif request.method == "POST" and request.POST.get("form_type") == "running_text_add":
+        teks = request.POST.get("teks", "").strip()
+        if teks:
+            urutan = request.POST.get("urutan")
+            try:
+                urutan = int(urutan)
+            except (ValueError, TypeError):
+                urutan = RunningText.objects.count() + 1
+            aktif = bool(request.POST.get("aktif"))
+            RunningText.objects.create(teks=teks, urutan=urutan, aktif=aktif)
+            messages.success(request, f"Teks berjalan '{teks}' berhasil ditambahkan.")
+            return redirect("app:dashboard")
+        messages.error(request, "Teks pengumuman tidak boleh kosong.")
     elif request.method == "POST" and request.POST.get("form_type") == "footer":
         footer_form = FooterSettingForm(request.POST, instance=footer_setting)
         if footer_form.is_valid():
@@ -1649,6 +1662,8 @@ def index(request):
                 "about_form": about_form,
                 "mitra_deepublish_forms": mitra_deepublish_forms,
                 "mitra_deepublish_add_form": mitra_deepublish_add_form,
+                "running_texts_list": RunningText.objects.all().order_by("urutan", "id"),
+                "running_text_next_urutan": RunningText.objects.count() + 1,
             }
         )
         return render(request, "app/dashboard.html", dashboard_context)
