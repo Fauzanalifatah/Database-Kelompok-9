@@ -5,6 +5,8 @@ from .models import (
     KategoriArtikel,
     MitraDeepublish,
     AboutSetting,
+    BannerBeranda,
+    RunningText,
     FooterSetting,
     FooterPayment,
     FooterSocial,
@@ -153,6 +155,15 @@ class PesananAdmin(admin.ModelAdmin):
     inlines = [ItemPesananInline]
 
 
+@admin.register(RunningText)
+class RunningTextAdmin(admin.ModelAdmin):
+    list_display = ("teks", "urutan", "aktif", "updated_at")
+    list_editable = ("urutan", "aktif")
+    search_fields = ("teks",)
+    list_filter = ("aktif",)
+
+
+admin.site.register(BannerBeranda)
 admin.site.register(Provinsi)
 admin.site.register(UserAdmin)
 admin.site.register(UserPengguna)

@@ -7,6 +7,7 @@ from django.contrib.auth.password_validation import validate_password
 from .models import (
     AboutSetting,
     BannerBeranda,
+    RunningText,
     FooterPayment,
     FooterSetting,
     FooterSocial,
@@ -356,6 +357,43 @@ class BannerBerandaForm(forms.ModelForm):
             "link_url": "URL tujuan ketika banner diklik di beranda (misal: /shop/). Kosongkan jika tidak perlu.",
             "aktif": "Aktifkan agar banner ini tampil di bagian atas beranda website.",
             "urutan": "Nomor urut penempatan banner (angka lebih kecil tampil lebih awal).",
+        }
+
+
+class RunningTextForm(forms.ModelForm):
+    class Meta:
+        model = RunningText
+        fields = ["teks", "urutan", "aktif"]
+        labels = {
+            "teks": "Teks Pengumuman",
+            "urutan": "Nomor Urutan Tampil",
+            "aktif": "Tampilkan di Website",
+        }
+        widgets = {
+            "teks": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Contoh: Garansi Resmi Toko 1 Bulan Penuh",
+                    "required": "required",
+                    "autocomplete": "off",
+                }
+            ),
+            "urutan": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": "1",
+                }
+            ),
+            "aktif": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                }
+            ),
+        }
+        help_texts = {
+            "teks": "Teks promo, pengumuman, atau keunggulan toko yang akan berjalan di pita atas website.",
+            "urutan": "Urutan tampil dalam deretan running text (angka lebih kecil tampil lebih dulu).",
+            "aktif": "Centang untuk mengaktifkan teks ini agar tampil di running text website.",
         }
 
 

@@ -417,19 +417,25 @@ header {
     overflow: hidden;
     padding: 11px 0;
     color: #fff;
-    background: #111827;
-    border-bottom: 1px solid #1f2937;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: .03em;
+    letter-spacing: .04em;
     text-transform: uppercase;
+    user-select: none;
+}
+
+.announcement:hover .announcement-track {
+    animation-play-state: paused;
 }
 
 .announcement-track {
     display: flex;
     width: max-content;
     white-space: nowrap;
-    animation: announcement-scroll 26s linear infinite;
+    animation: announcement-scroll 45s linear infinite;
+    will-change: transform;
 }
 
 .announcement-group {
@@ -438,6 +444,12 @@ header {
     align-items: center;
     gap: 25px;
     padding-right: 25px;
+}
+
+.announcement-bullet {
+    color: #ef4444;
+    font-size: 13px;
+    line-height: 1;
 }
 
 @keyframes announcement-scroll {

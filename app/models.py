@@ -446,6 +446,34 @@ class BannerBeranda(models.Model):
         return self.judul
 
 
+class RunningText(models.Model):
+    teks = models.CharField(
+        max_length=255,
+        verbose_name="Teks Pengumuman",
+        help_text="Teks yang akan berjalan di pita pengumuman website (misal: Garansi toko 1 bulan, Promo Laptop, dll).",
+    )
+    urutan = models.PositiveIntegerField(
+        default=1,
+        verbose_name="Urutan Tampil",
+        help_text="Nomor urut teks (angka lebih kecil tampil lebih dahulu).",
+    )
+    aktif = models.BooleanField(
+        default=True,
+        verbose_name="Status Aktif",
+        help_text="Centang untuk menampilkan teks ini di pita berjalan.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Dibuat pada")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Diperbarui pada")
+
+    class Meta:
+        ordering = ["urutan", "id"]
+        verbose_name = "Running Text"
+        verbose_name_plural = "Running Text"
+
+    def __str__(self):
+        return self.teks
+
+
 class MediaFile(models.Model):
     name = models.CharField(max_length=255, unique=True, db_index=True, verbose_name="Nama path file")
     data = models.BinaryField(verbose_name="Konten biner file")

@@ -1,0 +1,827 @@
+{% extends "app/content_manager.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    @media (min-width: 769px) {
+        .topbar {
+            display: none !important;
+        }
+    }
+
+    .rt-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* ─── Top Command Toolbar ─── */
+    .rt-top-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .rt-toolbar-copy h2 {
+        margin: 0 0 4px;
+        font-size: 22px;
+        font-weight: 850;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+    }
+
+    .rt-toolbar-copy p {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.45;
+    }
+
+    .rt-toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-public-preview {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 15px;
+        background: #ffffff;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-public-preview:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #0f172a;
+    }
+
+    /* ─── Live Preview Banner Simulator ─── */
+    .rt-preview-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    }
+
+    .rt-preview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .rt-preview-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .rt-preview-title svg {
+        color: #dc2626;
+        width: 16px;
+        height: 16px;
+    }
+
+    .rt-preview-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .rt-preview-badge .dot {
+        width: 6px;
+        height: 6px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+
+    .rt-live-track-wrap {
+        overflow: hidden;
+        border-radius: 10px;
+        background: #0f172a;
+        color: #ffffff;
+        padding: 10px 0;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        user-select: none;
+    }
+
+    .rt-live-track {
+        display: flex;
+        width: max-content;
+        white-space: nowrap;
+        animation: rt-live-scroll 35s linear infinite;
+    }
+
+    .rt-live-group {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        padding-right: 25px;
+    }
+
+    .rt-live-bullet {
+        color: #ef4444;
+        font-size: 13px;
+    }
+
+    @keyframes rt-live-scroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    /* ─── Metric Cards ─── */
+    .rt-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .rt-stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+    }
+
+    .rt-stat-info span {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+    }
+
+    .rt-stat-info strong {
+        font-size: 26px;
+        font-weight: 850;
+        color: #0f172a;
+        line-height: 1;
+    }
+
+    .rt-stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .rt-stat-icon.blue { background: #eff6ff; color: #2563eb; }
+    .rt-stat-icon.green { background: #f0fdf4; color: #16a34a; }
+    .rt-stat-icon.amber { background: #fffbeb; color: #d97706; }
+
+    /* ─── Layout Grid (Form & Table) ─── */
+    .rt-main-grid {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    /* ─── Form Card ─── */
+    .rt-form-card {
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+    }
+
+    .rt-form-card.is-editing {
+        border-color: #fca5a5;
+        box-shadow: 0 8px 26px rgba(220, 38, 38, 0.08);
+    }
+
+    .rt-form-header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .rt-form-header h3 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .rt-form-header p {
+        margin: 0;
+        font-size: 12.5px;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .rt-field {
+        margin-bottom: 18px;
+    }
+
+    .rt-field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 750;
+        color: #1e293b;
+    }
+
+    .rt-field input[type="text"],
+    .rt-field input[type="number"] {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 13.5px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 9px;
+        color: #0f172a;
+        background: #ffffff;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .rt-field input[type="text"]:focus,
+    .rt-field input[type="number"]:focus {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    }
+
+    .rt-field-help {
+        margin-top: 5px;
+        font-size: 11.5px;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .rt-check-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 10px 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .rt-check-label input {
+        width: 18px;
+        height: 18px;
+        accent-color: #dc2626;
+        cursor: pointer;
+    }
+
+    .rt-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .btn-submit-rt {
+        flex: 1;
+        padding: 11px 18px;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: #ffffff;
+        border: 0;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(220, 38, 38, 0.25);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        text-align: center;
+    }
+
+    .btn-submit-rt:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    }
+
+    .btn-cancel-edit {
+        padding: 11px 16px;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .btn-cancel-edit:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    /* ─── Table List Card ─── */
+    .rt-table-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+        overflow: hidden;
+    }
+
+    .rt-table-header {
+        padding: 18px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .rt-table-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .rt-table-header span {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .rt-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .rt-table th {
+        background: #f8fafc;
+        padding: 13px 20px;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+    }
+
+    .rt-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        font-size: 13.5px;
+    }
+
+    .rt-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .rt-table tr:hover {
+        background: #fafcff;
+    }
+
+    .rt-order-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 800;
+        font-size: 12.5px;
+        border-radius: 8px;
+    }
+
+    .rt-text-cell {
+        font-weight: 700;
+        color: #0f172a;
+        max-width: 320px;
+        overflow-wrap: break-word;
+        line-height: 1.4;
+    }
+
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 750;
+    }
+
+    .badge-status.is-active {
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge-status.is-inactive {
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #cbd5e1;
+    }
+
+    .badge-status .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .badge-status.is-active .status-dot { background: #16a34a; }
+    .badge-status.is-inactive .status-dot { background: #94a3b8; }
+
+    .rt-actions-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-action-icon {
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid transparent;
+        transition: all 0.15s ease;
+    }
+
+    .btn-action-toggle {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #334155;
+    }
+
+    .btn-action-toggle:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .btn-action-edit {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .btn-action-edit:hover {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .btn-action-delete {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+
+    .btn-action-delete:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    /* ─── Guide Box ─── */
+    .rt-guide-box {
+        margin-top: 24px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 18px 22px;
+    }
+
+    .rt-guide-box h4 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .rt-guide-box p {
+        margin: 0 0 6px;
+        font-size: 12.5px;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    .rt-guide-box p:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 900px) {
+        .rt-main-grid {
+            grid-template-columns: 1fr;
+        }
+        .rt-stats-grid {
+            grid-template-columns: 1fr;
+        }
+        .rt-table-card {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .rt-table {
+            min-width: 580px;
+        }
+    }
+</style>
+
+<div class="rt-container">
+    <!-- Top Command Toolbar -->
+    <div class="rt-top-toolbar">
+        <div class="rt-toolbar-copy">
+            <h2>Kelola Running Text (Teks Berjalan)</h2>
+            <p>Atur teks pengumuman, promo, dan keunggulan toko yang berjalan tanpa henti di pita atas website.</p>
+        </div>
+        <div class="rt-toolbar-actions">
+            <a href="{% url 'home' %}" target="_blank" rel="noopener" class="btn-public-preview">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                Lihat di Beranda
+            </a>
+        </div>
+    </div>
+
+    <!-- Live Preview Simulator -->
+    <div class="rt-preview-card">
+        <div class="rt-preview-head">
+            <div class="rt-preview-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                Pratinjau Langsung Running Text di Website
+            </div>
+            <div class="rt-preview-badge">
+                <span class="dot"></span>
+                Berjalan Otomatis (Looping)
+            </div>
+        </div>
+        <div class="rt-live-track-wrap">
+            <div class="rt-live-track">
+                <div class="rt-live-group">
+                    {% for _ in "123456" %}
+                        {% for item in objects %}
+                            {% if item.aktif %}
+                                <span>{{ item.teks }}</span><span class="rt-live-bullet">•</span>
+                            {% endif %}
+                        {% empty %}
+                            <span>Garansi toko</span><span class="rt-live-bullet">•</span>
+                            <span>Siap kirim ke seluruh kota</span><span class="rt-live-bullet">•</span>
+                            <span>Unit teruji</span><span class="rt-live-bullet">•</span>
+                            <span>Laptop second berkualitas</span><span class="rt-live-bullet">•</span>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                <div class="rt-live-group" aria-hidden="true">
+                    {% for _ in "123456" %}
+                        {% for item in objects %}
+                            {% if item.aktif %}
+                                <span>{{ item.teks }}</span><span class="rt-live-bullet">•</span>
+                            {% endif %}
+                        {% empty %}
+                            <span>Garansi toko</span><span class="rt-live-bullet">•</span>
+                            <span>Siap kirim ke seluruh kota</span><span class="rt-live-bullet">•</span>
+                            <span>Unit teruji</span><span class="rt-live-bullet">•</span>
+                            <span>Laptop second berkualitas</span><span class="rt-live-bullet">•</span>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Metrics -->
+    <div class="rt-stats-grid">
+        <div class="rt-stat-card">
+            <div class="rt-stat-info">
+                <span>Total Teks Terdaftar</span>
+                <strong>{{ total_count }}</strong>
+            </div>
+            <div class="rt-stat-icon blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12h16M4 6h16M4 18h10"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="rt-stat-card">
+            <div class="rt-stat-info">
+                <span>Teks Aktif (Tayang)</span>
+                <strong>{{ active_count }}</strong>
+            </div>
+            <div class="rt-stat-icon green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+        </div>
+        <div class="rt-stat-card">
+            <div class="rt-stat-info">
+                <span>Teks Disembunyikan</span>
+                <strong>{{ inactive_count }}</strong>
+            </div>
+            <div class="rt-stat-icon amber">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout: Form & List -->
+    <div class="rt-main-grid">
+        <!-- Form Tambah / Edit -->
+        <div class="rt-form-card {% if edit_item %}is-editing{% endif %}">
+            <div class="rt-form-header">
+                <h3>{% if edit_item %}Edit Teks Berjalan{% else %}Tambah Teks Berjalan Baru{% endif %}</h3>
+                <p>{% if edit_item %}Perbarui isi teks, urutan, atau ubah status tayang.{% else %}Tulis teks singkat dan menarik untuk ditampilkan di pita atas website.{% endif %}</p>
+            </div>
+
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+
+                <div class="rt-field">
+                    <label for="id_teks">Teks Pengumuman <span style="color:#dc2626;">*</span></label>
+                    {{ form.teks }}
+                    {% if form.teks.errors %}
+                        <div style="color:#dc2626; font-size:12px; margin-top:4px;">{{ form.teks.errors.0 }}</div>
+                    {% endif %}
+                    <div class="rt-field-help">Contoh: <em>Promo Gajian Diskon 10% Semua Laptop</em>, <em>Garansi Toko Resmi 1 Bulan</em>, dll.</div>
+                </div>
+
+                <div class="rt-field">
+                    <label for="id_urutan">Nomor Urutan Tampil</label>
+                    <input type="number" name="urutan" id="id_urutan" class="form-control" min="1" value="{{ form.urutan.value|default:next_urutan }}">
+                    {% if form.urutan.errors %}
+                        <div style="color:#dc2626; font-size:12px; margin-top:4px;">{{ form.urutan.errors.0 }}</div>
+                    {% endif %}
+                    <div class="rt-field-help">Angka lebih kecil akan muncul lebih awal di barisan teks berjalan.</div>
+                </div>
+
+                <div class="rt-field">
+                    <label class="rt-check-label">
+                        {{ form.aktif }}
+                        <span>Tampilkan di Running Text Website</span>
+                    </label>
+                    <div class="rt-field-help">Jika dicentang, teks ini langsung tampil dan berjalan di website.</div>
+                </div>
+
+                <div class="rt-form-actions">
+                    <button type="submit" class="btn-submit-rt">
+                        {% if edit_item %}Simpan Perubahan{% else %}Tambahkan Teks{% endif %}
+                    </button>
+                    {% if edit_item %}
+                        <a href="{% url 'app:running_text_manager' %}" class="btn-cancel-edit">Batal</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <div class="rt-guide-box">
+                <h4>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Panduan Admin
+                </h4>
+                <p>• <strong>Tanpa Jeda:</strong> Sistem secara otomatis melooping teks tanpa ada ruang kosong pada semua ukuran layar.</p>
+                <p>• <strong>Pause on Hover:</strong> Saat pengunjung mengarahkan kursor mouse ke running text, gerakan akan berhenti sejenak agar mudah dibaca.</p>
+                <p>• <strong>Status Cepat:</strong> Anda dapat mengaktifkan atau menonaktifkan teks promo dengan 1 klik tombol di tabel.</p>
+            </div>
+        </div>
+
+        <!-- Daftar Teks Berjalan -->
+        <div class="rt-table-card">
+            <div class="rt-table-header">
+                <h3>Daftar Teks Berjalan</h3>
+                <span>{{ objects.count }} item terdaftar</span>
+            </div>
+
+            <table class="rt-table">
+                <thead>
+                    <tr>
+                        <th style="width: 55px; text-align: center;">Urutan</th>
+                        <th>Isi Teks Pengumuman</th>
+                        <th style="width: 110px;">Status</th>
+                        <th style="width: 170px; text-align: right;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in objects %}
+                    <tr>
+                        <td style="text-align: center;">
+                            <span class="rt-order-pill">#{{ item.urutan }}</span>
+                        </td>
+                        <td>
+                            <div class="rt-text-cell">{{ item.teks }}</div>
+                        </td>
+                        <td>
+                            {% if item.aktif %}
+                                <span class="badge-status is-active">
+                                    <span class="status-dot"></span>
+                                    Aktif
+                                </span>
+                            {% else %}
+                                <span class="badge-status is-inactive">
+                                    <span class="status-dot"></span>
+                                    Nonaktif
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="rt-actions-row" style="justify-content: flex-end;">
+                                <!-- Toggle Button -->
+                                <form method="post" action="{% url 'app:running_text_toggle' item.pk %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action-icon btn-action-toggle" title="{% if item.aktif %}Klik untuk nonaktifkan{% else %}Klik untuk aktifkan{% endif %}">
+                                        {% if item.aktif %}
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            Nonaktifkan
+                                        {% else %}
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            Aktifkan
+                                        {% endif %}
+                                    </button>
+                                </form>
+
+                                <!-- Edit Button -->
+                                <a href="{% url 'app:running_text_edit' item.pk %}" class="btn-action-icon btn-action-edit" title="Edit teks">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    Edit
+                                </a>
+
+                                <!-- Delete Button -->
+                                <form method="post" action="{% url 'app:running_text_delete' item.pk %}" style="margin: 0;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus teks: \'{{ item.teks|escapejs }}\'?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action-icon btn-action-delete" title="Hapus teks">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px 20px; color: #64748b;">
+                            <p style="margin: 0 0 8px; font-weight: 700; color: #0f172a;">Belum ada teks pengumuman kustom.</p>
+                            <p style="margin: 0; font-size: 13px;">Gunakan formulir di sebelah kiri untuk menambahkan teks berjalan pertama Anda!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

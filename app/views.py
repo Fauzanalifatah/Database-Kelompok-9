@@ -22,6 +22,7 @@ from django.utils.text import slugify
 from .decorators_admin import admin_required
 from .form_admin import (
     BannerBerandaForm,
+    RunningTextForm,
     FooterPaymentForm,
     FooterPaymentAddForm,
     FooterSettingForm,
@@ -42,6 +43,7 @@ from .forms import RegistrationForm
 from .models import (
     Artikel,
     BannerBeranda,
+    RunningText,
     BlogPengguna,
     KategoriArtikel,
     MitraDeepublish,
@@ -597,6 +599,120 @@ def banner_manager_reorder(request, pk, direction):
                 request, f"Urutan banner '{banner.judul}' berhasil diturunkan ke Slide #{banner.urutan}."
             )
     return redirect("app:banner_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def running_text_manager(request):
+    """
+    Kelola Teks Berjalan (Running Text / Announcement Marquee) untuk admin.
+    Memungkinkan admin menambah, mengedit, mengaktifkan/menonaktifkan, dan menghapus teks pengumuman.
+    """
+    # Inisialisasi default jika tabel masih kosong sama sekali
+    if not RunningText.objects.exists():
+        default_items = [
+            ("Garansi toko", 1),
+            ("Siap kirim ke seluruh kota", 2),
+            ("Unit teruji", 3),
+            ("Laptop second berkualitas", 4),
+        ]
+        for teks, urut in default_items:
+            RunningText.objects.create(teks=teks, urutan=urut, aktif=True)
+
+    objects = RunningText.objects.all().order_by("urutan", "id")
+    total_count = objects.count()
+    active_count = objects.filter(aktif=True).count()
+    inactive_count = total_count - active_count
+
+    form = RunningTextForm(request.POST or None)
+    if request.method == "POST":
+        action = request.POST.get("action", "add")
+        if action == "add":
+            if form.is_valid():
+                item = form.save()
+                messages.success(request, f"Teks '{item.teks}' berhasil ditambahkan ke running text.")
+                return redirect("app:running_text_manager")
+            else:
+                messages.error(request, "Gagal menambahkan teks. Pastikan input terisi dengan benar.")
+
+    return render(
+        request,
+        "app/running_text_manager.html",
+        {
+            "title": "Kelola Running Text",
+            "heading": "Running Text (Teks Berjalan)",
+            "objects": objects,
+            "total_count": total_count,
+            "active_count": active_count,
+            "inactive_count": inactive_count,
+            "form": form,
+            "section": "running_text",
+            "next_urutan": total_count + 1,
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def running_text_edit(request, pk):
+    """
+    Mengubah teks, urutan, atau status aktif dari satu item running text.
+    """
+    item = get_object_or_404(RunningText, pk=pk)
+    form = RunningTextForm(request.POST or None, instance=item)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Perubahan teks '{item.teks}' berhasil disimpan.")
+            return redirect("app:running_text_manager")
+        else:
+            messages.error(request, "Gagal menyimpan perubahan. Periksa kembali isian formulir.")
+
+    objects = RunningText.objects.all().order_by("urutan", "id")
+    return render(
+        request,
+        "app/running_text_manager.html",
+        {
+            "title": f"Edit Running Text - #{item.pk}",
+            "heading": "Edit Teks Berjalan",
+            "edit_item": item,
+            "form": form,
+            "objects": objects,
+            "total_count": objects.count(),
+            "active_count": objects.filter(aktif=True).count(),
+            "inactive_count": objects.filter(aktif=False).count(),
+            "section": "running_text",
+        },
+    )
+
+
+@admin_required
+@login_required(login_url="app:login")
+def running_text_delete(request, pk):
+    """
+    Menghapus teks berjalan.
+    """
+    item = get_object_or_404(RunningText, pk=pk)
+    if request.method == "POST":
+        teks = item.teks
+        item.delete()
+        messages.success(request, f"Teks '{teks}' berhasil dihapus.")
+    return redirect("app:running_text_manager")
+
+
+@admin_required
+@login_required(login_url="app:login")
+def running_text_toggle(request, pk):
+    """
+    Toggle 1-klik untuk mengaktifkan / menonaktifkan status teks berjalan.
+    """
+    item = get_object_or_404(RunningText, pk=pk)
+    if request.method == "POST":
+        item.aktif = not item.aktif
+        item.save(update_fields=["aktif", "updated_at"])
+        status_text = "diaktifkan" if item.aktif else "dinonaktifkan"
+        messages.success(request, f"Teks '{item.teks}' berhasil {status_text}.")
+    return redirect("app:running_text_manager")
 
 
 def serve_media(request, path):
