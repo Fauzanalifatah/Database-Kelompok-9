@@ -7,7 +7,10 @@
 .shop-hero {
     position: relative;
     overflow: hidden;
-    width: 100%;
+    width: min(1220px, calc(100% - 40px));
+    margin: 20px auto 36px;
+    border-radius: 18px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.14);
     color: #fff;
     background: #8fd9ff;
 }
@@ -17,9 +20,11 @@
     display: block;
     width: 100%;
     height: auto;
-    min-height: 360px;
+    max-height: 520px;
+    min-height: 0;
     object-fit: cover;
     object-position: center;
+    border-radius: 18px;
 }
 
 .shop-content {
@@ -509,7 +514,12 @@
 }
 
 /* Cart inline form on shop cards */
-.cart-inline-form { display: inline-flex; margin: 0; padding: 0; }
+.cart-inline-form {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+}
+
 .cart-add-button {
     display: inline-flex;
     align-items: center;
@@ -525,6 +535,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
+
 .cart-add-button:hover {
     color: #fff;
     background: #1455d9;
@@ -595,11 +606,21 @@
 
 /* Mobile - max 760px */
 @media (max-width: 760px) {
+    .shop-hero {
+        width: min(1220px, calc(100% - 24px));
+        margin: 14px auto 24px;
+        border-radius: 12px;
+        max-height: 280px;
+    }
+
     .shop-hero-image,
     .shop-hero img {
-        min-height: 230px;
+        height: auto;
+        max-height: 280px;
+        min-height: 0;
         object-fit: cover;
         object-position: center;
+        border-radius: 12px;
     }
 
     .shop-content {
