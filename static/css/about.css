@@ -11,8 +11,10 @@
     overflow: hidden;
     padding: 96px 0 108px;
     color: #ffffff;
-    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.82) 50%, rgba(15, 23, 42, 0.65) 100%), url("../images/Toko%20UMKM%20Losari%20Computer.jpeg");
+    background-color: #0f172a;
+    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.84) 0%, rgba(15, 23, 42, 0.72) 48%, rgba(15, 23, 42, 0.42) 100%), url("../images/toko-umkm-losari-computer.jpeg");
     background-position: center 48%;
+    background-repeat: no-repeat;
     background-size: cover;
 }
 
