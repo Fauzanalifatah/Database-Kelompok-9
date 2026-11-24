@@ -10,7 +10,7 @@
     }
 
     .rt-container {
-        max-width: 1200px;
+        max-width: 1240px;
         margin: 0 auto;
     }
 
@@ -50,14 +50,15 @@
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        padding: 9px 15px;
+        padding: 9px 16px;
         background: #ffffff;
         color: #334155;
-        border: 1px solid #cbd5e1;
-        border-radius: 9px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 750;
         text-decoration: none;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
         transition: all 0.2s ease;
     }
 
@@ -65,16 +66,17 @@
         background: #f8fafc;
         border-color: #94a3b8;
         color: #0f172a;
+        transform: translateY(-1px);
     }
 
     /* ─── Live Preview Banner Simulator ─── */
     .rt-preview-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
+        border-radius: 18px;
         padding: 20px 24px;
         margin-bottom: 24px;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
     }
 
     .rt-preview-head {
@@ -88,11 +90,11 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 13px;
+        font-size: 12.5px;
         font-weight: 800;
         color: #0f172a;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
     }
 
     .rt-preview-title svg {
@@ -129,7 +131,7 @@
         border-radius: 10px;
         background: #0f172a;
         color: #ffffff;
-        padding: 10px 0;
+        padding: 11px 0;
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.04em;
@@ -173,8 +175,8 @@
     .rt-stat-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 18px 20px;
+        border-radius: 16px;
+        padding: 18px 22px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -183,12 +185,12 @@
 
     .rt-stat-info span {
         display: block;
-        font-size: 12px;
-        font-weight: 700;
+        font-size: 11.5px;
+        font-weight: 750;
         color: #64748b;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        margin-bottom: 4px;
+        margin-bottom: 5px;
     }
 
     .rt-stat-info strong {
@@ -212,164 +214,474 @@
     .rt-stat-icon.green { background: #f0fdf4; color: #16a34a; }
     .rt-stat-icon.amber { background: #fffbeb; color: #d97706; }
 
-    /* ─── Layout Grid (Form & Table) ─── */
+    /* ─── Main Grid Layout (Left Form, Right List) ─── */
     .rt-main-grid {
         display: grid;
-        grid-template-columns: 380px 1fr;
-        gap: 24px;
+        grid-template-columns: 420px 1fr;
+        gap: 28px;
         align-items: start;
     }
 
-    /* ─── Form Card ─── */
+    /* ═══════════════════════════════════════════════════════════════
+       PREMIUM CLEAN FORM CARD (KOLOM TAMBAH TEKS)
+       ═══════════════════════════════════════════════════════════════ */
     .rt-form-card {
         background: #ffffff;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #dc2626;
+        border-radius: 20px;
+        padding: 28px 26px 30px;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+        position: relative;
     }
 
     .rt-form-card.is-editing {
-        border-color: #fca5a5;
-        box-shadow: 0 8px 26px rgba(220, 38, 38, 0.08);
+        border-top-color: #2563eb;
+        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.08);
+    }
+
+    .rt-form-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fee2e2;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .rt-form-card.is-editing .rt-form-badge {
+        background: #eff6ff;
+        color: #2563eb;
+        border-color: #dbeafe;
+    }
+
+    .rt-form-badge .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
     }
 
     .rt-form-header {
-        margin-bottom: 20px;
-        padding-bottom: 16px;
+        margin-bottom: 22px;
+        padding-bottom: 18px;
         border-bottom: 1px solid #f1f5f9;
     }
 
     .rt-form-header h3 {
-        margin: 0 0 4px;
-        font-size: 17px;
-        font-weight: 800;
+        margin: 0 0 6px;
+        font-size: 19px;
+        font-weight: 850;
         color: #0f172a;
+        letter-spacing: -0.02em;
     }
 
     .rt-form-header p {
         margin: 0;
-        font-size: 12.5px;
-        color: #64748b;
-        line-height: 1.4;
-    }
-
-    .rt-field {
-        margin-bottom: 18px;
-    }
-
-    .rt-field label {
-        display: block;
-        margin-bottom: 6px;
         font-size: 13px;
-        font-weight: 750;
-        color: #1e293b;
+        color: #64748b;
+        line-height: 1.5;
     }
 
-    .rt-field input[type="text"],
-    .rt-field input[type="number"] {
+    /* Modern Form Field */
+    .rt-modern-field {
+        margin-bottom: 20px;
+    }
+
+    .rt-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .rt-field-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -0.01em;
+    }
+
+    .field-icon {
+        width: 16px;
+        height: 16px;
+        color: #dc2626;
+        flex-shrink: 0;
+    }
+
+    .label-badge-required {
+        font-size: 11px;
+        font-weight: 800;
+        color: #dc2626;
+        background: #fef2f2;
+        padding: 2px 7px;
+        border-radius: 6px;
+        letter-spacing: 0.03em;
+    }
+
+    .rt-modern-input {
         width: 100%;
-        padding: 10px 14px;
-        font-size: 13.5px;
+        padding: 12px 16px;
+        font-size: 14px;
         border: 1.5px solid #cbd5e1;
-        border-radius: 9px;
+        border-radius: 12px;
         color: #0f172a;
         background: #ffffff;
         outline: none;
         box-sizing: border-box;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: all 0.2s ease;
+        font-family: inherit;
     }
 
-    .rt-field input[type="text"]:focus,
-    .rt-field input[type="number"]:focus {
+    .rt-modern-input:focus {
         border-color: #dc2626;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
     }
 
-    .rt-field-help {
-        margin-top: 5px;
+    .rt-modern-input::placeholder {
+        color: #94a3b8;
+        font-size: 13.5px;
+    }
+
+    .rt-field-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        margin-top: 7px;
         font-size: 11.5px;
         color: #64748b;
-        line-height: 1.4;
+        line-height: 1.45;
     }
 
-    .rt-check-label {
+    .rt-field-hint svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        margin-top: 1px;
+        color: #94a3b8;
+    }
+
+    /* Order Input Box */
+    .rt-order-box {
         display: flex;
         align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        padding: 10px 12px;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 14px 16px;
         background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 9px;
-        font-size: 13px;
-        font-weight: 700;
-        color: #334155;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        margin-bottom: 20px;
     }
 
-    .rt-check-label input {
-        width: 18px;
-        height: 18px;
-        accent-color: #dc2626;
+    .order-box-copy {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .order-box-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 2px;
+    }
+
+    .order-box-label svg {
+        width: 15px;
+        height: 15px;
+        color: #dc2626;
+    }
+
+    .order-box-sub {
+        display: block;
+        font-size: 11.5px;
+        color: #64748b;
+        line-height: 1.35;
+    }
+
+    .order-box-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 4px 10px;
+        flex-shrink: 0;
+    }
+
+    .order-box-input-wrap:focus-within {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .order-prefix {
+        font-size: 13px;
+        font-weight: 800;
+        color: #94a3b8;
+    }
+
+    .order-number-input {
+        width: 50px;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        background: transparent;
+        text-align: center;
+        font-family: inherit;
+    }
+
+    /* Modern Toggle Switch Card */
+    .rt-switch-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        margin-bottom: 24px;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .rt-switch-card:hover {
+        border-color: #cbd5e1;
+        background: #fafbfc;
+    }
+
+    .switch-card-text {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .switch-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 3px;
+    }
+
+    .switch-title-row strong {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .switch-badge-live {
+        font-size: 10px;
+        font-weight: 800;
+        color: #16a34a;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        padding: 1px 7px;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .switch-card-text p {
+        margin: 0;
+        font-size: 11.5px;
+        color: #64748b;
+        line-height: 1.35;
+    }
+
+    /* iOS Style Toggle Switch */
+    .rt-toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 26px;
+        flex-shrink: 0;
         cursor: pointer;
     }
 
+    .rt-toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .rt-toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #cbd5e1;
+        transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 34px;
+    }
+
+    .rt-toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .rt-toggle-switch input:checked + .rt-toggle-slider {
+        background-color: #16a34a;
+    }
+
+    .rt-toggle-switch input:checked + .rt-toggle-slider:before {
+        transform: translateX(22px);
+    }
+
+    /* Form Action Buttons */
     .rt-form-actions {
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-top: 22px;
     }
 
-    .btn-submit-rt {
+    .btn-submit-modern {
         flex: 1;
-        padding: 11px 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 13px 20px;
         background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         color: #ffffff;
         border: 0;
-        border-radius: 10px;
-        font-size: 13.5px;
+        border-radius: 12px;
+        font-size: 14px;
         font-weight: 800;
         cursor: pointer;
-        box-shadow: 0 3px 12px rgba(220, 38, 38, 0.25);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-        text-align: center;
+        box-shadow: 0 4px 14px rgba(220, 38, 38, 0.28);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .btn-submit-rt:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    .btn-submit-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.38);
     }
 
-    .btn-cancel-edit {
-        padding: 11px 16px;
+    .btn-submit-modern svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .btn-cancel-modern {
+        padding: 13px 18px;
         background: #f1f5f9;
         color: #475569;
-        border: 1px solid #cbd5e1;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 700;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 750;
         text-decoration: none;
         text-align: center;
+        transition: all 0.15s ease;
     }
 
-    .btn-cancel-edit:hover {
+    .btn-cancel-modern:hover {
         background: #e2e8f0;
         color: #0f172a;
     }
 
-    /* ─── Table List Card ─── */
+    /* Modern Guide Card */
+    .rt-modern-guide {
+        margin-top: 24px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px 22px;
+    }
+
+    .guide-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: #0f172a;
+        font-size: 13.5px;
+        font-weight: 800;
+    }
+
+    .guide-icon-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .guide-icon-badge svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .guide-items {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .guide-items li {
+        font-size: 12px;
+        color: #475569;
+        line-height: 1.5;
+        padding-left: 16px;
+        position: relative;
+    }
+
+    .guide-items li::before {
+        content: "•";
+        position: absolute;
+        left: 4px;
+        color: #dc2626;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    .guide-items li strong {
+        color: #0f172a;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RIGHT COLUMN: DAFTAR TEKS BERJALAN TABLE CARD
+       ═══════════════════════════════════════════════════════════════ */
     .rt-table-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
         overflow: hidden;
     }
 
     .rt-table-header {
-        padding: 18px 24px;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 20px 26px;
+        border-bottom: 1.5px solid #f1f5f9;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -377,32 +689,60 @@
 
     .rt-table-header h3 {
         margin: 0;
-        font-size: 16px;
-        font-weight: 800;
+        font-size: 17px;
+        font-weight: 850;
         color: #0f172a;
+        letter-spacing: -0.01em;
     }
 
     .rt-table-header span {
         font-size: 12px;
         color: #64748b;
-        font-weight: 600;
+        font-weight: 700;
+        background: #f1f5f9;
+        padding: 4px 10px;
+        border-radius: 999px;
     }
 
     .rt-table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed !important;
+    }
+
+    .col-th-order {
+        width: 75px;
+        text-align: center !important;
+        padding: 14px 10px !important;
+    }
+
+    .col-th-text {
+        text-align: left !important;
+        padding: 14px 24px !important;
+    }
+
+    .col-th-status {
+        width: 130px;
+        text-align: center !important;
+        padding: 14px 10px !important;
+    }
+
+    .col-th-action {
+        width: 170px;
+        text-align: right !important;
+        padding: 14px 24px !important;
     }
 
     .rt-table th {
         background: #f8fafc;
-        padding: 13px 20px;
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 800;
         color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
-        border-bottom: 1px solid #e2e8f0;
-        text-align: left;
+        letter-spacing: 0.06em;
+        border-bottom: 1.5px solid #e2e8f0;
+        white-space: nowrap;
     }
 
     .rt-table td {
@@ -424,21 +764,22 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         background: #f1f5f9;
         color: #334155;
         font-weight: 800;
-        font-size: 12.5px;
-        border-radius: 8px;
+        font-size: 13px;
+        border-radius: 9px;
+        border: 1px solid #e2e8f0;
     }
 
     .rt-text-cell {
-        font-weight: 700;
+        font-weight: 750;
         color: #0f172a;
-        max-width: 320px;
+        line-height: 1.45;
+        padding-left: 4px;
         overflow-wrap: break-word;
-        line-height: 1.4;
     }
 
     .badge-status {
@@ -475,12 +816,13 @@
     .rt-actions-row {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
+        justify-content: flex-end;
     }
 
     .btn-action-icon {
-        padding: 6px 12px;
-        border-radius: 7px;
+        padding: 7px 11px;
+        border-radius: 8px;
         font-size: 12px;
         font-weight: 750;
         cursor: pointer;
@@ -525,37 +867,7 @@
         color: #b91c1c;
     }
 
-    /* ─── Guide Box ─── */
-    .rt-guide-box {
-        margin-top: 24px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 18px 22px;
-    }
-
-    .rt-guide-box h4 {
-        margin: 0 0 8px;
-        font-size: 14px;
-        font-weight: 800;
-        color: #0f172a;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-    }
-
-    .rt-guide-box p {
-        margin: 0 0 6px;
-        font-size: 12.5px;
-        color: #64748b;
-        line-height: 1.5;
-    }
-
-    .rt-guide-box p:last-child {
-        margin-bottom: 0;
-    }
-
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
         .rt-main-grid {
             grid-template-columns: 1fr;
         }
@@ -680,69 +992,118 @@
 
     <!-- Main Layout: Form & List -->
     <div class="rt-main-grid">
-        <!-- Form Tambah / Edit -->
+        <!-- ═══════════════════════════════════════════════════════════════
+             KOLOM TAMBAH / EDIT TEKS BERJALAN (DESAIN BARU PREMIUM & CLEAN)
+             ═══════════════════════════════════════════════════════════════ -->
         <div class="rt-form-card {% if edit_item %}is-editing{% endif %}">
+            <div class="rt-form-badge">
+                <span class="badge-dot"></span>
+                <span>{% if edit_item %}MODE PENGEDITAN{% else %}FORMULIR INPUT{% endif %}</span>
+            </div>
+
             <div class="rt-form-header">
                 <h3>{% if edit_item %}Edit Teks Berjalan{% else %}Tambah Teks Berjalan Baru{% endif %}</h3>
-                <p>{% if edit_item %}Perbarui isi teks, urutan, atau ubah status tayang.{% else %}Tulis teks singkat dan menarik untuk ditampilkan di pita atas website.{% endif %}</p>
+                <p>{% if edit_item %}Perbarui isi teks, ubah urutan tayang, atau ubah status publikasi.{% else %}Tulis teks pengumuman singkat untuk ditampilkan di pita atas website.{% endif %}</p>
             </div>
 
             <form method="post" action="">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="add">
 
-                <div class="rt-field">
-                    <label for="id_teks">Teks Pengumuman <span style="color:#dc2626;">*</span></label>
-                    {{ form.teks }}
+                <!-- Field: Teks Pengumuman -->
+                <div class="rt-modern-field">
+                    <div class="rt-label-row">
+                        <label for="id_teks" class="rt-field-label">
+                            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Teks Pengumuman
+                        </label>
+                        <span class="label-badge-required">Wajib diisi</span>
+                    </div>
+
+                    <input type="text" name="teks" id="id_teks" class="rt-modern-input" placeholder="Contoh: Promo Gajian Diskon 10% Semua Laptop" value="{{ form.teks.value|default:'' }}" required autocomplete="off">
+                    
                     {% if form.teks.errors %}
-                        <div style="color:#dc2626; font-size:12px; margin-top:4px;">{{ form.teks.errors.0 }}</div>
+                        <div style="color:#dc2626; font-size:12px; margin-top:5px; font-weight:700;">{{ form.teks.errors.0 }}</div>
                     {% endif %}
-                    <div class="rt-field-help">Contoh: <em>Promo Gajian Diskon 10% Semua Laptop</em>, <em>Garansi Toko Resmi 1 Bulan</em>, dll.</div>
+
+                    <div class="rt-field-hint">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        Tulis kalimat ringkas &amp; padat agar nyaman dibaca pengunjung saat melintas.
+                    </div>
                 </div>
 
-                <div class="rt-field">
-                    <label for="id_urutan">Nomor Urutan Tampil</label>
-                    <input type="number" name="urutan" id="id_urutan" class="form-control" min="1" value="{{ form.urutan.value|default:next_urutan }}">
-                    {% if form.urutan.errors %}
-                        <div style="color:#dc2626; font-size:12px; margin-top:4px;">{{ form.urutan.errors.0 }}</div>
-                    {% endif %}
-                    <div class="rt-field-help">Angka lebih kecil akan muncul lebih awal di barisan teks berjalan.</div>
+                <!-- Field: Nomor Urutan Tampil -->
+                <div class="rt-order-box">
+                    <div class="order-box-copy">
+                        <label for="id_urutan" class="order-box-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="10" y1="6" x2="21" y2="6"></line>
+                                <line x1="10" y1="12" x2="21" y2="12"></line>
+                                <line x1="10" y1="18" x2="21" y2="18"></line>
+                                <polyline points="3 6 4 5 5 7"></polyline>
+                                <polyline points="3 12 4 11 5 13"></polyline>
+                                <polyline points="3 18 4 17 5 19"></polyline>
+                            </svg>
+                            Nomor Urutan Tampil
+                        </label>
+                        <span class="order-box-sub">Angka lebih kecil tampil lebih dahulu di pita website</span>
+                    </div>
+                    <div class="order-box-input-wrap">
+                        <span class="order-prefix">#</span>
+                        <input type="number" name="urutan" id="id_urutan" class="order-number-input" min="1" value="{{ form.urutan.value|default:next_urutan }}">
+                    </div>
                 </div>
 
-                <div class="rt-field">
-                    <label class="rt-check-label">
-                        {{ form.aktif }}
-                        <span>Tampilkan di Running Text Website</span>
+                <!-- Field: Modern Toggle Switch Status Tayang -->
+                <div class="rt-switch-card">
+                    <div class="switch-card-text">
+                        <div class="switch-title-row">
+                            <strong>Publikasikan ke Website</strong>
+                            <span class="switch-badge-live">Live</span>
+                        </div>
+                        <p>Teks akan langsung melintas di pita atas website.</p>
+                    </div>
+                    <label class="rt-toggle-switch" for="id_aktif" title="Klik untuk mengaktifkan / menonaktifkan">
+                        <input type="checkbox" name="aktif" id="id_aktif" value="1" {% if form.aktif.value or not edit_item %}checked{% endif %}>
+                        <span class="rt-toggle-slider"></span>
                     </label>
-                    <div class="rt-field-help">Jika dicentang, teks ini langsung tampil dan berjalan di website.</div>
                 </div>
 
+                <!-- Submit Button -->
                 <div class="rt-form-actions">
-                    <button type="submit" class="btn-submit-rt">
-                        {% if edit_item %}Simpan Perubahan{% else %}Tambahkan Teks{% endif %}
+                    <button type="submit" class="btn-submit-modern">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12h14"></path>
+                        </svg>
+                        <span>{% if edit_item %}Simpan Perubahan Teks{% else %}Terbitkan Teks Berjalan{% endif %}</span>
                     </button>
                     {% if edit_item %}
-                        <a href="{% url 'app:running_text_manager' %}" class="btn-cancel-edit">Batal</a>
+                        <a href="{% url 'app:running_text_manager' %}" class="btn-cancel-modern">Batal</a>
                     {% endif %}
                 </div>
             </form>
 
-            <div class="rt-guide-box">
-                <h4>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    Panduan Admin
-                </h4>
-                <p>• <strong>Tanpa Jeda:</strong> Sistem secara otomatis melooping teks tanpa ada ruang kosong pada semua ukuran layar.</p>
-                <p>• <strong>Pause on Hover:</strong> Saat pengunjung mengarahkan kursor mouse ke running text, gerakan akan berhenti sejenak agar mudah dibaca.</p>
-                <p>• <strong>Status Cepat:</strong> Anda dapat mengaktifkan atau menonaktifkan teks promo dengan 1 klik tombol di tabel.</p>
+            <!-- Tips & Panduan Admin Modern -->
+            <div class="rt-modern-guide">
+                <div class="guide-header">
+                    <span class="guide-icon-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </span>
+                    <strong>Panduan Singkat</strong>
+                </div>
+                <ul class="guide-items">
+                    <li><strong>Looping Terus Menerus:</strong> Teks berputar otomatis tanpa jeda kosong pada layar laptop maupun ponsel.</li>
+                    <li><strong>Hover Pause:</strong> Gerakan otomatis berhenti sejenak saat kursor mouse diarahkan ke teks.</li>
+                    <li><strong>1-Klik Kontrol:</strong> Nyalakan atau sembunyikan teks promo kapan saja lewat tombol tabel samping.</li>
+                </ul>
             </div>
         </div>
 
-        <!-- Daftar Teks Berjalan -->
+        <!-- ═══════════════════════════════════════════════════════════════
+             KOLOM KANAN: DAFTAR TEKS BERJALAN
+             ═══════════════════════════════════════════════════════════════ -->
         <div class="rt-table-card">
             <div class="rt-table-header">
                 <h3>Daftar Teks Berjalan</h3>
@@ -750,12 +1111,18 @@
             </div>
 
             <table class="rt-table">
+                <colgroup>
+                    <col style="width: 80px;">
+                    <col>
+                    <col style="width: 140px;">
+                    <col style="width: 180px;">
+                </colgroup>
                 <thead>
                     <tr>
-                        <th style="width: 55px; text-align: center;">Urutan</th>
-                        <th>Isi Teks Pengumuman</th>
-                        <th style="width: 110px;">Status</th>
-                        <th style="width: 170px; text-align: right;">Aksi</th>
+                        <th class="col-th-order">Urutan</th>
+                        <th class="col-th-text">Isi Teks Pengumuman</th>
+                        <th class="col-th-status">Status</th>
+                        <th class="col-th-action">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -767,7 +1134,7 @@
                         <td>
                             <div class="rt-text-cell">{{ item.teks }}</div>
                         </td>
-                        <td>
+                        <td style="text-align: center;">
                             {% if item.aktif %}
                                 <span class="badge-status is-active">
                                     <span class="status-dot"></span>
@@ -781,16 +1148,16 @@
                             {% endif %}
                         </td>
                         <td style="text-align: right;">
-                            <div class="rt-actions-row" style="justify-content: flex-end;">
+                            <div class="rt-actions-row">
                                 <!-- Toggle Button -->
                                 <form method="post" action="{% url 'app:running_text_toggle' item.pk %}" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn-action-icon btn-action-toggle" title="{% if item.aktif %}Klik untuk nonaktifkan{% else %}Klik untuk aktifkan{% endif %}">
                                         {% if item.aktif %}
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             Nonaktifkan
                                         {% else %}
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                             Aktifkan
                                         {% endif %}
                                     </button>
@@ -798,7 +1165,7 @@
 
                                 <!-- Edit Button -->
                                 <a href="{% url 'app:running_text_edit' item.pk %}" class="btn-action-icon btn-action-edit" title="Edit teks">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                     Edit
                                 </a>
 
