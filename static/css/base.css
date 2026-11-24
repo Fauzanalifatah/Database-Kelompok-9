@@ -49,7 +49,7 @@ header { position:sticky; top:0; z-index:10; background:#fffffff2; backdrop-filt
 .user-dropdown button:hover { background:#fff1f0; }
 .button { display:inline-block; padding:12px 19px; color:#fff; background:linear-gradient(135deg,var(--blue),#2878ee); border:0; border-radius:9px; font-weight:700; cursor:pointer; box-shadow:0 7px 16px #1455d933; }
 .button:hover { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); box-shadow:0 10px 22px #1455d94d; transform:translateY(-2px); }
-.announcement { overflow:hidden; padding:11px 0; color:#fff; background:#111827; border-bottom:1px solid #1f2937; font-size:12px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+.announcement { overflow:hidden; padding:10px 0; color:#fff; background:linear-gradient(90deg, #b91c1c 0%, #e30613 50%, #dc2626 100%); border-bottom:1px solid rgba(0, 0, 0, 0.12); font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; box-shadow:inset 0 -1px 0 rgba(0, 0, 0, 0.08); }
 .announcement-track { display:flex; width:max-content; white-space:nowrap; animation:announcement-scroll 26s linear infinite; }
 .announcement-group { display:flex; flex:none; align-items:center; gap:25px; padding-right:25px; }
 @keyframes announcement-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
