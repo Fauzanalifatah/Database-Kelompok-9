@@ -2,30 +2,32 @@
 {% load static %}
 {% block title %}Shop - Losari Computer{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=18">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=19">
 <style>
 .shop-hero {
-    max-height: 320px;
+    position: relative;
     overflow: hidden;
+    width: 100%;
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 75%, #090d16 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .shop-hero-image,
 .shop-hero img {
+    display: block;
     width: 100%;
-    height: clamp(160px, 22vw, 320px);
-    max-height: 320px;
+    max-width: 1220px;
+    height: auto;
+    max-height: 420px;
     min-height: 0;
-    object-fit: cover;
-    object-position: center;
+    object-fit: contain;
+    margin: 0 auto;
 }
 @media (max-width: 760px) {
-    .shop-hero {
-        max-height: 220px;
-    }
     .shop-hero-image,
     .shop-hero img {
-        height: clamp(140px, 36vw, 220px);
-        max-height: 220px;
-        min-height: 0;
+        max-height: 260px;
     }
 }
 </style>
