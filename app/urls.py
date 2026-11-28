@@ -1,4 +1,4 @@
-from django.urls import path
+﻿from django.urls import path
 from core import views as core_views
 
 from . import views
@@ -37,10 +37,6 @@ urlpatterns = [
     path("dashboard/pesanan/<int:pk>/edit/", views.pesanan_manager_form, name="pesanan_manager_edit"),
     path("dashboard/pesanan/<int:pk>/detail/", views.pesanan_manager_detail, name="pesanan_manager_detail"),
     path("dashboard/pesanan/api/tracking/", views.pesanan_tracking_api, name="pesanan_tracking_api"),
-    path("dashboard/pengadaan/", views.pengadaan_manager, name="pengadaan_manager"),
-    path("dashboard/pengadaan/<int:pk>/status/", views.pengadaan_update_status, name="pengadaan_update_status"),
-    path("dashboard/pengadaan/<int:pk>/hapus/", views.pengadaan_delete, name="pengadaan_delete"),
-    path("pengadaan/", views.pengadaan, name="pengadaan"),
     path("shop/", views.shop, name="shop"),
     path("produk/<slug:slug>/", views.product_detail, name="product_detail"),
     path("checkout/<slug:slug>/", views.checkout, name="checkout"),

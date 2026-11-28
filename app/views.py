@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout
+﻿from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -38,9 +38,8 @@ from .form_admin import (
     create_produk_keunggulan_formset,
     AdminPelangganForm,
     AdminPesananStatusForm,
-    PengadaanAdminStatusForm,
 )
-from .forms import RegistrationForm, PengadaanForm
+from .forms import RegistrationForm
 from .models import (
     Artikel,
     BannerBeranda,
@@ -62,7 +61,6 @@ from .models import (
     Testimoni,
     ItemPesanan,
     ItemKeranjang,
-    Pengadaan,
 )
 from .checkout_forms import CheckoutForm
 from .midtrans import create_snap_transaction, is_valid_signature
@@ -1636,10 +1634,6 @@ def index(request):
         "pesanan_dibayar": pesanan_dibayar,
         "pesanan_selesai": pesanan_selesai,
         "pesanan_terbaru": pesanan_terbaru,
-        "total_pengadaan": Pengadaan.objects.count(),
-        "pengadaan_menunggu": Pengadaan.objects.filter(status="menunggu").count(),
-        "pengadaan_diproses": Pengadaan.objects.filter(status="diproses").count(),
-        "pengadaan_terbaru": Pengadaan.objects.order_by("-dibuat_pada")[:5],
     }
 
     dashboard_context["profil_pengguna"] = user_pengguna
@@ -2434,136 +2428,3 @@ def cart_remove(request, item_id):
     remove_from_cart(item_id)
     messages.success(request, "Produk dihapus dari keranjang.")
     return redirect(reverse("app:cart_view"))
-
-
-# ═══════════════════════════════════════════════════
-#  PENGADAAN BARANG & JASA (STOREFRONT & ADMIN)
-# ═══════════════════════════════════════════════════
-
-def pengadaan(request):
-    """
-    Halaman publik Storefront untuk Pengadaan Barang & Jasa IT / Komputer.
-    Pelanggan (instansi, sekolah, bisnis, UMKM, personal) dapat mengajukan permohonan pengadaan barang & jasa.
-    Data otomatis tersimpan di database dan admin menerima notifikasi di dashboard.
-    """
-    initial_data = {}
-    if request.user.is_authenticated:
-        initial_data["nama_pemohon"] = request.user.get_full_name() or request.user.username
-        initial_data["email"] = request.user.email
-        pengguna = getattr(request.user, "pengguna", None)
-        if pengguna and pengguna.telp:
-            initial_data["nomor_telepon"] = pengguna.telp
-
-    submitted_id = request.session.pop("last_pengadaan_id", None)
-    submitted_obj = None
-    if submitted_id:
-        submitted_obj = Pengadaan.objects.filter(pk=submitted_id).first()
-
-    if request.method == "POST":
-        form = PengadaanForm(request.POST, request.FILES)
-        if form.is_valid():
-            pengadaan_obj = form.save()
-            request.session["last_pengadaan_id"] = pengadaan_obj.id
-            messages.success(
-                request,
-                f"Permohonan pengadaan #{pengadaan_obj.id} berhasil dikirim! Tim Losari Computer akan segera menghubungi Anda."
-            )
-            return redirect("pengadaan")
-        else:
-            messages.error(request, "Mohon lengkapi seluruh isian formulir dengan benar.")
-    else:
-        form = PengadaanForm(initial=initial_data)
-
-    context = {
-        "title": "Pengadaan Barang & Jasa IT - Losari Computer",
-        "form": form,
-        "submitted_obj": submitted_obj,
-    }
-    return render(request, "storefront/pengadaan.html", context)
-
-
-@admin_required
-@login_required(login_url="app:login")
-def pengadaan_manager(request):
-    """
-    Dashboard admin untuk mengelola pengajuan Pengadaan Barang & Jasa.
-    Mendukung filter status, pencarian PIC/instansi, ubah status, catatan admin, dan kontak WhatsApp langsung.
-    """
-    status_filter = request.GET.get("status", "").strip().lower()
-    kategori_filter = request.GET.get("kategori", "").strip()
-    search_query = request.GET.get("q", "").strip()
-
-    queryset = Pengadaan.objects.all().order_by("-dibuat_pada")
-
-    if status_filter:
-        queryset = queryset.filter(status=status_filter)
-    if kategori_filter:
-        queryset = queryset.filter(kategori=kategori_filter)
-    if search_query:
-        queryset = queryset.filter(
-            Q(nama_pemohon__icontains=search_query)
-            | Q(instansi__icontains=search_query)
-            | Q(email__icontains=search_query)
-            | Q(nomor_telepon__icontains=search_query)
-            | Q(deskripsi_kebutuhan__icontains=search_query)
-        )
-
-    all_pengadaan = Pengadaan.objects.all()
-    stats = {
-        "total": all_pengadaan.count(),
-        "menunggu": all_pengadaan.filter(status="menunggu").count(),
-        "diproses": all_pengadaan.filter(status="diproses").count(),
-        "penawaran": all_pengadaan.filter(status="penawaran").count(),
-        "selesai": all_pengadaan.filter(status="selesai").count(),
-        "dibatalkan": all_pengadaan.filter(status="dibatalkan").count(),
-    }
-
-    context = {
-        "title": "Kelola Pengadaan Barang & Jasa",
-        "heading": "Pengadaan Barang & Jasa",
-        "objects": queryset,
-        "stats": stats,
-        "status_filter": status_filter,
-        "kategori_filter": kategori_filter,
-        "search_query": search_query,
-        "kategori_choices": Pengadaan.KATEGORI_CHOICES,
-        "status_choices": Pengadaan.STATUS_CHOICES,
-        "section": "pengadaan",
-    }
-    return render(request, "app/pengadaan_manager.html", context)
-
-
-@admin_required
-@login_required(login_url="app:login")
-@require_POST
-def pengadaan_update_status(request, pk):
-    """
-    Mengubah status pengajuan pengadaan dan memperbarui catatan admin.
-    """
-    pengadaan_obj = get_object_or_404(Pengadaan, pk=pk)
-    form = PengadaanAdminStatusForm(request.POST, instance=pengadaan_obj)
-    if form.is_valid():
-        form.save()
-        messages.success(
-            request,
-            f"Status pengajuan #{pengadaan_obj.id} ({pengadaan_obj.nama_pemohon}) berhasil diperbarui menjadi '{pengadaan_obj.get_status_display()}'."
-        )
-    else:
-        messages.error(request, "Gagal memperbarui status pengajuan.")
-    return redirect("app:pengadaan_manager")
-
-
-@admin_required
-@login_required(login_url="app:login")
-@require_POST
-def pengadaan_delete(request, pk):
-    """
-    Menghapus pengajuan pengadaan dari database.
-    """
-    pengadaan_obj = get_object_or_404(Pengadaan, pk=pk)
-    nama = pengadaan_obj.nama_pemohon
-    pengadaan_id = pengadaan_obj.id
-    pengadaan_obj.delete()
-    messages.success(request, f"Permohonan pengadaan #{pengadaan_id} atas nama '{nama}' berhasil dihapus.")
-    return redirect("app:pengadaan_manager")
-

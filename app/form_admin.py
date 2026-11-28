@@ -1,4 +1,4 @@
-import re
+﻿import re
 import urllib.parse
 from django import forms
 from django.contrib.auth.models import User
@@ -22,7 +22,6 @@ from .models import (
     Produk,
     ProdukGambar,
     ProdukKeunggulan,
-    Pengadaan,
 )
 
 
@@ -885,24 +884,3 @@ class TestimoniPublicForm(forms.ModelForm):
                 }
             ),
         }
-
-
-class PengadaanAdminStatusForm(forms.ModelForm):
-    class Meta:
-        model = Pengadaan
-        fields = ["status", "catatan_admin"]
-        labels = {
-            "status": "Status Pengajuan",
-            "catatan_admin": "Catatan Tindak Lanjut Admin",
-        }
-        widgets = {
-            "status": forms.Select(attrs={"class": "form-select"}),
-            "catatan_admin": forms.Textarea(
-                attrs={
-                    "class": "form-textarea",
-                    "rows": 4,
-                    "placeholder": "Tulis catatan penanganan internal untuk pengajuan ini...",
-                }
-            ),
-        }
-

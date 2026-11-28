@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!doctype html>
 <html lang="id">
 <head>
@@ -311,10 +311,6 @@
             <a class="nav-link" href="{% url 'app:pesanan_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6z"></path><path d="M9 3v18"></path><path d="M15 3v18"></path><path d="M9 7h6"></path></svg></span>Pesanan
             </a>
-            <a class="nav-link" href="{% url 'app:pengadaan_manager' %}">
-                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span>Pengadaan Jasa
-                {% if pengadaan_menunggu %}<span style="margin-left:auto;background:#ef4444;color:#fff;font-size:10px;padding:2px 7px;border-radius:999px;font-weight:700;">{{ pengadaan_menunggu }}</span>{% endif %}
-            </a>
             <a class="nav-link" href="{% url 'app:artikel_manager' %}">
                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>Artikel
             </a>
@@ -576,7 +572,6 @@
                 <article class="card"><div class="card-head"><span class="card-label">Provinsi</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span></div><div class="card-value">{{ total_provinsi }}</div><div class="card-note">{{ provinsi_aktif }} provinsi aktif</div><a class="card-link" href="/admin/app/provinsi/">Kelola wilayah →</a></article>
                 <article class="card"><div class="card-head"><span class="card-label">Akun Terdaftar</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 3v4"></path><path d="M17 5h4"></path></svg></span></div><div class="card-value">{{ total_user }}</div><div class="card-note">{{ total_admin }} profil administrator</div><a class="card-link" href="/admin/auth/user/">Kelola akun →</a></article>
                 <article class="card"><div class="card-head"><span class="card-label">Total Pesanan</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span></div><div class="card-value">{{ total_pesanan }}</div><div class="card-note">{{ pesanan_menunggu }} menunggu · {{ pesanan_dibayar }} dibayar</div><a class="card-link" href="{% url 'app:pesanan_manager' %}">Kelola pesanan →</a></article>
-                <article class="card"><div class="card-head"><span class="card-label">Pengadaan Jasa</span><span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span></div><div class="card-value">{{ total_pengadaan|default:0 }}</div><div class="card-note">{{ pengadaan_menunggu|default:0 }} permohonan baru menunggu</div><a class="card-link" href="{% url 'app:pengadaan_manager' %}">Kelola pengadaan →</a></article>
             </section>
             <section class="panels">
                 <div class="panels-col-left">
@@ -697,7 +692,6 @@
                                 <a class="quick-link" href="{% url 'app:artikel_manager_add' %}"><span>Tambah artikel baru</span><span>›</span></a>
                                 <a class="quick-link" href="{% url 'app:pelanggan_manager' %}"><span>Kelola pelanggan</span><span>›</span></a>
                                 <a class="quick-link" href="{% url 'app:pesanan_manager' %}"><span>Kelola pesanan</span><span>›</span></a>
-                                <a class="quick-link" href="{% url 'app:pengadaan_manager' %}"><span>Kelola pengadaan barang &amp; jasa</span><span>›</span></a>
                                 <a class="quick-link" href="/admin/"><span>Kelola administrasi</span><span>›</span></a>
                             </div>
                         </div>

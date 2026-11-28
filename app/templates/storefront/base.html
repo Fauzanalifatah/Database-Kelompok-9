@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!doctype html>
 <html lang="id">
 
@@ -105,16 +105,6 @@
         <span class="nav-text">Shop</span>
         <span class="nav-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
     </a>
-    <a class="nav-item {% if request.resolver_match.url_name == 'pengadaan' %}active{% endif %}" href="{% url 'pengadaan' %}">
-        <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-            </svg>
-        </span>
-        <span class="nav-text">Jasa Pengadaan</span>
-        <span class="nav-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-    </a>
     <a class="nav-item {% if request.resolver_match.url_name == 'article_list' or request.resolver_match.url_name == 'article_detail' %}active{% endif %}" href="{% url 'article_list' %}">
         <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -202,7 +192,6 @@
                 <section class="footer-column">
                     <h2>Layanan</h2>
                     <a href="{% url 'shop' %}">Belanja laptop</a>
-                    <a href="{% url 'pengadaan' %}">Pengadaan barang &amp; jasa</a>
                     <a href="{% url 'article_list' %}">Artikel teknologi</a>
                     <a href="{% url 'shop' %}">Konsultasi produk</a>
                     <a href="#footer">Garansi toko</a>

@@ -1,4 +1,4 @@
-"""
+﻿"""
 URL configuration for core project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -44,6 +44,5 @@ urlpatterns = [
     ),
     path("tentang-kami/", views.about, name="about"),
     path("testimoni/", views.testimonials, name="testimonials"),
-    path("pengadaan/", views.pengadaan, name="pengadaan"),
     re_path(r"^media/(?P<path>.*)$", views.serve_media, name="serve_media"),
 ]

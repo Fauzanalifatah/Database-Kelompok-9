@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!doctype html>
 <html lang="id">
 <head>
@@ -167,7 +167,6 @@
             <a class="nav-link {% if section == 'produk' %}active{% endif %}" href="{% url 'app:produk_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"></rect><path d="M8 21h8"></path><path d="M12 18v3"></path><path d="M8 8h8"></path></svg></span>Produk</a>
             <a class="nav-link {% if section == 'pelanggan' %}active{% endif %}" href="{% url 'app:pelanggan_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path><path d="M19 8h2"></path><path d="M20 7v2"></path></svg></span>Pelanggan</a>
             <a class="nav-link {% if section == 'pesanan' %}active{% endif %}" href="{% url 'app:pesanan_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6z"></path><path d="M9 3v18"></path><path d="M15 3v18"></path><path d="M9 7h6"></path></svg></span>Pesanan</a>
-            <a class="nav-link {% if section == 'pengadaan' %}active{% endif %}" href="{% url 'app:pengadaan_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span>Pengadaan Jasa</a>
             <a class="nav-link {% if section == 'artikel' %}active{% endif %}" href="{% url 'app:artikel_manager' %}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>Artikel</a>
         </nav>
         <p class="menu-label menu-label-spaced">Pengaturan</p>
