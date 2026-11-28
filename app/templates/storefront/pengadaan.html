@@ -2,25 +2,24 @@
 {% load static %}
 {% block title %}Pengadaan Barang & Jasa IT - Losari Computer{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pengadaan.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/pengadaan.css' %}?v=2">
 {% endblock %}
 
 {% block content %}
 <!-- ═══ HERO SECTION ═══ -->
 <section class="pengadaan-hero" aria-label="Layanan Pengadaan Barang & Jasa IT">
-    <div class="pengadaan-hero-glow pengadaan-hero-glow-1"></div>
-    <div class="pengadaan-hero-glow pengadaan-hero-glow-2"></div>
+    <div class="pengadaan-hero-bg-grid"></div>
     <div class="container pengadaan-hero-grid">
         <div class="pengadaan-hero-copy">
             <div class="pengadaan-badge">
                 <span class="pengadaan-badge-dot"></span>
-                <span>Layanan Bisnis, Sekolah &amp; Instansi</span>
+                <span>Layanan Resmi Bisnis, Sekolah &amp; Instansi</span>
             </div>
             <h1 class="pengadaan-hero-title">
                 Solusi <span>Pengadaan Barang &amp; Jasa</span> IT Terpercaya
             </h1>
             <p class="pengadaan-hero-desc">
-                Partner resmi pengadaan laptop kantor, komputer PC, infrastruktur jaringan &amp; server, CCTV, hingga kontrak maintenance berkala untuk instansi pemerintah, sekolah, universitas, yayasan, dan perusahaan swasta di seluruh Indonesia.
+                Partner resmi penyedia laptop kantor, PC laboratorium, infrastruktur jaringan &amp; server, CCTV, hingga kontrak maintenance berkala untuk instansi pemerintah, sekolah, universitas, yayasan, dan perusahaan swasta di seluruh Indonesia.
             </p>
             <div class="pengadaan-hero-actions">
                 <a class="btn-pengadaan-primary" href="#form-pengadaan">
@@ -28,27 +27,31 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </a>
                 <a class="btn-pengadaan-secondary" href="https://api.whatsapp.com/send?phone={{ footer_setting.whatsapp_clean|default:'6282399213651' }}&text=Halo%20Tim%20Pengadaan%20Losari%20Computer%2C%20saya%20ingin%20berkonsultasi%20mengenai%20pengadaan%20barang%20dan%20jasa%20IT." target="_blank" rel="noopener">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                     <span>Konsultasi Cepat via WhatsApp</span>
                 </a>
             </div>
             <div class="pengadaan-hero-stats">
                 <div class="hero-stat-item">
                     <strong>100%</strong>
-                    <span>Legalitas &amp; Nota Faktur Resmi</span>
+                    <span>Legalitas &amp; Faktur Pajak Resmi</span>
                 </div>
                 <div class="hero-stat-item">
                     <strong>Garansi</strong>
-                    <span>Jaminan Garansi Toko &amp; Distributor</span>
+                    <span>Jaminan Toko &amp; Distributor Resmi</span>
                 </div>
                 <div class="hero-stat-item">
                     <strong>Nasional</strong>
-                    <span>Kirim &amp; Pasang Seluruh Indonesia</span>
+                    <span>Kirim &amp; Pasang On-site se-Indonesia</span>
                 </div>
             </div>
         </div>
 
         <div class="pengadaan-hero-visual">
+            <div class="procurement-card-top-badge">
+                <span class="procurement-live-indicator"></span>
+                <span>Standar B2B &amp; Instansi Resmi</span>
+            </div>
             <div class="procurement-card-header">
                 <div class="procurement-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -57,31 +60,41 @@
                     </svg>
                 </div>
                 <div>
-                    <h3>Paket Bisnis &amp; Institusi</h3>
-                    <p>Fasilitas lengkap untuk kebutuhan pengadaan Anda</p>
+                    <h3>Paket Pengadaan Institusi</h3>
+                    <p>Fasilitas lengkap &amp; transparansi LPJ anggaran</p>
                 </div>
             </div>
             <ul class="procurement-checklist">
                 <li>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span class="check-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
                     <span><strong>Surat Penawaran Harga (SPH) &amp; RAB:</strong> Rincian spesifikasi &amp; biaya transparan dalam format resmi.</span>
                 </li>
                 <li>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span class="check-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
                     <span><strong>Fleksibilitas Pengadaan:</strong> Pilihan unit Baru (Brand New) maupun Second Bisnis Grade A+ teruji.</span>
                 </li>
                 <li>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><strong>Setup Siap Pakai:</strong> Instalasi OS resmi, software produktivitas, dan konfigurasi jaringan di tempat.</span>
+                    <span class="check-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                    <span><strong>Setup Siap Pakai On-Site:</strong> Instalasi OS resmi, software produktivitas, dan konfigurasi jaringan.</span>
                 </li>
                 <li>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span class="check-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                    <span><strong>Termin Pembayaran Fleksibel:</strong> Mendukung sistem Purchase Order (PO), SPK, dan tempo instansi.</span>
+                </li>
+                <li>
+                    <span class="check-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
                     <span><strong>Purna Jual Terjamin:</strong> Ketersediaan unit pengganti (backup) dan teknisi support responsif.</span>
                 </li>
             </ul>
             <div class="procurement-card-cta">
-                <p>Punya dokumen TOR atau daftar kebutuhan sendiri?</p>
-                <a href="#form-pengadaan">Lampirkan file PDF / Excel Anda di bawah &darr;</a>
+                <p>Punya dokumen TOR, KAK, atau daftar kebutuhan sendiri?</p>
+                <a href="#form-pengadaan">Lampirkan file PDF / Excel Anda di formulir bawah &darr;</a>
+            </div>
+            <div class="procurement-trust-badges">
+                <span class="trust-badge-pill">✓ Faktur Pajak Resmi</span>
+                <span class="trust-badge-pill">✓ SPK / PO</span>
+                <span class="trust-badge-pill">✓ BAST Resmi</span>
+                <span class="trust-badge-pill">✓ Garansi Unit</span>
             </div>
         </div>
     </div>
