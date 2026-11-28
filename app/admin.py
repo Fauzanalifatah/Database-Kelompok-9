@@ -20,6 +20,7 @@ from .models import (
     UserAdmin,
     UserPengguna,
     Testimoni,
+    Pengadaan,
 )
 
 
@@ -161,6 +162,30 @@ class RunningTextAdmin(admin.ModelAdmin):
     list_editable = ("urutan", "aktif")
     search_fields = ("teks",)
     list_filter = ("aktif",)
+
+
+@admin.register(Pengadaan)
+class PengadaanAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "nama_pemohon",
+        "instansi",
+        "kategori",
+        "nomor_telepon",
+        "status",
+        "dibuat_pada",
+    )
+    list_filter = ("status", "kategori", "dibuat_pada")
+    search_fields = (
+        "nama_pemohon",
+        "instansi",
+        "email",
+        "nomor_telepon",
+        "deskripsi_kebutuhan",
+    )
+    readonly_fields = ("dibuat_pada", "diperbarui_pada")
+    list_editable = ("status",)
+    ordering = ("-dibuat_pada",)
 
 
 admin.site.register(BannerBeranda)

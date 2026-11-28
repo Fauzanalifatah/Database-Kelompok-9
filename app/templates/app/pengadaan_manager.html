@@ -1,0 +1,895 @@
+{% extends "app/content_manager.html" %}
+{% load humanize %}
+{% block content %}
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   PENGADAAN BARANG & JASA - ADMIN DASHBOARD SUITE
+   ══════════════════════════════════════════════════════════════════ */
+.pengadaan-mgmt-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* ─── Top Command Bar ─── */
+.pengadaan-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.pengadaan-breadcrumb {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pengadaan-breadcrumb a {
+    color: #dc2626;
+    text-decoration: none;
+}
+
+.pengadaan-title-area h2 {
+    font-size: 26px;
+    font-weight: 850;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.03em;
+}
+
+.pengadaan-title-area p {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 4px 0 0;
+}
+
+/* ─── KPI Stats Cards ─── */
+.pengadaan-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
+}
+
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+.kpi-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.kpi-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kpi-icon-pill {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kpi-icon-pill svg {
+    width: 17px;
+    height: 17px;
+}
+
+.kpi-total .kpi-icon-pill { background: #f1f5f9; color: #475569; }
+.kpi-menunggu .kpi-icon-pill { background: #fef2f2; color: #dc2626; }
+.kpi-diproses .kpi-icon-pill { background: #eff6ff; color: #2563eb; }
+.kpi-penawaran .kpi-icon-pill { background: #fefce8; color: #ca8a04; }
+.kpi-selesai .kpi-icon-pill { background: #f0fdf4; color: #16a34a; }
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: 850;
+    color: #0f172a;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.kpi-subtext {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* ─── Filters & Search Toolbar ─── */
+.pengadaan-toolbar {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.toolbar-search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 360px;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1 1 240px;
+}
+
+.search-input-wrapper svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 14px 9px 36px;
+    font-size: 13.5px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+}
+
+.search-input-wrapper input:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.filter-select {
+    padding: 9px 14px;
+    font-size: 13.5px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    color: #334155;
+    font-weight: 600;
+}
+
+.filter-select:focus {
+    border-color: #dc2626;
+}
+
+.btn-filter-apply {
+    padding: 9px 16px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-filter-apply:hover {
+    background: #1e293b;
+}
+
+.btn-filter-reset {
+    padding: 9px 14px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-filter-reset:hover {
+    color: #0f172a;
+}
+
+/* ─── Table Layout ─── */
+.pengadaan-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.pengadaan-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13.5px;
+}
+
+.pengadaan-table th {
+    background: #f8fafc;
+    padding: 14px 18px;
+    font-weight: 800;
+    color: #475569;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1.5px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.pengadaan-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    vertical-align: middle;
+}
+
+.pengadaan-table tr:hover td {
+    background: #fafbfc;
+}
+
+/* Badges */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.badge-status-menunggu { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.badge-status-diproses { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.badge-status-penawaran { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.badge-status-selesai { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-status-dibatalkan { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+
+.pic-cell strong {
+    display: block;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.pic-cell span {
+    display: block;
+    font-size: 12.5px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.contact-cell a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.contact-cell a:hover {
+    text-decoration: underline;
+}
+
+.wa-btn-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: #dcfce7;
+    color: #15803d !important;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 750;
+    margin-top: 4px;
+}
+
+.wa-btn-sm:hover {
+    background: #bbf7d0;
+}
+
+/* Action buttons */
+.action-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-action-view {
+    padding: 7px 12px;
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.btn-action-view:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+.btn-action-delete {
+    padding: 7px 10px;
+    background: #fff;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-action-delete:hover {
+    background: #fee2e2;
+}
+
+/* ─── Detail Modal / Drawer ─── */
+.pengadaan-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.pengadaan-modal.is-active {
+    display: flex;
+}
+
+.modal-dialog {
+    background: #ffffff;
+    border-radius: 20px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 28px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #fafbfc;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 850;
+    color: #0f172a;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close-btn:hover {
+    color: #dc2626;
+}
+
+.modal-body {
+    padding: 26px 28px;
+}
+
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+}
+
+.modal-info-item span {
+    display: block;
+    font-size: 11.5px;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.modal-info-item strong {
+    display: block;
+    font-size: 14px;
+    color: #0f172a;
+    margin-top: 2px;
+}
+
+.modal-specs-box {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+}
+
+.modal-specs-box h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+}
+
+.modal-specs-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #1e293b;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.modal-file-attach {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 22px;
+    font-size: 13.5px;
+}
+
+.modal-file-attach a {
+    color: #1d4ed8;
+    font-weight: 750;
+    text-decoration: underline;
+}
+
+.modal-form-update {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+}
+
+.modal-form-update label {
+    display: block;
+    font-size: 13px;
+    font-weight: 750;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.modal-form-update select,
+.modal-form-update textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    outline: none;
+    font-family: inherit;
+}
+
+.modal-form-update select:focus,
+.modal-form-update textarea:focus {
+    border-color: #dc2626;
+}
+
+.modal-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.btn-save-status {
+    padding: 10px 22px;
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-save-status:hover {
+    background: #b91c1c;
+}
+
+/* Empty State */
+.empty-pengadaan {
+    padding: 60px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.empty-pengadaan svg {
+    width: 48px;
+    height: 48px;
+    color: #cbd5e1;
+    margin-bottom: 14px;
+}
+
+.empty-pengadaan h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    color: #0f172a;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .pengadaan-kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .pengadaan-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .modal-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="pengadaan-mgmt-container">
+    <!-- Top Command Bar -->
+    <div class="pengadaan-header-bar">
+        <div class="pengadaan-title-area">
+            <div class="pengadaan-breadcrumb">
+                <a href="{% url 'app:dashboard' %}">Dashboard</a>
+                <span>/</span>
+                <span>Pengadaan Barang &amp; Jasa</span>
+            </div>
+            <h2>Kelola Pengadaan Barang &amp; Jasa</h2>
+            <p>Kelola permohonan pengadaan perangkat IT dan jasa dari sekolah, instansi, perusahaan, dan UMKM.</p>
+        </div>
+        <div>
+            <a class="btn-filter-apply" href="{% url 'pengadaan' %}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Buka Halaman Publik Pengadaan &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Executive KPI Grid -->
+    <div class="pengadaan-kpi-grid">
+        <div class="kpi-card kpi-total">
+            <div class="kpi-card-header">
+                <span class="kpi-label">Total Masuk</span>
+                <div class="kpi-icon-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
+            </div>
+            <div class="kpi-value">{{ stats.total }}</div>
+            <div class="kpi-subtext">Semua permohonan</div>
+        </div>
+
+        <div class="kpi-card kpi-menunggu">
+            <div class="kpi-card-header">
+                <span class="kpi-label">Menunggu</span>
+                <div class="kpi-icon-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+            </div>
+            <div class="kpi-value">{{ stats.menunggu }}</div>
+            <div class="kpi-subtext">Perlu ditindaklanjuti</div>
+        </div>
+
+        <div class="kpi-card kpi-diproses">
+            <div class="kpi-card-header">
+                <span class="kpi-label">Diproses</span>
+                <div class="kpi-icon-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+            </div>
+            <div class="kpi-value">{{ stats.diproses }}</div>
+            <div class="kpi-subtext">Sedang di-follow up</div>
+        </div>
+
+        <div class="kpi-card kpi-penawaran">
+            <div class="kpi-card-header">
+                <span class="kpi-label">Penawaran/RAB</span>
+                <div class="kpi-icon-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                </div>
+            </div>
+            <div class="kpi-value">{{ stats.penawaran }}</div>
+            <div class="kpi-subtext">Kirim SPH / Negosiasi</div>
+        </div>
+
+        <div class="kpi-card kpi-selesai">
+            <div class="kpi-card-header">
+                <span class="kpi-label">Selesai</span>
+                <div class="kpi-icon-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+            </div>
+            <div class="kpi-value">{{ stats.selesai }}</div>
+            <div class="kpi-subtext">PO Deal / Selesai</div>
+        </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="pengadaan-toolbar">
+        <form class="toolbar-search-form" method="get">
+            <div class="search-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Cari nama PIC, instansi, HP, atau kebutuhan...">
+            </div>
+
+            <select class="filter-select" name="status">
+                <option value="">Semua Status</option>
+                {% for val, label in status_choices %}
+                <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <select class="filter-select" name="kategori">
+                <option value="">Semua Kategori</option>
+                {% for val, label in kategori_choices %}
+                <option value="{{ val }}" {% if kategori_filter == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="btn-filter-apply" type="submit">Filter Data</button>
+            {% if search_query or status_filter or kategori_filter %}
+            <a class="btn-filter-reset" href="{% url 'app:pengadaan_manager' %}">Reset</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Main Table -->
+    <div class="pengadaan-table-card">
+        <div class="table-responsive">
+            <table class="pengadaan-table">
+                <thead>
+                    <tr>
+                        <th>Tiket / Waktu</th>
+                        <th>PIC / Instansi</th>
+                        <th>Kontak &amp; WhatsApp</th>
+                        <th>Kategori Layanan</th>
+                        <th>Unit / Budget</th>
+                        <th>Lampiran</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Aksi Tindak Lanjut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in objects %}
+                    <tr>
+                        <td>
+                            <strong style="color: #dc2626;">#{{ item.id }}</strong>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 3px;">
+                                {{ item.dibuat_pada|date:"d M Y, H:i" }}
+                            </div>
+                        </td>
+                        <td class="pic-cell">
+                            <strong>{{ item.nama_pemohon }}</strong>
+                            <span>{{ item.instansi|default:"Perorangan / Bisnis Mandiri" }}</span>
+                        </td>
+                        <td class="contact-cell">
+                            <div><a href="mailto:{{ item.email }}">{{ item.email }}</a></div>
+                            <div>
+                                <a class="wa-btn-sm" href="{{ item.whatsapp_url }}" target="_blank" rel="noopener" title="Chat WhatsApp langsung">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                                    <span>{{ item.nomor_telepon }}</span>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="font-size: 13px; color: #334155;">{{ item.get_kategori_display }}</strong>
+                        </td>
+                        <td>
+                            <div><strong>{{ item.estimasi_unit|default:"-" }}</strong></div>
+                            <div style="font-size: 12px; color: #64748b;">{{ item.estimasi_budget|default:"Budget fleksibel" }}</div>
+                        </td>
+                        <td>
+                            {% if item.lampiran %}
+                            <a href="{{ item.lampiran.url }}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #eff6ff; color: #1d4ed8; border-radius: 6px; font-weight: 700; font-size: 12px; text-decoration: none;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                                <span>Unduh</span>
+                            </a>
+                            {% else %}
+                            <span style="color: #94a3b8; font-size: 12px;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-pill {{ item.status_badge_class }}">
+                                {{ item.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="action-btn-group">
+                                <button class="btn-action-view" type="button" onclick="openDetailModal({{ item.id }})">
+                                    Detail &amp; Status
+                                </button>
+                                <form method="post" action="{% url 'app:pengadaan_delete' item.id %}" onsubmit="return confirm('Hapus permohonan pengadaan #{{ item.id }} atas nama {{ item.nama_pemohon }}?');" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button class="btn-action-delete" type="submit" title="Hapus Pengajuan">
+                                        &times;
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Detail Modal for Item -->
+                    <div class="pengadaan-modal" id="modal-{{ item.id }}">
+                        <div class="modal-dialog">
+                            <div class="modal-header">
+                                <div>
+                                    <h3>Permohonan Pengadaan #{{ item.id }}</h3>
+                                    <span style="font-size: 12px; color: #64748b;">Diajukan pada {{ item.dibuat_pada|date:"d F Y, H:i" }} WIB</span>
+                                </div>
+                                <button class="modal-close-btn" type="button" onclick="closeDetailModal({{ item.id }})">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="modal-info-grid">
+                                    <div class="modal-info-item">
+                                        <span>Nama Pemohon (PIC)</span>
+                                        <strong>{{ item.nama_pemohon }}</strong>
+                                    </div>
+                                    <div class="modal-info-item">
+                                        <span>Instansi / Perusahaan</span>
+                                        <strong>{{ item.instansi|default:"Perorangan / Mandiri" }}</strong>
+                                    </div>
+                                    <div class="modal-info-item">
+                                        <span>Email</span>
+                                        <strong><a href="mailto:{{ item.email }}" style="color: #2563eb;">{{ item.email }}</a></strong>
+                                    </div>
+                                    <div class="modal-info-item">
+                                        <span>WhatsApp / Telepon</span>
+                                        <strong>
+                                            <a href="{{ item.whatsapp_url }}" target="_blank" rel="noopener" style="color: #16a34a; display: inline-flex; align-items: center; gap: 4px;">
+                                                <span>{{ item.nomor_telepon }}</span>
+                                                <small style="background: #22c55e; color: #fff; padding: 1px 6px; border-radius: 4px; font-size: 10px;">Chat WA</small>
+                                            </a>
+                                        </strong>
+                                    </div>
+                                    <div class="modal-info-item">
+                                        <span>Kategori Layanan</span>
+                                        <strong>{{ item.get_kategori_display }}</strong>
+                                    </div>
+                                    <div class="modal-info-item">
+                                        <span>Estimasi Unit &amp; Budget</span>
+                                        <strong>{{ item.estimasi_unit|default:"-" }} / {{ item.estimasi_budget|default:"-" }}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="modal-specs-box">
+                                    <h4>Rincian Kebutuhan &amp; Spesifikasi Teknis:</h4>
+                                    <p>{{ item.deskripsi_kebutuhan }}</p>
+                                </div>
+
+                                {% if item.lampiran %}
+                                <div class="modal-file-attach">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                                    <div>
+                                        <strong>Dokumen Lampiran TOR / RAB Tersedia:</strong>
+                                        <a href="{{ item.lampiran.url }}" target="_blank" rel="noopener">Klik di sini untuk melihat / mengunduh file &rarr;</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Form Update Status & Catatan -->
+                                <form class="modal-form-update" method="post" action="{% url 'app:pengadaan_update_status' item.id %}">
+                                    {% csrf_token %}
+                                    <label for="status-select-{{ item.id }}">Ubah Status Pengajuan:</label>
+                                    <select name="status" id="status-select-{{ item.id }}">
+                                        {% for val, label in status_choices %}
+                                        <option value="{{ val }}" {% if item.status == val %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <label for="catatan-text-{{ item.id }}">Catatan Internal Admin (Tindak Lanjut):</label>
+                                    <textarea name="catatan_admin" id="catatan-text-{{ item.id }}" placeholder="Tuliskan catatan internal toko, misal: Sudah dikirimi email penawaran, proses pengadaan disetujui, jadwal instalasi minggu depan...">{{ item.catatan_admin }}</textarea>
+
+                                    <div class="modal-footer-actions">
+                                        <button type="button" class="btn-filter-reset" onclick="closeDetailModal({{ item.id }})">Tutup</button>
+                                        <button type="submit" class="btn-save-status">Simpan Perubahan Status</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-pengadaan">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                <h3>Belum Ada Permohonan Pengadaan</h3>
+                                <p>Ketika pelanggan atau instansi mengirimkan permohonan melalui form pengadaan, data akan tampil di tabel ini.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDetailModal(id) {
+    const modal = document.getElementById('modal-' + id);
+    if (modal) {
+        modal.classList.add('is-active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeDetailModal(id) {
+    const modal = document.getElementById('modal-' + id);
+    if (modal) {
+        modal.classList.remove('is-active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Close modal when clicking on overlay background
+document.querySelectorAll('.pengadaan-modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('is-active');
+            document.body.style.overflow = '';
+        }
+    });
+});
+</script>
+{% endblock %}

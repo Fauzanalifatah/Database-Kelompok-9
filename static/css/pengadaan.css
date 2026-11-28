@@ -1,0 +1,781 @@
+/* ==========================================================================
+   PENGADAAN BARANG & JASA IT - LOSARI COMPUTER
+   Design: Modern Corporate IT & Business Procurement System
+   ========================================================================== */
+
+/* ─── Hero Section ─── */
+.pengadaan-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%);
+    color: #ffffff;
+    padding: clamp(60px, 8vw, 110px) 0 clamp(50px, 7vw, 90px);
+    margin-bottom: clamp(40px, 6vw, 70px);
+}
+
+.pengadaan-hero-glow {
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    opacity: 0.22;
+}
+
+.pengadaan-hero-glow-1 {
+    top: -120px;
+    left: -100px;
+    background: radial-gradient(circle, #e30613 0%, transparent 70%);
+}
+
+.pengadaan-hero-glow-2 {
+    bottom: -150px;
+    right: -100px;
+    background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+}
+
+.pengadaan-hero-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.95fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 64px);
+}
+
+.pengadaan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(227, 6, 19, 0.14);
+    border: 1px solid rgba(227, 6, 19, 0.35);
+    border-radius: 999px;
+    color: #fca5a5;
+    font-size: 12.5px;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.pengadaan-badge-dot {
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.3);
+    animation: pulseRed 2s infinite;
+}
+
+@keyframes pulseRed {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.75; }
+}
+
+.pengadaan-hero-title {
+    font-size: clamp(32px, 4.2vw, 52px);
+    font-weight: 850;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    margin: 0 0 18px;
+    color: #ffffff;
+}
+
+.pengadaan-hero-title span {
+    background: linear-gradient(135deg, #ff6b6b 0%, #e30613 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.pengadaan-hero-desc {
+    font-size: clamp(15px, 1.4vw, 17px);
+    line-height: 1.65;
+    color: #94a3b8;
+    margin: 0 0 32px;
+    max-width: 620px;
+}
+
+.pengadaan-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.btn-pengadaan-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 26px;
+    background: #e30613;
+    color: #ffffff !important;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 750;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(227, 6, 19, 0.38);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-pengadaan-primary:hover {
+    background: #c8000b;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(227, 6, 19, 0.48);
+}
+
+.btn-pengadaan-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 700;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+}
+
+.btn-pengadaan-secondary:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+.pengadaan-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    padding-top: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hero-stat-item strong {
+    display: block;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 850;
+    color: #ffffff;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.hero-stat-item span {
+    font-size: 12.5px;
+    color: #94a3b8;
+    line-height: 1.35;
+}
+
+/* ─── Hero Visual Card ─── */
+.pengadaan-hero-visual {
+    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 28px 24px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
+}
+
+.procurement-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 20px;
+}
+
+.procurement-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e30613 0%, #b91c1c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+
+.procurement-card-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.procurement-card-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.procurement-card-header p {
+    margin: 3px 0 0;
+    font-size: 12.5px;
+    color: #94a3b8;
+}
+
+.procurement-checklist {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.procurement-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: #cbd5e1;
+    line-height: 1.45;
+}
+
+.procurement-checklist li svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    color: #22c55e;
+    margin-top: 1px;
+}
+
+.procurement-card-cta {
+    background: rgba(227, 6, 19, 0.12);
+    border: 1px dashed rgba(227, 6, 19, 0.45);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: center;
+}
+
+.procurement-card-cta p {
+    margin: 0 0 8px;
+    font-size: 12.5px;
+    color: #fca5a5;
+    font-weight: 600;
+}
+
+.procurement-card-cta a {
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 750;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* ─── Success Alert Box ─── */
+.pengadaan-success-box {
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border: 1.5px solid #86efac;
+    border-radius: 18px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.12);
+}
+
+.success-icon-badge {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border-radius: 50%;
+    background: #22c55e;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+}
+
+.success-icon-badge svg {
+    width: 26px;
+    height: 26px;
+}
+
+.success-content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.success-content h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 850;
+    color: #14532d;
+}
+
+.success-content p {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: #166534;
+    line-height: 1.6;
+}
+
+.success-summary-card {
+    background: #ffffff;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px 20px;
+    font-size: 13px;
+}
+
+.summary-item span {
+    display: block;
+    color: #64748b;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.summary-item strong {
+    display: block;
+    margin-top: 2px;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.btn-whatsapp-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: #25d366;
+    color: #ffffff !important;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 750;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-whatsapp-confirm:hover {
+    background: #1eb956;
+    transform: translateY(-1px);
+}
+
+/* ─── Section Header ─── */
+.section-header-centered {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto clamp(36px, 5vw, 56px);
+}
+
+.section-pill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px;
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+    margin-bottom: 12px;
+}
+
+.section-header-centered h2 {
+    font-size: clamp(26px, 3.2vw, 38px);
+    font-weight: 850;
+    color: #0f172a;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px;
+}
+
+.section-header-centered p {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ─── Services Grid ─── */
+.services-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(18px, 2.5vw, 26px);
+    margin-bottom: clamp(60px, 8vw, 90px);
+}
+
+.service-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 28px 24px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+    border-color: #fca5a5;
+}
+
+.service-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #fef2f2;
+    color: #e30613;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover .service-card-icon {
+    background: #e30613;
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.service-card-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.service-card h3 {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px;
+    line-height: 1.3;
+}
+
+.service-card p {
+    font-size: 13.5px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0 0 18px;
+}
+
+.service-features-list {
+    list-style: none;
+    margin: 0;
+    padding: 16px 0 0;
+    border-top: 1px solid #f1f5f9;
+    display: grid;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.service-features-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.service-features-list li::before {
+    content: "✓";
+    color: #e30613;
+    font-weight: 900;
+}
+
+/* ─── Workflow Steps ─── */
+.workflow-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: clamp(36px, 6vw, 64px) clamp(20px, 4vw, 44px);
+    margin-bottom: clamp(60px, 8vw, 90px);
+}
+
+.workflow-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    position: relative;
+}
+
+.workflow-step-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px 18px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 850;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.workflow-step-card h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.workflow-step-card p {
+    margin: 0;
+    font-size: 12.5px;
+    color: #64748b;
+    line-height: 1.55;
+}
+
+/* ─── Procurement Form Section ─── */
+.pengadaan-form-container {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    margin-bottom: clamp(60px, 8vw, 90px);
+}
+
+.form-header-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 36px 36px 32px;
+    border-bottom: 3px solid #e30613;
+}
+
+.form-header-banner h3 {
+    margin: 0 0 8px;
+    font-size: clamp(22px, 2.5vw, 28px);
+    font-weight: 850;
+}
+
+.form-header-banner p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 14.5px;
+    line-height: 1.55;
+}
+
+.procurement-form-body {
+    padding: clamp(24px, 4vw, 44px);
+}
+
+.form-grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    margin-bottom: 22px;
+}
+
+.form-group-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group-field label {
+    font-size: 13.5px;
+    font-weight: 750;
+    color: #1e293b;
+}
+
+.form-group-field label .req-star {
+    color: #e30613;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    background: #ffffff;
+    border-color: #e30613;
+    box-shadow: 0 0 0 3.5px rgba(227, 6, 19, 0.15);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-file-wrap {
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 10px;
+}
+
+.form-file {
+    width: 100%;
+    font-size: 13px;
+    color: #475569;
+}
+
+.form-help-hint {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.form-submit-row {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.form-security-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12.5px;
+    max-width: 480px;
+    line-height: 1.45;
+}
+
+.form-security-note svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    color: #22c55e;
+}
+
+.btn-submit-pengadaan {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: #e30613;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(227, 6, 19, 0.35);
+    transition: all 0.25s ease;
+}
+
+.btn-submit-pengadaan:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(227, 6, 19, 0.45);
+}
+
+/* ─── FAQ Section ─── */
+.pengadaan-faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: clamp(60px, 8vw, 80px);
+}
+
+.faq-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+
+.faq-card h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.faq-card h4::before {
+    content: "Q:";
+    color: #e30613;
+    font-weight: 900;
+}
+
+.faq-card p {
+    margin: 0;
+    font-size: 13.5px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* ─── Responsive Queries ─── */
+@media (max-width: 1024px) {
+    .pengadaan-hero-grid {
+        grid-template-columns: 1fr;
+    }
+    .services-catalog-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .workflow-steps-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .form-grid-2col {
+        grid-template-columns: 1fr;
+    }
+    .services-catalog-grid {
+        grid-template-columns: 1fr;
+    }
+    .workflow-steps-grid {
+        grid-template-columns: 1fr;
+    }
+    .pengadaan-faq-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-submit-row {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    .btn-submit-pengadaan {
+        width: 100%;
+        justify-content: center;
+    }
+    .pengadaan-success-box {
+        flex-direction: column;
+        padding: 20px;
+    }
+}

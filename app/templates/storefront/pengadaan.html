@@ -1,0 +1,436 @@
+{% extends "storefront/base.html" %}
+{% load static %}
+{% block title %}Pengadaan Barang & Jasa IT - Losari Computer{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pengadaan.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<!-- ═══ HERO SECTION ═══ -->
+<section class="pengadaan-hero" aria-label="Layanan Pengadaan Barang & Jasa IT">
+    <div class="pengadaan-hero-glow pengadaan-hero-glow-1"></div>
+    <div class="pengadaan-hero-glow pengadaan-hero-glow-2"></div>
+    <div class="container pengadaan-hero-grid">
+        <div class="pengadaan-hero-copy">
+            <div class="pengadaan-badge">
+                <span class="pengadaan-badge-dot"></span>
+                <span>Layanan Bisnis, Sekolah &amp; Instansi</span>
+            </div>
+            <h1 class="pengadaan-hero-title">
+                Solusi <span>Pengadaan Barang &amp; Jasa</span> IT Terpercaya
+            </h1>
+            <p class="pengadaan-hero-desc">
+                Partner resmi pengadaan laptop kantor, komputer PC, infrastruktur jaringan &amp; server, CCTV, hingga kontrak maintenance berkala untuk instansi pemerintah, sekolah, universitas, yayasan, dan perusahaan swasta di seluruh Indonesia.
+            </p>
+            <div class="pengadaan-hero-actions">
+                <a class="btn-pengadaan-primary" href="#form-pengadaan">
+                    <span>Ajukan Kebutuhan Online</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+                <a class="btn-pengadaan-secondary" href="https://api.whatsapp.com/send?phone={{ footer_setting.whatsapp_clean|default:'6282399213651' }}&text=Halo%20Tim%20Pengadaan%20Losari%20Computer%2C%20saya%20ingin%20berkonsultasi%20mengenai%20pengadaan%20barang%20dan%20jasa%20IT." target="_blank" rel="noopener">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <span>Konsultasi Cepat via WhatsApp</span>
+                </a>
+            </div>
+            <div class="pengadaan-hero-stats">
+                <div class="hero-stat-item">
+                    <strong>100%</strong>
+                    <span>Legalitas &amp; Nota Faktur Resmi</span>
+                </div>
+                <div class="hero-stat-item">
+                    <strong>Garansi</strong>
+                    <span>Jaminan Garansi Toko &amp; Distributor</span>
+                </div>
+                <div class="hero-stat-item">
+                    <strong>Nasional</strong>
+                    <span>Kirim &amp; Pasang Seluruh Indonesia</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pengadaan-hero-visual">
+            <div class="procurement-card-header">
+                <div class="procurement-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3>Paket Bisnis &amp; Institusi</h3>
+                    <p>Fasilitas lengkap untuk kebutuhan pengadaan Anda</p>
+                </div>
+            </div>
+            <ul class="procurement-checklist">
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span><strong>Surat Penawaran Harga (SPH) &amp; RAB:</strong> Rincian spesifikasi &amp; biaya transparan dalam format resmi.</span>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span><strong>Fleksibilitas Pengadaan:</strong> Pilihan unit Baru (Brand New) maupun Second Bisnis Grade A+ teruji.</span>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span><strong>Setup Siap Pakai:</strong> Instalasi OS resmi, software produktivitas, dan konfigurasi jaringan di tempat.</span>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span><strong>Purna Jual Terjamin:</strong> Ketersediaan unit pengganti (backup) dan teknisi support responsif.</span>
+                </li>
+            </ul>
+            <div class="procurement-card-cta">
+                <p>Punya dokumen TOR atau daftar kebutuhan sendiri?</p>
+                <a href="#form-pengadaan">Lampirkan file PDF / Excel Anda di bawah &darr;</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main class="container">
+    <!-- SUCCESS ALERT NOTIFICATION -->
+    {% if submitted_obj %}
+    <div class="pengadaan-success-box" role="alert">
+        <div class="success-icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="success-content">
+            <h3>Permohonan Pengadaan Berhasil Dikirim!</h3>
+            <p>Terima kasih Bpk/Ibu <strong>{{ submitted_obj.nama_pemohon }}</strong>. Formulir kebutuhan Anda telah tercatat di sistem kami dengan nomor tiket <strong>#{{ submitted_obj.id }}</strong>. Tim marketing &amp; teknis Losari Computer akan segera meninjau dan mengirimkan penawaran resmi.</p>
+            <div class="success-summary-card">
+                <div class="summary-item">
+                    <span>Tiket Pengajuan</span>
+                    <strong>#{{ submitted_obj.id }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Instansi / Pemohon</span>
+                    <strong>{{ submitted_obj.instansi|default:submitted_obj.nama_pemohon }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Kategori</span>
+                    <strong>{{ submitted_obj.get_kategori_display }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Status Saat Ini</span>
+                    <strong style="color: #15803d;">{{ submitted_obj.get_status_display }}</strong>
+                </div>
+            </div>
+            {% if submitted_obj.whatsapp_url %}
+            <a class="btn-whatsapp-confirm" href="{{ submitted_obj.whatsapp_url }}" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <span>Konfirmasi Langsung via WhatsApp Admin</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══ SERVICES CATALOG ═══ -->
+    <div class="section-header-centered">
+        <span class="section-pill-tag">Katalog Layanan</span>
+        <h2>Ruang Lingkup Pengadaan IT</h2>
+        <p>Kami melayani pengadaan terpadu mulai dari perangkat keras (hardware), infrastruktur jaringan, hingga jasa pemeliharaan berkala.</p>
+    </div>
+
+    <div class="services-catalog-grid">
+        <!-- 1. Laptop & PC -->
+        <article class="service-card">
+            <div class="service-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+            </div>
+            <h3>Laptop &amp; PC Kantor / Lab Sekolah</h3>
+            <p>Pengadaan armada laptop bisnis (ThinkPad, Dell Latitude, HP EliteBook, Asus, Apple), PC Desktop kantor, PC All-in-One, dan lab komputer sekolah/kampus.</p>
+            <ul class="service-features-list">
+                <li>Unit Baru &amp; Second Bisnis Grade A+</li>
+                <li>Sudah Termasuk OS &amp; Office Siap Pakai</li>
+                <li>Garansi Toko Ganti Unit</li>
+            </ul>
+        </article>
+
+        <!-- 2. Jaringan & Server -->
+        <article class="service-card">
+            <div class="service-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+            </div>
+            <h3>Server, Jaringan &amp; WiFi Kantor</h3>
+            <p>Pembangunan infrastruktur jaringan internet lokal, router Mikrotik, switch manageable, access point WiFi kantor stabil, dan file server backup terpusat.</p>
+            <ul class="service-features-list">
+                <li>Instalasi Kabel LAN / UTP Rapi</li>
+                <li>Manajemen Bandwidth &amp; Keamanan Jaringan</li>
+                <li>Konfigurasi File Server &amp; Cloud Backup</li>
+            </ul>
+        </article>
+
+        <!-- 3. CCTV & Keamanan -->
+        <article class="service-card">
+            <div class="service-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </div>
+            <h3>CCTV &amp; Sistem Keamanan Digital</h3>
+            <p>Pemasangan kamera CCTV IP/Wireless, NVR/DVR multi-channel kapasitas rekam tinggi, pemantauan realtime lewat HP, serta mesin absensi sidik jari &amp; wajah.</p>
+            <ul class="service-features-list">
+                <li>Resolusi Full HD / 2K Night Vision</li>
+                <li>Akses Monitoring Realtime via Smartphone</li>
+                <li>Integrasi Absensi Karyawan</li>
+            </ul>
+        </article>
+
+        <!-- 4. Printer & Periferal -->
+        <article class="service-card">
+            <div class="service-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+            </div>
+            <h3>Printer, Scanner &amp; Periferal Kantor</h3>
+            <p>Pengadaan printer barcode gudang, printer ink-tank kantor hemat tinta, scanner dokumen arsip berkecepatan tinggi, proyektor meeting, dan stabilizer UPS.</p>
+            <ul class="service-features-list">
+                <li>Printer Ink Tank &amp; Laserjet Bergaransi</li>
+                <li>Scanner Arsip Dokumen Cepat</li>
+                <li>UPS Perlindungan Listrik Kantor</li>
+            </ul>
+        </article>
+
+        <!-- 5. Upgrade Hardware -->
+        <article class="service-card">
+            <div class="service-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+            </div>
+            <h3>Upgrade Masal Hardware Komputer</h3>
+            <p>Solusi peremajaan armada komputer dan laptop lama kantor dengan upgrade RAM &amp; SSD NVMe berkecepatan tinggi, hemat anggaran hingga 70% dibanding beli baru.</p>
+            <ul class="service-features-list">
+                <li>Kloning Data &amp; OS Tanpa Hilang File</li>
+                <li>SSD &amp; RAM Original Bergaransi Panjang</li>
+                <li>Pengerjaan Cepat di Tempat (On-Site)</li>
+            </ul>
+        </article>
+
+        <!-- 6. Maintenance & Servis -->
+        <article class="service-card">
+            <div class="service-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                </svg>
+            </div>
+            <h3>Jasa Maintenance &amp; Servis Berkala</h3>
+            <p>Kontrak pemeliharaan rutin bulanan/tahunan (SLA), servis berkala software &amp; hardware, pembersihan debu &amp; ganti thermal paste, serta technical support standby.</p>
+            <ul class="service-features-list">
+                <li>Kunjungan Rutin Teknisi Berpengalaman</li>
+                <li>Pembersihan &amp; Pengecekan Menyeluruh</li>
+                <li>Laporan Servis &amp; Rekomendasi Berkala</li>
+            </ul>
+        </article>
+    </div>
+
+    <!-- ═══ WORKFLOW SECTION ═══ -->
+    <section class="workflow-section">
+        <div class="section-header-centered">
+            <span class="section-pill-tag">Alur Kerjasama</span>
+            <h2>Tahapan Pengadaan Mudah &amp; Transparan</h2>
+            <p>Kami mendampingi proses pengadaan Anda dari awal konsultasi hingga serah terima dan masa garansi.</p>
+        </div>
+
+        <div class="workflow-steps-grid">
+            <div class="workflow-step-card">
+                <div class="step-number">01</div>
+                <h4>Pengajuan Kebutuhan</h4>
+                <p>Isi formulir online atau hubungi kami untuk mendiskusikan jumlah unit, spesifikasi, dan estimasi waktu.</p>
+            </div>
+            <div class="workflow-step-card">
+                <div class="step-number">02</div>
+                <h4>Penawaran Resmi (RAB)</h4>
+                <p>Kami menerbitkan Surat Penawaran Harga (SPH), spesifikasi unit lengkap, dan Rencana Anggaran Biaya.</p>
+            </div>
+            <div class="workflow-step-card">
+                <div class="step-number">03</div>
+                <h4>Kesepakatan &amp; PO</h4>
+                <p>Penerbitan Purchase Order (PO) atau Surat Perjanjian Kerjasama (SPK) dengan termin pembayaran fleksibel.</p>
+            </div>
+            <div class="workflow-step-card">
+                <div class="step-number">04</div>
+                <h4>Quality Check &amp; Kirim</h4>
+                <p>Uji ketat setiap perangkat (QC 100%), instalasi software siap pakai, dan pengiriman aman ke lokasi Anda.</p>
+            </div>
+            <div class="workflow-step-card">
+                <div class="step-number">05</div>
+                <h4>Serah Terima &amp; Garansi</h4>
+                <p>Penandatanganan Berita Acara Serah Terima (BAST), faktur resmi, dan pendampingan garansi purna jual.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ PROCUREMENT FORM ═══ -->
+    <section class="pengadaan-form-container" id="form-pengadaan">
+        <div class="form-header-banner">
+            <h3>Formulir Permohonan Pengadaan Barang &amp; Jasa</h3>
+            <p>Silakan lengkapi formulir di bawah ini. Tim Losari Computer akan segera memproses dan menghubungi Anda dengan penawaran terbaik dalam 1x24 jam.</p>
+        </div>
+
+        <div class="procurement-form-body">
+            <form method="post" enctype="multipart/form-data" action="{% url 'pengadaan' %}">
+                {% csrf_token %}
+                <div class="form-grid-2col">
+                    <!-- Nama Pemohon -->
+                    <div class="form-group-field">
+                        <label for="{{ form.nama_pemohon.id_for_label }}">
+                            Nama Lengkap / PIC <span class="req-star">*</span>
+                        </label>
+                        {{ form.nama_pemohon }}
+                        {% if form.nama_pemohon.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.nama_pemohon.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Nama Instansi / Perusahaan -->
+                    <div class="form-group-field">
+                        <label for="{{ form.instansi.id_for_label }}">
+                            Instansi / Perusahaan / Lembaga
+                        </label>
+                        {{ form.instansi }}
+                        {% if form.instansi.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.instansi.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group-field">
+                        <label for="{{ form.email.id_for_label }}">
+                            Alamat Email Aktif <span class="req-star">*</span>
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.email.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Nomor WhatsApp -->
+                    <div class="form-group-field">
+                        <label for="{{ form.nomor_telepon.id_for_label }}">
+                            Nomor WhatsApp / HP <span class="req-star">*</span>
+                        </label>
+                        {{ form.nomor_telepon }}
+                        {% if form.nomor_telepon.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.nomor_telepon.errors.0 }}</span>
+                        {% endif %}
+                        <span class="form-help-hint">Digunakan untuk konfirmasi dan pengiriman dokumen penawaran cepat.</span>
+                    </div>
+
+                    <!-- Kategori Pengadaan -->
+                    <div class="form-group-field">
+                        <label for="{{ form.kategori.id_for_label }}">
+                            Kategori Pengadaan <span class="req-star">*</span>
+                        </label>
+                        {{ form.kategori }}
+                        {% if form.kategori.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.kategori.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Estimasi Jumlah Unit -->
+                    <div class="form-group-field">
+                        <label for="{{ form.estimasi_unit.id_for_label }}">
+                            Estimasi Jumlah Unit
+                        </label>
+                        {{ form.estimasi_unit }}
+                        {% if form.estimasi_unit.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.estimasi_unit.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Estimasi Budget -->
+                    <div class="form-group-field full-width">
+                        <label for="{{ form.estimasi_budget.id_for_label }}">
+                            Estimasi Anggaran / Budget (Rp)
+                        </label>
+                        {{ form.estimasi_budget }}
+                        {% if form.estimasi_budget.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.estimasi_budget.errors.0 }}</span>
+                        {% endif %}
+                        <span class="form-help-hint">Opsional. Membantu kami memberikan opsi spesifikasi terbaik sesuai batas anggaran Anda.</span>
+                    </div>
+
+                    <!-- Rincian Kebutuhan & Spesifikasi -->
+                    <div class="form-group-field full-width">
+                        <label for="{{ form.deskripsi_kebutuhan.id_for_label }}">
+                            Rincian Kebutuhan &amp; Spesifikasi Teknis <span class="req-star">*</span>
+                        </label>
+                        {{ form.deskripsi_kebutuhan }}
+                        {% if form.deskripsi_kebutuhan.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.deskripsi_kebutuhan.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Upload Dokumen Pendukung -->
+                    <div class="form-group-field full-width">
+                        <label for="{{ form.lampiran.id_for_label }}">
+                            Upload Lampiran Dokumen (TOR / RAB / Surat Pengajuan)
+                        </label>
+                        <div class="form-file-wrap">
+                            {{ form.lampiran }}
+                        </div>
+                        <span class="form-help-hint">Format didukung: PDF, DOCX, XLSX, XLS, JPG, PNG, ZIP. Maksimal 10MB (opsional).</span>
+                        {% if form.lampiran.errors %}
+                        <span class="form-help-hint" style="color: #dc2626;">{{ form.lampiran.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-submit-row">
+                    <div class="form-security-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <span>Data Anda tersimpan dengan aman di database Losari Computer dan hanya digunakan untuk keperluan penawaran pengadaan resmi.</span>
+                    </div>
+                    <button class="btn-submit-pengadaan" type="submit">
+                        <span>Kirim Permohonan Pengadaan</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ═══ FAQ SECTION ═══ -->
+    <div class="section-header-centered">
+        <span class="section-pill-tag">Pertanyaan Umum</span>
+        <h2>FAQ Pengadaan Barang &amp; Jasa</h2>
+        <p>Hal yang sering ditanyakan pelanggan seputar pengadaan di Losari Computer.</p>
+    </div>
+
+    <div class="pengadaan-faq-grid">
+        <div class="faq-card">
+            <h4>Apakah Losari Computer bisa menerbitkan Faktur Pajak &amp; Kwitansi Resmi?</h4>
+            <p>Ya. Kami melayani administrasi perpajakan resmi, Surat Penawaran Harga (SPH), Kwitansi bermaterai, dan Berita Acara Serah Terima (BAST) untuk kebutuhan LPJ instansi atau perusahaan Anda.</p>
+        </div>
+        <div class="faq-card">
+            <h4>Apakah tersedia opsi laptop second berkualitas untuk penghematan anggaran?</h4>
+            <p>Tentu. Kami menyediakan laptop second Grade A+ lini bisnis (ThinkPad, Dell, HP) yang telah lulus uji hardware ketat, mulus seperti baru, dan bergaransi penuh dengan harga jauh lebih terjangkau.</p>
+        </div>
+        <div class="faq-card">
+            <h4>Berapa minimal pemesanan untuk pengadaan barang?</h4>
+            <p>Tidak ada batas minimum pesanan. Kami melayani pengadaan mulai dari 2 unit untuk UMKM hingga puluhan atau ratusan unit untuk lab sekolah, kampus, dan instansi perkantoran.</p>
+        </div>
+        <div class="faq-card">
+            <h4>Bagaimana pengiriman untuk instansi di luar kota Makassar?</h4>
+            <p>Kami bekerja sama dengan ekspedisi kargo terpercaya (JNE Trucking, SiCepat Cargo, Indah Cargo, Pelni) lengkap dengan packing kayu standar dan asuransi pengiriman ke seluruh Indonesia.</p>
+        </div>
+    </div>
+</main>
+{% endblock %}

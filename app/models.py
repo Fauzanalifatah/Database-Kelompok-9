@@ -1151,3 +1151,114 @@ class ItemKeranjang(models.Model):
 
     def __str__(self):
         return f"{self.produk.nama} ({self.jumlah} unit)"
+
+
+class Pengadaan(models.Model):
+    STATUS_CHOICES = (
+        ("menunggu", "Menunggu Respon"),
+        ("diproses", "Sedang Diproses"),
+        ("penawaran", "Tahap Penawaran / RAB"),
+        ("selesai", "Selesai"),
+        ("dibatalkan", "Dibatalkan"),
+    )
+
+    KATEGORI_CHOICES = (
+        ("laptop_pc", "Laptop & PC Komputer Kantor / Sekolah"),
+        ("server_jaringan", "Server, Jaringan & WiFi Kantor"),
+        ("cctv_keamanan", "CCTV & Sistem Keamanan"),
+        ("printer_periferal", "Printer, Scanner & Periferal IT"),
+        ("upgrade_hardware", "Komponen, Sparepart & Upgrade Hardware"),
+        ("maintenance_service", "Jasa Maintenance & Servis Berkala"),
+        ("lainnya", "Pengadaan IT Lainnya"),
+    )
+
+    nama_pemohon = models.CharField(max_length=150, verbose_name="Nama Pemohon / PIC")
+    instansi = models.CharField(max_length=200, blank=True, verbose_name="Instansi / Perusahaan / Sekolah")
+    email = models.EmailField(verbose_name="Alamat Email")
+    nomor_telepon = models.CharField(max_length=35, verbose_name="Nomor WhatsApp / HP")
+    kategori = models.CharField(
+        max_length=50,
+        choices=KATEGORI_CHOICES,
+        default="laptop_pc",
+        verbose_name="Kategori Pengadaan",
+    )
+    estimasi_unit = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Estimasi Jumlah Unit",
+        help_text="Misal: 10 Unit, 1 Lab Komputer, dll.",
+    )
+    estimasi_budget = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Estimasi Budget (Rp)",
+        help_text="Misal: Rp50.000.000, Fleksibel, dll.",
+    )
+    deskripsi_kebutuhan = models.TextField(
+        verbose_name="Rincian Kebutuhan & Spesifikasi",
+        help_text="Jelaskan kebutuhan laptop/komputer, software, jangka waktu, atau spesifikasi teknis yang diinginkan.",
+    )
+    lampiran = models.FileField(
+        upload_to="pengadaan/",
+        blank=True,
+        null=True,
+        verbose_name="Dokumen Pendukung (TOR / RAB / Surat Pengajuan)",
+    )
+    status = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default="menunggu",
+        verbose_name="Status Pengajuan",
+    )
+    catatan_admin = models.TextField(
+        blank=True,
+        verbose_name="Catatan Internal Admin",
+        help_text="Catatan penanganan untuk tim internal toko.",
+    )
+    dibuat_pada = models.DateTimeField(auto_now_add=True, verbose_name="Waktu Pengajuan")
+    diperbarui_pada = models.DateTimeField(auto_now=True, verbose_name="Terakhir Diperbarui")
+
+    class Meta:
+        verbose_name = "Pengadaan Barang & Jasa"
+        verbose_name_plural = "Daftar Pengadaan Barang & Jasa"
+        ordering = ["-dibuat_pada"]
+
+    def __str__(self):
+        instansi_text = f" ({self.instansi})" if self.instansi else ""
+        return f"Pengadaan #{self.id} - {self.nama_pemohon}{instansi_text}"
+
+    @property
+    def clean_telepon(self):
+        cleaned = "".join(filter(str.isdigit, str(self.nomor_telepon or "")))
+        if cleaned.startswith("0"):
+            return "62" + cleaned[1:]
+        if cleaned.startswith("8"):
+            return "62" + cleaned
+        return cleaned
+
+    @property
+    def whatsapp_url(self):
+        nomor = self.clean_telepon
+        if not nomor:
+            return ""
+        import urllib.parse
+        teks = (
+            f"Halo Bpk/Ibu {self.nama_pemohon},\n\n"
+            f"Kami dari Losari Computer telah menerima permohonan Pengadaan Barang & Jasa "
+            f"(Tiket #{self.id}: {self.get_kategori_display()}).\n\n"
+            f"Kami siap membantu menyediakan penawaran & konsultasi terbaik untuk instansi/kebutuhan Anda. "
+            f"Boleh kami konfirmasi rincian kebutuhan lebih lanjut?"
+        )
+        return f"https://api.whatsapp.com/send?phone={nomor}&text={urllib.parse.quote(teks)}"
+
+    @property
+    def status_badge_class(self):
+        mapping = {
+            "menunggu": "badge-status-menunggu",
+            "diproses": "badge-status-diproses",
+            "penawaran": "badge-status-penawaran",
+            "selesai": "badge-status-selesai",
+            "dibatalkan": "badge-status-dibatalkan",
+        }
+        return mapping.get(self.status, "badge-status-default")
+
