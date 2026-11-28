@@ -49,6 +49,30 @@
     margin: 4px 0 0;
 }
 
+.btn-live-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    transition: all 0.15s ease;
+}
+
+.btn-live-preview:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+}
+
 /* ─── KPI Stats Cards ─── */
 .pengadaan-kpi-grid {
     display: grid;
@@ -600,9 +624,9 @@
             <p>Kelola permohonan pengadaan perangkat IT dan jasa dari sekolah, instansi, perusahaan, dan UMKM.</p>
         </div>
         <div>
-            <a class="btn-filter-apply" href="{% url 'pengadaan' %}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                <span>Buka Halaman Publik Pengadaan &rarr;</span>
+            <a class="btn-live-preview" href="{% url 'pengadaan' %}" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>Lihat Tampilan Website ↗</span>
             </a>
         </div>
     </div>
